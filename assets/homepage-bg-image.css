@@ -1,0 +1,6 @@
+.text-on-image{
+    background-image: url('minecraft-wallpaper.png');
+    background-size: cover;
+    background-position: center;
+    padding: 100px;
+}
