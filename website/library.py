@@ -134,3 +134,21 @@ def login_user(email: str, password: str) -> list:
         connection.close()
         return [False, "Email and password do not match"]
 
+def edit_username(new_username: str, email: str) -> bool:
+    try:
+        connection = sqlite3.connect('rx.db')
+    except sqlite3.Error as e:
+        print(f"Error connecting to 'rx.db': {e}")
+        return False
+    
+    cursor = connection.cursor()
+    
+    try:
+        cursor.execute("UPDATE accounts SET username = ? WHERE email = ?;", (new_username, email))
+        connection.commit()
+        return True
+    except sqlite3.Error as e:
+        print(f"Error updating username: {e}")
+        return False
+    finally:
+        connection.close()
