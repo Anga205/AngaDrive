@@ -67,6 +67,9 @@ class State(rx.State):
             return rx.window_alert("Please enter a valid email address")
         if self.SignUp_password=="":
             return rx.window_alert("Password field is empty")
+        for i in [self.SignUp_username, self.SignUp_email, self.SignUp_password]:
+            if func.find_sql_insertion(i):
+                return rx.window_alert('''Potential SQL insertion detected, please avoid charectors like ', ", } etc.''')
         insertion = func.new_user_signup(self.SignUp_username, self.SignUp_email, self.SignUp_password)
         #print(f"insertion reads: {insertion}")
         if insertion==True:

@@ -1,14 +1,44 @@
 import re, sqlite3, random, time, sqlite3
 
+
+def find_sql_insertion(input_string):
+    # Common SQL injection patterns
+    sql_injection_patterns = [
+        r"\bSELECT\b.*\bFROM\b",
+        r"\bINSERT INTO\b",
+        r"\bUPDATE\b.*\bSET\b",
+        r"\bDELETE FROM\b",
+        r"\bDROP TABLE\b",
+        r"\bUNION\b.*\bSELECT\b",
+        r"\bOR\b.*\b1=1\b"
+    ]
+    
+    # Characters that might indicate SQL injection
+    harmful_characters = ["'", "\"", "}", ")", "]"]
+    
+    # Check for harmful characters
+    for char in harmful_characters:
+        if char in input_string:
+            return True
+    
+    # Check if any of the patterns match
+    for pattern in sql_injection_patterns:
+        if re.search(pattern, input_string, re.IGNORECASE):
+            return True
+    
+    return False
+
 def is_valid_email(email):
     # Regular expression pattern for validating email addresses
     email_pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
     
     # Use the re.match function to check if the email matches the pattern
-    if re.match(email_pattern, email):
-        return True
-    else:
+    if not re.match(email_pattern, email):
         return False
+    elif find_sql_insertion(email):
+        return False
+    else:
+        return True
 
 def setup_rx_db():
     # 1) Attempt to connect to "rx.db" or create a new database if it doesn't exist
