@@ -74,7 +74,7 @@ class State(rx.State):
         if insertion==True:
             self.username, self.email, self.password=self.SignUp_username, self.SignUp_email, self.SignUp_password
             print(f"{self.username} just registered a new account!")
-            return rx.window_alert("Signup Successful!")
+            return [rx.window_alert("Signup Successful!"), rx.redirect("/dashboard")]
         else:
             return rx.window_alert(insertion)
 
@@ -105,7 +105,7 @@ class State(rx.State):
             if (True in login_data):
                 self.username=login_data[1]
                 
-                return [rx.set_local_storage("accounts",str({"username":self.username,"email":self.email,"password":self.password})),rx.window_alert(f"Login for {self.username} successful!")]
+                return [rx.set_local_storage("accounts",str({"username":self.username,"email":self.email,"password":self.password})),rx.window_alert(f"Login for {self.username} successful!"), rx.redirect("/dashboard")]
             else:
                 print(login_data)
                 return rx.window_alert(login_data[1])
@@ -121,19 +121,11 @@ class State(rx.State):
     def random_light_color(self):
         return random.choice(["#ffcccb","#90EE90","#ADD8E6"])
 
-
-    def local_storage_value(self):
-        try:
-            return rx.get_local_storage("accounts")
-        except Exception as e:
-            print(f"local_storage_value error {e}")
-
-
     def page_load(self, storage):
         if self.username=="":
             try:
                 if storage==None:
-                    print("No local storage found")
+                    pass
                 else:
                     login_data=eval(storage)
                     response=func.login_user(login_data["email"],login_data["password"])
@@ -145,11 +137,11 @@ class State(rx.State):
                         print(f"{self.username} logged in thru session")
                     else:
                         print(f"Login with details '{login_data['email']}', '{login_data['password']}' failed with reason {response[1]}")
-                        rx.clear_local_storage()
+                        return rx.clear_local_storage()
             except Exception as e:
                 print(e)
         else:
-            print(f"{self.username} is already logged in")
+            pass
 
     def login_page_load(self, storage):
         self.page_load(storage)
@@ -224,7 +216,8 @@ def login() -> rx.Component:
                         rx.vstack(
                             rx.input(placeholder="Enter a username", on_blur=State.set_SignUp_username),
                             rx.input(placeholder="Enter an e-mail ID", bg=State.signup_email_color_bg, on_blur=State.set_SignUp_email),
-                            rx.password(placeholder="Enter a password", on_blur=State.set_SignUp_password)
+                            rx.password(placeholder="Enter a password", on_blur=State.set_SignUp_password),
+                            rx.heading(rx.span("This should go without saying but, please "), rx.span("DO NOT USE THE SAME PASSWORD EVERYWHERE", color="RED", _as="b"), font_size="xs")
                         )
                     ),
                     rx.alert_dialog_footer(
