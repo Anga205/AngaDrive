@@ -71,7 +71,6 @@ class State(rx.State):
             if func.find_sql_insertion(i):
                 return rx.window_alert('''Potential SQL insertion detected, please avoid charectors like ', ", } etc.''')
         insertion = func.new_user_signup(self.SignUp_username, self.SignUp_email, self.SignUp_password)
-        #print(f"insertion reads: {insertion}")
         if insertion==True:
             self.username, self.email, self.password=self.SignUp_username, self.SignUp_email, self.SignUp_password
             print(f"{self.username} just registered a new account!")
@@ -502,8 +501,7 @@ def dashboard():
 
 # Add state and page to the app.
 app = rx.App()
-app.add_page(login, title="Login Page - anga.pro")
-app.add_page(dashboard, title="Dashboard - anga.pro")
-app.add_page(index, title="Home - anga.pro")
-#app.add_page(rx.fragment(), on_load=rx.redirect("/login"), route="/")
+app.add_page(login, title="Login Page - anga.pro", description="Website is under construction")
+app.add_page(dashboard, title="Dashboard - anga.pro", description="Website is under construction")
+app.add_page(index, title="Home - anga.pro", description="Website is under construction")
 app.compile()
