@@ -110,7 +110,6 @@ def login_user(email: str, password: str) -> list:
     # Attempt to connect to "rx.db" or create a new database if it doesn't exist
     try:
         connection = sqlite3.connect('rx.db')
-        print("Connected to 'rx.db'")
     except sqlite3.Error as e:
         print(f"Error connecting to 'rx.db': {e}")
         return [False, "Error connecting to the database"]

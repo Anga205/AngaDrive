@@ -163,6 +163,18 @@ class State(rx.State):
         else:
             return rx.window_alert("An error occured")
 
+    def dashboard_load(self, local_storage):
+        self.page_load(local_storage)
+        if self.username:
+            pass
+        else:
+            return rx.redirect("/login")
+    
+    enable_change_pfp_gui=False
+
+    def switch_enable_change_pfp_gui(self):
+        self.enable_change_pfp_gui = not self.enable_change_pfp_gui
+
 class OnLoadHack(rx.Fragment):
     def _get_hooks(self):
         formatted_on_load = rx.components.tags.tag.Tag.format_prop(
@@ -495,8 +507,29 @@ def dashboard():
             rx.box(height="105vh"),
             rx.cond(
                 State.arrow_over_pfp_in_dashboard,
-                rx.image(src="edit.png", height="100px", width="100px", border_radius="50px",on_mouse_leave=State.func_mouse_hover_pfp_in_dashboard),
+                rx.image(src="edit.png", height="100px", width="100px", border_radius="50px",on_mouse_leave=State.func_mouse_hover_pfp_in_dashboard, on_click=State.switch_enable_change_pfp_gui),
                 rx.avatar(name=State.username, height="100px", width="100px", on_mouse_enter=State.func_mouse_hover_pfp_in_dashboard),
+            ),
+            rx.alert_dialog(
+                rx.alert_dialog_overlay(
+                    rx.alert_dialog_content(
+                        rx.alert_dialog_header("Upload new profile picture"),
+                        rx.alert_dialog_body(
+                            rx.upload(
+                                rx.text("Drag and drop images here or click to upload"),
+                                border="1px dotted rgb(107,99,246)",
+                                padding="5em"
+                            )
+                        ),
+                        rx.alert_dialog_footer(
+                            rx.button(
+                                "Cancel",
+                                on_click=State.switch_enable_change_pfp_gui,
+                            )
+                        ),
+                    )
+                ),
+                is_open=State.enable_change_pfp_gui,
             ),
             rx.cond(
                 State.dashboard_gui_to_edit_username,
@@ -511,7 +544,7 @@ def dashboard():
             bg="#0E0019",
             position="fixed"
         ),
-        OnLoadHack.create(on_load=lambda: State.page_load(rx.get_local_storage("accounts")))
+        OnLoadHack.create(on_load=lambda: State.dashboard_load(rx.get_local_storage("accounts")))
     )
 
 # Add state and page to the app.
