@@ -1,7 +1,7 @@
 """Welcome to Reflex! This file outlines the steps to create a basic app."""
 import reflex as rx
 import website.library as func
-import random
+import random, os
 
 class State(rx.State):
     username=""
@@ -74,7 +74,7 @@ class State(rx.State):
         if insertion==True:
             self.username, self.email, self.password=self.SignUp_username, self.SignUp_email, self.SignUp_password
             print(f"{self.username} just registered a new account!")
-            return [rx.window_alert("Signup Successful!"), rx.redirect("/dashboard")]
+            return [rx.window_alert("Signup Successful!"), rx.redirect("/dashboard"), rx.set_local_storage("accounts",str({"username":self.username,"email":self.email,"password":self.password}))]
         else:
             return rx.window_alert(insertion)
 
@@ -174,6 +174,10 @@ class State(rx.State):
 
     def switch_enable_change_pfp_gui(self):
         self.enable_change_pfp_gui = not self.enable_change_pfp_gui
+
+    @rx.var
+    def pfp_exists(self):
+        return os.path.exists(os.path.exists(f"assets\\pfps\\{self.email}"))
 
 class OnLoadHack(rx.Fragment):
     def _get_hooks(self):
@@ -499,6 +503,13 @@ def index():
         rx.mobile_only(
             rx.heading("Mobile support hasnt been added")
         )
+    )
+
+def user_profile_pic(side=100):
+    return rx.cond(
+        State.pfp_exists,
+        rx.image(src=f"/pfps/{State.email}"),
+        rx.avatar(name=State.username, border_radius=f"{side/2}px", height=f"{side}px", width=f"{side}px")
     )
 
 def dashboard():
