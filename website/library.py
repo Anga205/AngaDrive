@@ -105,6 +105,25 @@ def new_user_signup(username: str, email: str, password: str) -> bool:
         # Close the connection
         connection.close()
 
+def delete_account(email: str) -> bool:
+    try:
+        connection = sqlite3.connect('rx.db')
+    except sqlite3.Error as e:
+        print(f"Error connecting to 'rx.db': {e}")
+        return False
+    
+    cursor = connection.cursor()
+    
+    try:
+        cursor.execute("DELETE FROM accounts WHERE email = ?;", (email,))
+        connection.commit()
+        return True
+    except sqlite3.Error as e:
+        print(f"Error deleting account: {e}")
+        return False
+    finally:
+        connection.close()
+
 def login_user(email: str, password: str) -> list:
 
     # Attempt to connect to "rx.db" or create a new database if it doesn't exist

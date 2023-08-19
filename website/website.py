@@ -86,6 +86,19 @@ class State(rx.State):
         self.SignUp_username=""
         self.SignUp_email=""
         return rx.clear_local_storage()
+    
+    def dashboard_delete_account(self):
+        if func.delete_account(self.email):
+            self.username=""
+            self.email=""
+            self.password=""
+            self.SignUp_password=""
+            self.SignUp_username=""
+            self.SignUp_email=""
+            return [rx.clear_local_storage(), rx.window_alert("Account deletion was successful!"), rx.redirect("/login")]
+        else:
+            return [rx.window_alert("An error occured while deleting your account")]
+            
 
     def set_email(self, email):
         if email=="":
