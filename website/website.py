@@ -515,42 +515,54 @@ def user_profile_pic(side=100):
 def dashboard():
     return rx.hstack(
         rx.vstack(
-            rx.box(height="105vh"),
-            rx.cond(
-                State.arrow_over_pfp_in_dashboard,
-                rx.image(src="edit.png", height="100px", width="100px", border_radius="50px",on_mouse_leave=State.func_mouse_hover_pfp_in_dashboard, on_click=State.switch_enable_change_pfp_gui),
-                rx.avatar(name=State.username, height="100px", width="100px", on_mouse_enter=State.func_mouse_hover_pfp_in_dashboard),
-            ),
-            rx.alert_dialog(
-                rx.alert_dialog_overlay(
-                    rx.alert_dialog_content(
-                        rx.alert_dialog_header("Upload new profile picture"),
-                        rx.alert_dialog_body(
-                            rx.upload(
-                                rx.text("Drag and drop images here or click to upload"),
-                                border="1px dotted rgb(107,99,246)",
-                                padding="5em"
-                            )
-                        ),
-                        rx.alert_dialog_footer(
-                            rx.button(
-                                "Cancel",
-                                on_click=State.switch_enable_change_pfp_gui,
-                            )
-                        ),
-                    )
+            rx.box(height="100vh"),
+            rx.button(
+                rx.span(
+                    rx.image(src="/account.png"), 
+                    width="20px", 
+                    height="20px", 
+                    style={"margin-top": "3px"}
+                    ), 
+                rx.span("", width="20px"), 
+                rx.span("Manage Account"), 
+                rx.spacer(), 
+                color="WHITE", 
+                font_size="20px", 
+                bg="#0E0019", 
+                width="100%"
                 ),
-                is_open=State.enable_change_pfp_gui,
-            ),
-            rx.cond(
-                State.dashboard_gui_to_edit_username,
-                rx.input(default_value=State.username, color="WHITE", width="50%", on_blur=State.dashboard_username_editor),
-                rx.hstack(
-                    rx.heading(State.username, color="WHITE"),
-                    rx.image(src="edit.png", width="30px", height="30px", on_click= State.switch_dashboard_gui_to_edit_username)
-                )
-            ),
-            width="20%",
+            rx.button(
+                rx.span(
+                    rx.image(src="/file_host.png"), 
+                    width="20px", 
+                    height="20px", 
+                    style={"margin-top": "3px"}
+                    ), 
+                rx.span("", width="20px"), 
+                rx.span("File Hosting"), 
+                rx.spacer(), 
+                color="WHITE", 
+                font_size="20px", 
+                bg="#0E0019", 
+                width="100%"
+                ),
+            rx.button(
+                rx.span(
+                    rx.image(src="/support.png"), 
+                    width="20px", 
+                    height="20px", 
+                    style={"margin-top": "3px"}
+                    ), 
+                rx.span("", width="20px"), 
+                rx.span("Support"), 
+                rx.spacer(), 
+                color="WHITE", 
+                font_size="20px", 
+                bg="#0E0019", 
+                width="100%"
+                ),
+            rx.button(rx.span(rx.icon(tag="delete"), style={"margin-top": "-5px"}), rx.span("", width="20px"), rx.span("Delete Account"), rx.spacer(), color="RED", font_size="20px", bg="#0E0019", width="100%"),
+            width="15%",
             height="200vh",
             bg="#0E0019",
             position="fixed"
