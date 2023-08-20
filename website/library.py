@@ -97,7 +97,6 @@ def new_user_signup(username: str, email: str, password: str) -> bool:
         cursor.execute("INSERT INTO accounts (username, email, password) VALUES (?, ?, ?);",
                        (username, email, password))
         connection.commit()
-        print("User signup successful.")
         return True
     except sqlite3.Error as e:
         return f"Error inserting user data: {e}"

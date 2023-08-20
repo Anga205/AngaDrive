@@ -210,7 +210,6 @@ class OnLoadHack(rx.Fragment):
         return ""
 
 
-
 def login() -> rx.Component:
     return rx.hstack(
         rx.center( 
@@ -502,6 +501,14 @@ def index():
                     spacing="30px",
                 ),
                 rx.vstack(
+                    rx.box(height="10vh"),
+                    rx.heading("Some interesting statistics about this website:", color="WHITE"),
+                    rx.text("This data is live updated, refresh this page to see the numbers change!", color="WHITE"),
+                    height="80vh",
+                    width="100%",
+                    bg="#001918",
+                ),
+                rx.vstack(
                     rx.box(height="1vh"),
                     rx.text(rx.span("All visible content on this website is available under the ",rx.span(rx.link("Creative Commons Attribution-ShareAlike License 4.0", href="https://creativecommons.org/licenses/by-sa/4.0/", color="#ADD8E6"))), color="WHITE"),
                     spacing="30px",
@@ -527,8 +534,10 @@ def user_profile_pic(side=100):
 
 def dashboard():
     return rx.hstack(
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+#                                                              SIDEBAR
+#-------------------------------------------------------------------------------------------------------------------------------------------------
         rx.vstack(
-            rx.box(height="100vh"),
             rx.button(
                 rx.span(
                     rx.image(src="/account.png"), 
@@ -574,12 +583,46 @@ def dashboard():
                 bg="#0E0019", 
                 width="100%"
                 ),
-            rx.button(rx.span(rx.icon(tag="delete"), style={"margin-top": "-5px"}), rx.span("", width="20px"), rx.span("Delete Account"), rx.spacer(), color="RED", font_size="20px", bg="#0E0019", width="100%"),
+            rx.button(
+                rx.span(
+                    rx.icon(tag="delete"), 
+                    style={"margin-top": "-5px"}
+                    ), 
+                rx.span(
+                    "", 
+                    width="20px"
+                    ), 
+                rx.span("Delete Account"), 
+                rx.spacer(), 
+                color="RED", 
+                font_size="20px", 
+                bg="#0E0019", 
+                width="100%",
+                on_click=State.dashboard_delete_account
+                ),
             width="15%",
-            height="200vh",
+            height="100vh",
             bg="#0E0019",
-            position="fixed"
+            position="fixed",
         ),
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+#                                                              TOPBAR
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+        rx.vstack(
+            rx.hstack(
+                rx.box(width="6%"),
+                rx.image(src="/logo.png", height="6vh", width="auto"),
+                rx.spacer(),
+                bg="#000d19",
+                height="6vh",
+                width="100%"
+            ),
+            height="100vh", 
+            width="85%", 
+            bg="BLACK", 
+            style={"margin-left":"15%"}
+            ),
+
         OnLoadHack.create(on_load=lambda: State.dashboard_load(rx.get_local_storage("accounts")))
     )
 
