@@ -1,4 +1,4 @@
-import re, sqlite3, random, time, sqlite3
+import re, sqlite3, sqlite3
 
 
 def find_sql_insertion(input_string):
@@ -152,6 +152,7 @@ def login_user(email: str, password: str) -> list:
         return [False, "Email and password do not match"]
 
 def edit_username(new_username: str, email: str) -> bool:
+
     try:
         connection = sqlite3.connect('rx.db')
     except sqlite3.Error as e:
@@ -169,3 +170,4 @@ def edit_username(new_username: str, email: str) -> bool:
         return False
     finally:
         connection.close()
+
