@@ -11,7 +11,7 @@ To get started with hosting your own version of anga.pro, you will need to insta
 
 To run anga.pro, you can use the following command:
 
-`reflex run``
+`reflex run`
 
 anga.pro will be available at http://localhost:3000.
 

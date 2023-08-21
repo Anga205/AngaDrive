@@ -5,6 +5,6 @@ class WebsiteConfig(rx.Config):
 
 config = WebsiteConfig(
     app_name="website",
-    #api_url="https://testapi.anga.pro",
+    api_url="https://api.anga.pro",
     env=rx.Env.DEV,
 )
