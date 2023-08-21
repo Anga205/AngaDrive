@@ -1,28 +1,45 @@
 """Welcome to Reflex! This file outlines the steps to create a basic app."""
 import reflex as rx
 import website.library as func
-import random, os
+import random, os, time
 
 class State(rx.State):
     username=""
     email = ""
     password = ""
-
     signup_email_color_bg="WHITE"
     email_color_bg="WHITE"
-
     arrow_over_pfp_in_dashboard=False
+    SignUpEnabled = False
+    SignUp_username=""
+    SignUp_email=""
+    SignUp_password=""
+    navbar_contact_color="WHITE"
+    enable_change_pfp_gui=False
+    
+    @rx.var
+    def loads_today(self):
+        return func.calls_per_day(func.get_timestamps())[-1]
 
     def func_mouse_hover_pfp_in_dashboard(self):
         self.arrow_over_pfp_in_dashboard=not self.arrow_over_pfp_in_dashboard
 
-    SignUpEnabled = False
-
-    SignUp_username=""
-    SignUp_email=""
-    SignUp_password=""
-
-    navbar_contact_color="WHITE"
+    @rx.var
+    def loads_per_day(self) -> list[int]:
+        timestamps=func.get_timestamps()
+        earliest_day=timestamps[0]-86400
+        all_days=[]
+        for i in range(len(func.calls_per_day(timestamps))+1):
+            all_days.append(" ".join(time.ctime(earliest_day).split()[1:3]))
+            earliest_day+=86400
+        return rx.data(
+            "line",
+            x=all_days,
+            y=[0]+func.calls_per_day(timestamps),
+        )
+    
+    def homepage_load(self):
+        func.insert_timestamp()
 
     def navbar_contact_hover(self):
         self.navbar_contact_color="#D3D3D3"
@@ -182,8 +199,6 @@ class State(rx.State):
             pass
         else:
             return rx.redirect("/login")
-    
-    enable_change_pfp_gui=False
 
     def switch_enable_change_pfp_gui(self):
         self.enable_change_pfp_gui = not self.enable_change_pfp_gui
@@ -191,6 +206,10 @@ class State(rx.State):
     @rx.var
     def pfp_exists(self):
         return os.path.exists(os.path.exists(f"assets\\pfps\\{self.email}"))
+
+    mobile_homepage_drawer=False
+    def switch_mobile_homepage_drawer(self):
+        self.mobile_homepage_drawer=not self.mobile_homepage_drawer
 
 class OnLoadHack(rx.Fragment):
     def _get_hooks(self):
@@ -504,6 +523,21 @@ def index():
                     rx.box(height="10vh"),
                     rx.heading("Some interesting statistics about this website:", color="WHITE"),
                     rx.text("This data is live updated, refresh this page to see the numbers change!", color="WHITE"),
+                    rx.hstack(
+                        rx.vstack(
+                            rx.chart(
+                                rx.line(
+                                    data=State.loads_per_day,
+                                ),
+                            ),
+                            rx.heading(rx.span("Number of times this page was loaded today: "), rx.span(State.loads_today), font_size="lg"),
+                            bg="#00fff5",
+                            border_radius="5px",
+                            spacing="0px",
+                            border_width="5px",
+                            border_color="#00fff5"
+                        ),
+                    ),
                     height="80vh",
                     width="100%",
                     bg="#001918",
@@ -521,7 +555,53 @@ def index():
             )
         ),
         rx.mobile_only(
-            rx.heading("Mobile support hasnt been added")
+            rx.vstack(
+                rx.hstack(
+                    rx.box(width="2%"),
+                    rx.icon(tag="hamburger", color="WHITE", font_size="3xl", on_click=State.switch_mobile_homepage_drawer),
+                    rx.spacer(),
+                    rx.image(src="/logo.png", height="13vh"),
+                    bg="BLACK",
+                    height="12vh",
+                    width="100%"
+                ),
+                rx.vstack(
+                    rx.cond(
+                        State.username,
+                        rx.heading(
+                            rx.span("Welcome back, ", color="WHITE"),
+                            rx.span(State.username, color=State.random_light_color),
+                            font_size="5xl"
+                        ),
+                        rx.heading(
+                            rx.span("Welcome to ", color="WHITE"),
+                            rx.span("anga", color="#ffcccb"),
+                            rx.span(".", color="#90EE90"),
+                            rx.span("pro", color="#ADD8E6"),
+                            font_size="5xl"
+                        )
+                    ),
+                    rx.cond(
+                        State.username,
+                        rx.button(
+                            rx.span("Go to panel ", on_click=rx.redirect("/dashboard")),
+                            rx.span(rx.icon(tag="external_link")),
+                            bg="GREEN",
+                            color="WHITE"
+                        ),
+                        rx.button(
+                            rx.span("Login to your account"),
+                            rx.span(rx.icon(tag="lock")),
+                            color="WHITE",
+                            bg="BLUE",
+                            on_click=rx.redirect("/login")
+                        )
+                    ),
+                    bg="#0E0019",
+                    height="60vh"
+                ),
+                spacing="0px"
+            )
         )
     )
 
@@ -630,5 +710,5 @@ def dashboard():
 app = rx.App()
 app.add_page(login, title="Login Page - anga.pro", description="Website is under construction")
 app.add_page(dashboard, title="Dashboard - anga.pro", description="Website is under construction")
-app.add_page(index, title="Home - anga.pro", description="Website is under construction")
+app.add_page(index, title="Home - anga.pro", description="Website is under construction", on_load=State.homepage_load)
 app.compile()

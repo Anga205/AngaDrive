@@ -1,4 +1,4 @@
-import re, sqlite3, sqlite3
+import re, sqlite3, sqlite3, datetime, time
 
 
 def find_sql_insertion(input_string):
@@ -39,39 +39,6 @@ def is_valid_email(email):
         return False
     else:
         return True
-
-def setup_rx_db():
-    # 1) Attempt to connect to "rx.db" or create a new database if it doesn't exist
-    try:
-        connection = sqlite3.connect('rx.db')
-    except sqlite3.Error as e:
-        raise Exception(f"Error connecting to 'rx.db': {e}")
-    
-    cursor = connection.cursor()
-    
-    # 2) Check if 'accounts' table exists
-    cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='accounts';")
-    table_exists = cursor.fetchone()
-    
-    if not table_exists:
-        # 3) Create 'accounts' table with the specified columns
-        try:
-            cursor.execute('''CREATE TABLE accounts (
-                                username TEXT,
-                                email TEXT PRIMARY KEY,
-                                password TEXT,
-                                data TEXT
-                            )''')
-            print("'accounts' table created successfully.")
-        except sqlite3.Error as e:
-            print(f"Error creating 'accounts' table: {e}")
-        finally:
-            connection.commit()
-    else:
-        print("'accounts' table already exists.")
-
-    # Close the connection
-    connection.close()
 
 def new_user_signup(username: str, email: str, password: str) -> bool:
     # 1) Attempt to connect to "rx.db" or create a new database if it doesn't exist
@@ -171,3 +138,57 @@ def edit_username(new_username: str, email: str) -> bool:
     finally:
         connection.close()
 
+def calls_per_day(timestamps):
+    days_counts = {}
+    
+    for ts in timestamps:
+        dt = datetime.datetime.fromtimestamp(ts)
+        day = dt.date()
+        
+        if day in days_counts:
+            days_counts[day] += 1
+        else:
+            days_counts[day] = 1
+    
+    counts_per_day = [count for day, count in sorted(days_counts.items())]
+    return counts_per_day
+
+def get_timestamps():
+    try:
+        connection = sqlite3.connect('rx.db')
+    except sqlite3.Error as e:
+        print(f"Error connecting to 'rx.db': {e}")
+        return []
+    
+    cursor = connection.cursor()
+    
+    try:
+        cursor.execute("SELECT timestamps FROM activity;")
+        timestamps = [row[0] for row in cursor.fetchall()]
+        return timestamps
+    except sqlite3.Error as e:
+        print(f"Error retrieving timestamps: {e}")
+        return []
+    finally:
+        connection.close()
+
+def insert_timestamp():
+    try:
+        connection = sqlite3.connect('rx.db')
+    except sqlite3.Error as e:
+        print(f"Error connecting to 'rx.db': {e}")
+        return False
+    
+    cursor = connection.cursor()
+    
+    try:
+        current_timestamp = round(time.time())
+        cursor.execute("INSERT INTO activity (timestamps) VALUES (?);", (current_timestamp,))
+        connection.commit()
+        print("Timestamp inserted successfully.")
+        return True
+    except sqlite3.Error as e:
+        print(f"Error inserting timestamp: {e}")
+        return False
+    finally:
+        connection.close()
