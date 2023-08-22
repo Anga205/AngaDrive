@@ -185,10 +185,8 @@ def insert_timestamp():
         current_timestamp = round(time.time())
         cursor.execute("INSERT INTO activity (timestamps) VALUES (?);", (current_timestamp,))
         connection.commit()
-        print("Timestamp inserted successfully.")
         return True
     except sqlite3.Error as e:
-        print(f"Error inserting timestamp: {e}")
         return False
     finally:
         connection.close()
