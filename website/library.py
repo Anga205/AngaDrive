@@ -4,7 +4,51 @@ import re, sqlite3, sqlite3, datetime, time, platform
 if platform.system()=='Windows':
     database_directory="..\\rx.db"
 else:
-    database_directory=r"/home/anga/Desktop/rx.db"
+    database_directory=r"../rx.db"
+
+
+def setup_db(db_path):
+    # Check if the file already exists
+    if os.path.exists(db_path):
+        print(f"Database file '{db_path}' already exists. Nothing to do.")
+        return
+    
+    # Create the database and tables
+    try:
+        connection = sqlite3.connect(db_path)
+        cursor = connection.cursor()
+
+        # Create 'accounts' table
+        cursor.execute('''
+            CREATE TABLE accounts (
+                username TEXT,
+                email TEXT PRIMARY KEY,
+                password TEXT
+            )
+        ''')
+
+        # Create 'activity' table
+        cursor.execute('''
+            CREATE TABLE activity (
+                timestamps INTEGER
+            )
+        ''')
+
+        # Insert rows into 'activity' table
+        current_time = round(time.time())
+        cursor.execute('INSERT INTO activity (timestamps) VALUES (?)', (current_time,))
+        cursor.execute('INSERT INTO activity (timestamps) VALUES (?)', (current_time,))
+
+        connection.commit()
+        print(f"Database '{db_path}' created and initialized.")
+    except Exception as e:
+        print("Error:", e)
+    finally:
+        connection.close()
+
+setup_db(database_directory)
+
+
 
 def find_sql_insertion(input_string):
     # Common SQL injection patterns
