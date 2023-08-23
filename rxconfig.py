@@ -1,5 +1,4 @@
 import reflex as rx
-import platform
 
 class WebsiteConfig(rx.Config):
     pass
