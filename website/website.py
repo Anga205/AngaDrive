@@ -9,20 +9,16 @@ class State(rx.State):
     password = ""
     signup_email_color_bg="WHITE"
     email_color_bg="WHITE"
-    arrow_over_pfp_in_dashboard=False
     SignUpEnabled = False
     SignUp_username=""
     SignUp_email=""
     SignUp_password=""
     navbar_contact_color="WHITE"
-    enable_change_pfp_gui=False
     
     @rx.var
     def loads_today(self):
         return func.calls_per_day(func.get_timestamps())[-1]
 
-    def func_mouse_hover_pfp_in_dashboard(self):
-        self.arrow_over_pfp_in_dashboard=not self.arrow_over_pfp_in_dashboard
 
     @rx.var
     def loads_per_day(self) -> list[int]:
@@ -179,33 +175,13 @@ class State(rx.State):
             pass
         else:
             return rx.redirect("/dashboard")
-        
-    dashboard_gui_to_edit_username=False
-
-    def switch_dashboard_gui_to_edit_username(self):
-        self.dashboard_gui_to_edit_username= not self.dashboard_gui_to_edit_username 
-
-    def dashboard_username_editor(self, new_username):
-        self.switch_dashboard_gui_to_edit_username()
-        if func.edit_username(new_username, self.email):
-            self.username=new_username
-            return rx.window_alert("Changes were applied successfully")
-        else:
-            return rx.window_alert("An error occured")
-
+    
     def dashboard_load(self, local_storage):
         self.page_load(local_storage)
         if self.username:
             pass
         else:
             return rx.redirect("/login")
-
-    def switch_enable_change_pfp_gui(self):
-        self.enable_change_pfp_gui = not self.enable_change_pfp_gui
-
-    @rx.var
-    def pfp_exists(self):
-        return os.path.exists(os.path.exists(f"assets\\pfps\\{self.email}"))
 
     mobile_homepage_drawer=False
     def switch_mobile_homepage_drawer(self):
@@ -231,7 +207,7 @@ class OnLoadHack(rx.Fragment):
 
 def login() -> rx.Component:
     return rx.box(
-    rx.tablet_and_desktop(
+    rx.desktop_only(
         rx.hstack(
             rx.center( 
                 rx.vstack(
@@ -301,18 +277,18 @@ def login() -> rx.Component:
             bg="BLACK",
         )
     ),
-    rx.mobile_only(
+    rx.mobile_and_tablet(
         rx.vstack(
             rx.box(height="10vh"),
             rx.vstack(
                 rx.box(height="5vh"),
                 rx.heading("Login", font_size="4vh"),
                 rx.box(height="2vh"),
-                rx.input(placeholder="Enter e-mail address", width="85%"),
+                rx.input(placeholder="Enter e-mail address", width="85%",on_blur=State.set_email, bg=State.email_color_bg),
                 rx.box(height="2vh"),
-                rx.input(placeholder="Enter password", width="85%"),
+                rx.input(placeholder="Enter password", width="85%", on_blur=State.set_password),
                 rx.box(height="2vh"),
-                rx.button("LOGIN",bg="PURPLE", color="WHITE"),
+                rx.button("LOGIN",bg="PURPLE", color="WHITE", on_click=State.submit_login),
                 rx.box(height="1vh"),
                 rx.text("Dont have an account? ", rx.span(rx.link("Sign up!", on_click=State.SignUpEnable))),
                 rx.box(height="7vh"),
