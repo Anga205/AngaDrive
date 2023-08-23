@@ -1,5 +1,6 @@
 import re, sqlite3, sqlite3, datetime, time
 
+database_directory="..\\rx.db"
 
 def find_sql_insertion(input_string):
     # Common SQL injection patterns
@@ -43,9 +44,9 @@ def is_valid_email(email):
 def new_user_signup(username: str, email: str, password: str) -> bool:
     # 1) Attempt to connect to "rx.db" or create a new database if it doesn't exist
     try:
-        connection = sqlite3.connect('rx.db')
+        connection = sqlite3.connect(database_directory)
     except sqlite3.Error as e:
-        return f"Error connecting to 'rx.db': {e}"
+        return f"Error connecting to database: {e}"
     
     cursor = connection.cursor()
     
@@ -73,9 +74,9 @@ def new_user_signup(username: str, email: str, password: str) -> bool:
 
 def delete_account(email: str) -> bool:
     try:
-        connection = sqlite3.connect('rx.db')
+        connection = sqlite3.connect(database_directory)
     except sqlite3.Error as e:
-        print(f"Error connecting to 'rx.db': {e}")
+        print(f"Error connecting to database: {e}")
         return False
     
     cursor = connection.cursor()
@@ -94,9 +95,9 @@ def login_user(email: str, password: str) -> list:
 
     # Attempt to connect to "rx.db" or create a new database if it doesn't exist
     try:
-        connection = sqlite3.connect('rx.db')
+        connection = sqlite3.connect(database_directory)
     except sqlite3.Error as e:
-        print(f"Error connecting to 'rx.db': {e}")
+        print(f"Error connecting to database: {e}")
         return [False, "Error connecting to the database"]
     
     cursor = connection.cursor()
@@ -121,9 +122,9 @@ def login_user(email: str, password: str) -> list:
 def edit_username(new_username: str, email: str) -> bool:
 
     try:
-        connection = sqlite3.connect('rx.db')
+        connection = sqlite3.connect(database_directory)
     except sqlite3.Error as e:
-        print(f"Error connecting to 'rx.db': {e}")
+        print(f"Error connecting to database: {e}")
         return False
     
     cursor = connection.cursor()
@@ -155,9 +156,9 @@ def calls_per_day(timestamps):
 
 def get_timestamps():
     try:
-        connection = sqlite3.connect('rx.db')
+        connection = sqlite3.connect(database_directory)
     except sqlite3.Error as e:
-        print(f"Error connecting to 'rx.db': {e}")
+        print(f"Error connecting to database: {e}")
         return []
     
     cursor = connection.cursor()
@@ -174,9 +175,9 @@ def get_timestamps():
 
 def insert_timestamp():
     try:
-        connection = sqlite3.connect('rx.db')
+        connection = sqlite3.connect(database_directory)
     except sqlite3.Error as e:
-        print(f"Error connecting to 'rx.db': {e}")
+        print(f"Error connecting to database: {e}")
         return False
     
     cursor = connection.cursor()
