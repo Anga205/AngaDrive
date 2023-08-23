@@ -1,6 +1,10 @@
-import re, sqlite3, sqlite3, datetime, time
+import re, sqlite3, sqlite3, datetime, time, platform
 
-database_directory="..\\rx.db"
+
+if platform.system()=='Windows':
+    database_directory="..\\rx.db"
+else:
+    database_directory=r"/home/anga/Desktop/rx.db"
 
 def find_sql_insertion(input_string):
     # Common SQL injection patterns
