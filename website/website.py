@@ -535,12 +535,14 @@ def index():
                     rx.text("This data is live updated, refresh this page to see the numbers change!", color="WHITE", font_size="1.5vh"),
                     rx.hstack(
                         rx.vstack(
-                            rx.chart(
-                                rx.line(
-                                    data=State.loads_per_day,
-                                ),
+                            rx.box(
+                                rx.chart(
+                                    rx.line(
+                                        data=State.loads_per_day,
+                                    ),
+                                )
                             ),
-                            rx.heading(rx.span("Number of times this page was loaded today: "), rx.span(State.loads_today), font_size="2vh", bg="#00fff5", style={"margin-top":"-2vh"}),
+                            rx.heading(rx.span("Number of times this page was loaded today: "), rx.span(State.loads_today), font_size="2vh", bg="#00fff5"),
                             bg="#00fff5",
                             border_radius="5px",
                             spacing="0vh",
