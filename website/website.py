@@ -230,157 +230,183 @@ class OnLoadHack(rx.Fragment):
 
 
 def login() -> rx.Component:
-    return rx.hstack(
-        rx.center( 
-            rx.vstack(
-                rx.box(height="40vh", width="100%"),
-                rx.center(
-                    rx.vstack(
-                        rx.heading("Login"),
-                        rx.box(height="10px"),
-                        rx.input(
-                            placeholder="Enter e-mail address",
-                            on_blur=State.set_email,
-                            bg=State.email_color_bg
-                            ),
-                        rx.password(
-                            placeholder="Enter password",
-                            on_blur=State.set_password
-                        ),
-                        rx.button("LOGIN", bg="PURPLE", color="WHITE", on_click=State.submit_login),
-                        rx.hstack(
-                            rx.text("Dont have an account?"),
-                            rx.link("Sign up!", as_="b" ,on_click=State.SignUpEnable),
-                        ),
-                        spacing="20px"
-                    ),
-                    height="50vh", 
-                    bg="WHITE", 
-                    width="100%",
-                    border_radius="20px 0px 20px 0px",
-                    border_color="BLUE",
-                    border_width="10px"
-                    ),
-                rx.box(height="40vh", width="100%"),
-                width="20%",
-                height="100vh"
-            ),
-            width="100%"
-        ),
-        rx.alert_dialog(
-            rx.alert_dialog_overlay(
-                rx.alert_dialog_content(
-                    rx.alert_dialog_header("Sign Up"),
-                    rx.alert_dialog_body(
-                        rx.vstack(
-                            rx.input(placeholder="Enter a username", on_blur=State.set_SignUp_username),
-                            rx.input(placeholder="Enter an e-mail ID", bg=State.signup_email_color_bg, on_blur=State.set_SignUp_email),
-                            rx.password(placeholder="Enter a password", on_blur=State.set_SignUp_password),
-                            rx.heading(rx.span("This should go without saying but, please "), rx.span("DO NOT USE THE SAME PASSWORD EVERYWHERE", color="RED", _as="b"), font_size="xs")
-                        )
-                    ),
-                    rx.alert_dialog_footer(
-                        rx.hstack(
-                            rx.button(
-                                "Close",
-                                on_click=State.SignUpEnable
-                            ),
-                            rx.button(
-                                "Submit",
-                                on_click=State.submit_signup,
-                            )
-                        )
-                    ),
-                )
-            ),
-            is_open=State.SignUpEnabled,
-        ),
-        OnLoadHack.create(on_load=lambda: State.login_page_load(rx.get_local_storage("accounts"))),
-        width="100%",
-        bg="BLACK",
-    )
-
-
-def navbar():
-    return rx.hstack(
-        rx.box(width="21vh"),
-        rx.image(src="/logo.png", width="7.875vh", height="7.875vh", on_click=rx.redirect("/")),
-        rx.spacer(),
+    return rx.box(
+    rx.tablet_and_desktop(
         rx.hstack(
-            rx.menu(
-                rx.menu_button(
-                    rx.heading(
-                        "Contact", 
-                        color=State.navbar_contact_color, 
-                        font_size="2.1vh"
-                        ), 
-                    on_mouse_enter=State.navbar_contact_hover, 
-                    on_mouse_leave=State.navbar_contact_unhover
-                    ),
-                rx.menu_list(
-                    rx.menu_item("Discord", on_click=rx.redirect("https://discord.gg/DgxppCZnJb")),
-                    rx.menu_item("Instagram", on_click=rx.redirect("https://instagram.com/_anga205")),
-                    rx.menu_item("Threads", on_click=rx.redirect("https://threads.net/@_anga205")),
-                    rx.menu_item("𝕏.com", on_click=rx.redirect("https://x.com/_anga205")),
-                    rx.menu_item("Email", on_click=rx.redirect("mailto:support@anga.pro")),
-                    rx.menu_item("GitHub", on_click=rx.redirect("https://github.com/Anga205")),
-                    rx.menu_item("Telegram", on_click=rx.redirect("https://t.me/Anga205"))
-                )
-            ),
-            rx.menu(
-                rx.menu_button(
-                    rx.hstack(
-                        rx.heading(
-                            State.account_manager_navbar_menu_text, 
-                            color=State.navbar_my_account_color, 
-                            font_size="2.1vh"
+            rx.center( 
+                rx.vstack(
+                    rx.box(height="40vh", width="100%"),
+                    rx.center(
+                        rx.vstack(
+                            rx.heading("Login"),
+                            rx.box(height="10px"),
+                            rx.input(
+                                placeholder="Enter e-mail address",
+                                on_blur=State.set_email,
+                                bg=State.email_color_bg
+                                ),
+                            rx.password(
+                                placeholder="Enter password",
+                                on_blur=State.set_password
                             ),
-                        rx.icon(
-                            tag="chevron_down",
-                            color="white",
-                            width="2.625vh",
-                            height="auto"
+                            rx.button("LOGIN", bg="PURPLE", color="WHITE", on_click=State.submit_login),
+                            rx.hstack(
+                                rx.text("Dont have an account?"),
+                                rx.link("Sign up!",on_click=State.SignUpEnable),
+                            ),
+                            spacing="20px"
                         ),
-                        spacing="0px"
-                    ), 
-                    on_mouse_enter=State.navbar_my_account_hover, 
-                    on_mouse_leave=State.navbar_my_account_unhover
+                        height="50vh", 
+                        bg="WHITE", 
+                        width="100%",
+                        border_radius="20px 0px 20px 0px",
+                        border_color="BLUE",
+                        border_width="10px"
+                        ),
+                    rx.box(height="40vh", width="100%"),
+                    width="20%",
+                    height="100vh"
                 ),
-                rx.cond(
-                    State.username,
-                    rx.menu_list(
-                        rx.menu_item("Manage Account"),
-                        rx.menu_item("My Services"),
-                        rx.menu_divider(),
-                        rx.menu_item("Logout", on_click=State.logout)
-                    ),
-                    rx.menu_list(
-                        rx.hstack(rx.box(),rx.text("You are not logged in")),
-                        rx.box(height="0.84vh"),
-                        rx.hstack(rx.box(),rx.button("LOGIN", bg="GREEN", color="WHITE", on_click=rx.redirect("/login"))),
-                        rx.menu_divider(),
-                        rx.hstack(rx.box(),rx.text("Dont have an account?")),
-                        rx.box(height="0.84vh"),
-                        rx.hstack(rx.box(),rx.button("SIGN UP", bg="#00008B", color="WHITE", on_click=State.navbar_signup))
-                    ),
-                )
+                width="100%"
             ),
-            spacing="3.15vh"
-        ),
-        rx.box(width="10.5vh"),
-        OnLoadHack.create(on_load=lambda: State.page_load(rx.get_local_storage("accounts"))),
-        width="100%",
-        bg="black",
-        position="fixed",
-        height="10.4vh"
-    )
-
+            rx.alert_dialog(
+                rx.alert_dialog_overlay(
+                    rx.alert_dialog_content(
+                        rx.alert_dialog_header("Sign Up"),
+                        rx.alert_dialog_body(
+                            rx.vstack(
+                                rx.input(placeholder="Enter a username", on_blur=State.set_SignUp_username),
+                                rx.input(placeholder="Enter an e-mail ID", bg=State.signup_email_color_bg, on_blur=State.set_SignUp_email),
+                                rx.password(placeholder="Enter a password", on_blur=State.set_SignUp_password),
+                                rx.heading(rx.span("This should go without saying but, please "), rx.span("DO NOT USE THE SAME PASSWORD EVERYWHERE", color="RED", _as="b"), font_size="xs")
+                            )
+                        ),
+                        rx.alert_dialog_footer(
+                            rx.hstack(
+                                rx.button(
+                                    "Close",
+                                    on_click=State.SignUpEnable
+                                ),
+                                rx.button(
+                                    "Submit",
+                                    on_click=State.submit_signup,
+                                )
+                            )
+                        ),
+                    )
+                ),
+                is_open=State.SignUpEnabled,
+            ),
+            width="100%",
+            bg="BLACK",
+        )
+    ),
+    rx.mobile_only(
+        rx.vstack(
+            rx.box(height="10vh"),
+            rx.vstack(
+                rx.box(height="5vh"),
+                rx.heading("Login", font_size="4vh"),
+                rx.box(height="2vh"),
+                rx.input(placeholder="Enter e-mail address", width="85%"),
+                rx.box(height="2vh"),
+                rx.input(placeholder="Enter password", width="85%"),
+                rx.box(height="2vh"),
+                rx.button("LOGIN",bg="PURPLE", color="WHITE"),
+                rx.box(height="1vh"),
+                rx.text("Dont have an account? ", rx.span(rx.link("Sign up!", on_click=State.SignUpEnable))),
+                rx.box(height="7vh"),
+                spacing="0vh",
+                width="90%",
+                bg="WHITE",
+                border_radius="2vh 0px",
+                border_color="BLUE",
+                border_width="1vh"
+                ),
+            height="100vh",
+            position="fixed",
+            bg="BLACK",
+            width="100%"
+        )
+    ),
+    OnLoadHack.create(on_load=lambda: State.login_page_load(rx.get_local_storage("accounts")))
+)
 
 def index():
     return rx.box(
-        rx.desktop_only( 
+        rx.tablet_and_desktop( 
             rx.vstack(
-                navbar(),
+                rx.hstack(
+                    rx.box(width="21vh"),
+                    rx.image(src="/logo.png", width="7.875vh", height="7.875vh", on_click=rx.redirect("/")),
+                    rx.spacer(),
+                    rx.hstack(
+                        rx.menu(
+                            rx.menu_button(
+                                rx.heading(
+                                    "Contact", 
+                                    color=State.navbar_contact_color, 
+                                    font_size="2.1vh"
+                                    ), 
+                                on_mouse_enter=State.navbar_contact_hover, 
+                                on_mouse_leave=State.navbar_contact_unhover
+                                ),
+                            rx.menu_list(
+                                rx.menu_item("Discord", on_click=rx.redirect("https://discord.gg/DgxppCZnJb")),
+                                rx.menu_item("Instagram", on_click=rx.redirect("https://instagram.com/_anga205")),
+                                rx.menu_item("Threads", on_click=rx.redirect("https://threads.net/@_anga205")),
+                                rx.menu_item("𝕏.com", on_click=rx.redirect("https://x.com/_anga205")),
+                                rx.menu_item("Email", on_click=rx.redirect("mailto:support@anga.pro")),
+                                rx.menu_item("GitHub", on_click=rx.redirect("https://github.com/Anga205")),
+                                rx.menu_item("Telegram", on_click=rx.redirect("https://t.me/Anga205"))
+                            )
+                        ),
+                        rx.menu(
+                            rx.menu_button(
+                                rx.hstack(
+                                    rx.heading(
+                                        State.account_manager_navbar_menu_text, 
+                                        color=State.navbar_my_account_color, 
+                                        font_size="2.1vh"
+                                        ),
+                                    rx.icon(
+                                        tag="chevron_down",
+                                        color="white",
+                                        width="2.625vh",
+                                        height="auto"
+                                    ),
+                                    spacing="0px"
+                                ), 
+                                on_mouse_enter=State.navbar_my_account_hover, 
+                                on_mouse_leave=State.navbar_my_account_unhover
+                            ),
+                            rx.cond(
+                                State.username,
+                                rx.menu_list(
+                                    rx.menu_item("Manage Account"),
+                                    rx.menu_item("My Services"),
+                                    rx.menu_divider(),
+                                    rx.menu_item("Logout", on_click=State.logout)
+                                ),
+                                rx.menu_list(
+                                    rx.hstack(rx.box(),rx.text("You are not logged in")),
+                                    rx.box(height="0.84vh"),
+                                    rx.hstack(rx.box(),rx.button("LOGIN", bg="GREEN", color="WHITE", on_click=rx.redirect("/login"))),
+                                    rx.menu_divider(),
+                                    rx.hstack(rx.box(),rx.text("Dont have an account?")),
+                                    rx.box(height="0.84vh"),
+                                    rx.hstack(rx.box(),rx.button("SIGN UP", bg="#00008B", color="WHITE", on_click=State.navbar_signup))
+                                ),
+                            )
+                        ),
+                        spacing="3.15vh"
+                    ),
+                    rx.box(width="10.5vh"),
+                    width="100%",
+                    bg="black",
+                    position="fixed",
+                    height="10.4vh"
+                ),
                 rx.vstack(
                     rx.box(height="40vh"),
                     rx.cond(
@@ -403,8 +429,11 @@ def index():
                         rx.button(
                             rx.span("Go to panel ", on_click=rx.redirect("/dashboard")),
                             rx.span(rx.icon(tag="external_link")),
+                            font_size="1.6vh",
                             bg="GREEN",
                             color="WHITE",
+                            height="4vh",
+                            width="13vh"
                         ),
                         rx.button(
                             rx.span("Login to your account"),
@@ -568,7 +597,7 @@ def index():
                 spacing="0px"
             )
         ),
-        rx.mobile_and_tablet(
+        rx.mobile_only(
             rx.vstack(
                 rx.hstack(
                     rx.box(width="2%"),
@@ -896,15 +925,11 @@ def index():
                 ),
                 spacing="0px"
             )
-        )
+        ),
+        OnLoadHack.create(on_load=lambda: State.page_load(rx.get_local_storage("accounts"))),
     )
 
-def user_profile_pic(side=100):
-    return rx.cond(
-        State.pfp_exists,
-        rx.image(src=f"/pfps/{State.email}"),
-        rx.avatar(name=State.username, border_radius=f"{side/2}px", height=f"{side}px", width=f"{side}px")
-    )
+
 
 def dashboard():
     return rx.hstack(
