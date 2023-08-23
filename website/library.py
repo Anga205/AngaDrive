@@ -1,4 +1,4 @@
-import re, sqlite3, sqlite3, datetime, time, platform
+import re, sqlite3, sqlite3, datetime, time, platform, os
 
 
 if platform.system()=='Windows':
@@ -10,7 +10,6 @@ else:
 def setup_db(db_path):
     # Check if the file already exists
     if os.path.exists(db_path):
-        print(f"Database file '{db_path}' already exists. Nothing to do.")
         return
     
     # Create the database and tables
