@@ -303,8 +303,8 @@ def login() -> rx.Component:
 
 def navbar():
     return rx.hstack(
-        rx.box(width="200px"),
-        rx.image(src="/logo.png", width="75px", height="75px", on_click=rx.redirect("/")),
+        rx.box(width="21vh"),
+        rx.image(src="/logo.png", width="7.875vh", height="7.875vh", on_click=rx.redirect("/")),
         rx.spacer(),
         rx.hstack(
             rx.menu(
@@ -312,7 +312,7 @@ def navbar():
                     rx.heading(
                         "Contact", 
                         color=State.navbar_contact_color, 
-                        size="md"
+                        font_size="2.1vh"
                         ), 
                     on_mouse_enter=State.navbar_contact_hover, 
                     on_mouse_leave=State.navbar_contact_unhover
@@ -333,12 +333,12 @@ def navbar():
                         rx.heading(
                             State.account_manager_navbar_menu_text, 
                             color=State.navbar_my_account_color, 
-                            size="md"
+                            font_size="2.1vh"
                             ),
                         rx.icon(
                             tag="chevron_down",
                             color="white",
-                            width="25px",
+                            width="2.625vh",
                             height="auto"
                         ),
                         spacing="0px"
@@ -356,23 +356,23 @@ def navbar():
                     ),
                     rx.menu_list(
                         rx.hstack(rx.box(),rx.text("You are not logged in")),
-                        rx.box(height="8px"),
+                        rx.box(height="0.84vh"),
                         rx.hstack(rx.box(),rx.button("LOGIN", bg="GREEN", color="WHITE", on_click=rx.redirect("/login"))),
                         rx.menu_divider(),
                         rx.hstack(rx.box(),rx.text("Dont have an account?")),
-                        rx.box(height="8px"),
+                        rx.box(height="0.84vh"),
                         rx.hstack(rx.box(),rx.button("SIGN UP", bg="#00008B", color="WHITE", on_click=State.navbar_signup))
                     ),
                 )
             ),
-            spacing="30px"
+            spacing="3.15vh"
         ),
-        rx.box(width="100px"),
+        rx.box(width="10.5vh"),
         OnLoadHack.create(on_load=lambda: State.page_load(rx.get_local_storage("accounts"))),
         width="100%",
         bg="black",
         position="fixed",
-        height="100px"
+        height="10.4vh"
     )
 
 
@@ -388,14 +388,14 @@ def index():
                         rx.heading(
                             rx.span("Welcome back, ", color="WHITE"),
                             rx.span(State.username, color=State.random_light_color),
-                            font_size="5xl"
+                            font_size="4vh"
                         ),
                         rx.heading(
                             rx.span("Welcome to ", color="WHITE"),
                             rx.span("anga", color="#ffcccb"),
                             rx.span(".", color="#90EE90"),
                             rx.span("pro", color="#ADD8E6"),
-                            font_size="5xl"
+                            font_size="4vh"
                         )
                     ),
                     rx.cond(
@@ -404,20 +404,23 @@ def index():
                             rx.span("Go to panel ", on_click=rx.redirect("/dashboard")),
                             rx.span(rx.icon(tag="external_link")),
                             bg="GREEN",
-                            color="WHITE"
+                            color="WHITE",
                         ),
                         rx.button(
                             rx.span("Login to your account"),
                             rx.span(rx.icon(tag="lock")),
+                            font_size="1.6vh",
                             color="WHITE",
                             bg="BLUE",
-                            on_click=rx.redirect("/login")
+                            on_click=rx.redirect("/login"),
+                            width="20vh",
+                            height="4vh"
                         )
                     ),
                     bg="#0E0019",
                     width="100%",
                     height="90vh",
-                    spacing="20px"
+                    spacing="2.1vh"
                 ),
                 rx.vstack(
                     rx.box(height="10vh"),
@@ -427,89 +430,96 @@ def index():
                         rx.span(".", color="#90EE90"),
                         rx.span("pro", color="#ADD8E6"),
                         rx.span("?"),
-                        color='WHITE'
+                        color='WHITE',
+                        font_size="4vh"
                     ),
                     rx.center(
                         rx.hstack(
                             rx.vstack(
-                                rx.image(src="open-source.png", height="75px", width="auto"),
-                                rx.heading("Open Source", _as="b", color="WHITE", font_size="3xl", text_align="center"),
+                                rx.image(src="open-source.png", height="8vh", width="auto"),
+                                rx.heading("Open Source", _as="b", color="WHITE", font_size="3vh", text_align="center"),
                                 rx.center(
-                                    rx.text("All of my projects (including this website!) are open source, and availible on my github page, if you doubt my hosting, you can always download and host by yourself", text_align="center", color="WHITE")
+                                    rx.text("All of my projects (including this website!) are open source, and availible on my github page, if you doubt my hosting, you can always download and host by yourself", text_align="center", color="WHITE", font_size="1.66vh")
                                 ),
-                                width="14%",
-                                border_radius="5px",
+                                width="22vh",
+                                border_radius="0.525vh",
                                 bg="BLACK",
-                                border_width="20px",
+                                border_width="2.1vh",
                                 border_color="BLACK",
-                                height="400px"
+                                height="41vh",
+                                spacing="0.5vh"
                             ),
                             rx.vstack(
-                                rx.image(src="attention.png", height="75px", width="auto"),
-                                rx.heading("Personalized Attention", _as="b", color="WHITE", font_size="3xl", text_align="center"),
+                                rx.image(src="attention.png", height="8vh", width="auto"),
+                                rx.heading("Personalized Attention", _as="b", color="WHITE", font_size="3vh", text_align="center"),
                                 rx.center(
-                                    rx.text("Due to the small-scale nature of anga.pro, any issues you have, will be personally looked into (and hopefully solved) by me, there is no elaborate beaureocracy to navigate for support", text_align="center", color="WHITE")
+                                    rx.text("Due to the small-scale nature of anga.pro, any issues you have, will be personally looked into (and hopefully solved) by me, there is no elaborate beaureocracy to navigate for support", text_align="center", color="WHITE", font_size="1.66vh")
                                 ),
-                                width="14%",
-                                border_radius="5px",
+                                width="22vh",
+                                border_radius="0.525vh",
                                 bg="BLACK",
-                                border_width="20px",
+                                border_width="2.1vh",
                                 border_color="BLACK",
-                                height="400px"
+                                height="41vh",
+                                spacing="0.5vh"
                             ),
                             rx.vstack(
-                                rx.image(src="money.png", height="75px", width="auto"),
-                                rx.heading("Cost Effective", _as="b", color="WHITE", font_size="3xl", text_align="center"),
+                                rx.image(src="money.png", height="8vh", width="auto"),
+                                rx.heading("Cost Effective", _as="b", color="WHITE", font_size="3vh", text_align="center"),
                                 rx.center(
-                                    rx.text("anga.pro is an indie project and therefore prioritizes cost effectiveness over everything, although i will always try to maintain quality in my work", text_align="center", color="WHITE")
+                                    rx.text("anga.pro is an indie project and therefore prioritizes cost effectiveness over everything, although i will always try to maintain quality in my work", text_align="center", color="WHITE", font_size="1.66vh")
                                 ),
-                                width="14%",
-                                border_radius="5px",
+                                width="22vh",
+                                border_radius="0.525vh",
                                 bg="BLACK",
-                                border_width="20px",
+                                border_width="2.1vh",
                                 border_color="BLACK",
-                                height="400px"
+                                height="41vh",
+                                spacing="0.5vh"
                             ),
                             rx.vstack(
-                                rx.image(src="flower.png", height="75px", width="auto"),
-                                rx.heading("Customized Solutions", _as="b", color="WHITE", font_size="3xl", text_align="center"),
+                                rx.image(src="flower.png", height="8vh", width="auto"),
+                                rx.heading("Customized Solutions", _as="b", color="WHITE", font_size="3vh", text_align="center"),
                                 rx.center(
-                                    rx.text("If a public project of mine does not suit exactly your hosting needs, just contact me and tell me exactly what you desire, i will try to help you out", text_align="center", color="WHITE")
+                                    rx.text("If a public project of mine does not suit exactly your hosting needs, just contact me and tell me exactly what you desire, i will try to help you out", text_align="center", color="WHITE", font_size="1.66vh")
                                 ),
-                                width="14%",
-                                border_radius="5px",
+                                width="22vh",
+                                border_radius="0.525vh",
                                 bg="BLACK",
-                                border_width="20px",
+                                border_width="2.1vh",
                                 border_color="BLACK",
-                                height="400px"
+                                height="41vh",
+                                spacing="0.5vh"
                             ),
                             rx.vstack(
-                                rx.image(src="lock.png", height="75px", width="auto"),
-                                rx.heading("Privacy", _as="b", color="WHITE", font_size="3xl", text_align="center"),
+                                rx.image(src="lock.png", height="8vh", width="auto"),
+                                rx.heading("Privacy", _as="b", color="WHITE", font_size="3vh", text_align="center"),
                                 rx.center(
-                                    rx.text("Any projects i make specifically for you will not be published to open source without your explicit consent, on the off chance i do publish it, ill refund you and you can use it for free", text_align="center", color="WHITE")
+                                    rx.text("Any projects i make specifically for you will not be published to open source without your explicit consent, on the off chance i do publish it, ill refund you and you can use it for free", text_align="center", color="WHITE", font_size="1.66vh")
                                 ),
-                                width="14%",
-                                border_radius="5px",
+                                width="22vh",
+                                border_radius="0.525vh",
                                 bg="BLACK",
-                                border_width="20px",
+                                border_width="2.1vh",
                                 border_color="BLACK",
-                                height="400px"
+                                height="41vh",
+                                spacing="0.5vh"
                             ),
                             rx.vstack(
-                                rx.image(src="kling.png", height="75px", width="auto"),
-                                rx.heading("Track Record", _as="b", color="WHITE", font_size="3xl", text_align="center"),
+                                rx.image(src="kling.png", height="8vh", width="auto"),
+                                rx.heading("Track Record", _as="b", color="WHITE", font_size="3vh", text_align="center"),
                                 rx.center(
-                                    rx.text("I have somewhat of a positive track record, You may know my previous project, KlingMC, which remained up to date while it was active.", text_align="center", color="WHITE")
+                                    rx.text("I have somewhat of a positive track record, You may know my previous project, KlingMC, which remained up to date while it was active.", text_align="center", color="WHITE", font_size="1.66vh")
                                 ),
-                                width="14%",
-                                border_radius="5px",
+                                width="22vh",
+                                border_radius="0.525vh",
                                 bg="BLACK",
-                                border_width="20px",
+                                border_width="2.1vh",
                                 border_color="BLACK",
-                                height="400px"
+                                height="41vh",
+                                spacing="0.5vh"
                             ),
-                            spacing="30px",
+                            spacing="3.15vh",
                             width="80%"
                         ),
                         width="100%"
@@ -517,10 +527,10 @@ def index():
                     bg="#190000",
                     width="100%",
                     height="75vh",
-                    spacing="30px",
+                    spacing="3.15vh",
                 ),
                 rx.vstack(
-                    rx.box(height="10vh"),
+                    rx.box(height="6vh"),
                     rx.heading("Some interesting statistics about this website:", color="WHITE"),
                     rx.text("This data is live updated, refresh this page to see the numbers change!", color="WHITE"),
                     rx.hstack(
@@ -538,7 +548,7 @@ def index():
                             border_color="#00fff5"
                         ),
                     ),
-                    height="80vh",
+                    height="60vh",
                     width="100%",
                     bg="#001918",
                 ),

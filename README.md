@@ -5,13 +5,13 @@ anga.pro is an open source Python web app made in Reflex. It is a simple app tha
 * File hosting
 
 ## Getting Started
-To get started with hosting your own version of anga.pro, you will need to install Reflex and Python in a virtual environment. Once you have installed the dependencies, you can clone the anga.pro repository from GitHub.
+To get started with hosting your own version of anga.pro, you will need to install reflex and Python in a virtual environment. Once you have installed the dependencies, you can clone the anga.pro repository from GitHub.
 
 `git clone https://github.com/Anga205/anga.pro.git`
 
 To run anga.pro, you can use the following command:
 
-`reflex run`
+`reflex run --env prod`
 
 anga.pro will be available at http://localhost:3000.
 
