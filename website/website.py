@@ -531,8 +531,8 @@ def index():
                 ),
                 rx.vstack(
                     rx.box(height="6vh"),
-                    rx.heading("Some interesting statistics about this website:", color="WHITE"),
-                    rx.text("This data is live updated, refresh this page to see the numbers change!", color="WHITE"),
+                    rx.heading("Some interesting statistics about this website:", color="WHITE", font_size="3.5vh"),
+                    rx.text("This data is live updated, refresh this page to see the numbers change!", color="WHITE", font_size="1.5vh"),
                     rx.hstack(
                         rx.vstack(
                             rx.chart(
@@ -540,22 +540,24 @@ def index():
                                     data=State.loads_per_day,
                                 ),
                             ),
-                            rx.heading(rx.span("Number of times this page was loaded today: "), rx.span(State.loads_today), font_size="lg"),
+                            rx.heading(rx.span("Number of times this page was loaded today: "), rx.span(State.loads_today), font_size="2vh", bg="#00fff5", style={"margin-top":"-2vh"}),
                             bg="#00fff5",
                             border_radius="5px",
-                            spacing="0px",
+                            spacing="0vh",
                             border_width="5px",
-                            border_color="#00fff5"
+                            border_color="#00fff5",
+                            height="36vh"
                         ),
                     ),
                     height="60vh",
                     width="100%",
                     bg="#001918",
+                    spacing="0.3vh"
                 ),
                 rx.vstack(
                     rx.box(height="1vh"),
-                    rx.text(rx.span("All visible content on this website is available under the ",rx.span(rx.link("Creative Commons Attribution-ShareAlike License 4.0", href="https://creativecommons.org/licenses/by-sa/4.0/", color="#ADD8E6"))), color="WHITE"),
-                    spacing="30px",
+                    rx.text(rx.span("All visible content on this website is available under the ",rx.span(rx.link("Creative Commons Attribution-ShareAlike License 4.0", href="https://creativecommons.org/licenses/by-sa/4.0/", color="#ADD8E6"))), color="WHITE", font_size="1.4vh"),
+                    spacing="3.15vh",
                     width="100%",
                     height="10vh",
                     bg="#000f19"
