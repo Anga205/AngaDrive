@@ -187,6 +187,22 @@ class State(rx.State):
     def switch_mobile_homepage_drawer(self):
         self.mobile_homepage_drawer=not self.mobile_homepage_drawer
 
+    enable_username_editor_in_dashboard=False
+    def switch_username_editor_in_dashboard(self):
+        self.enable_username_editor_in_dashboard = not self.enable_username_editor_in_dashboard
+
+    def change_username_thru_dashboard(self, new_username):
+        if new_username.strip()==self.username.strip():
+            pass
+        else:
+            self.username=new_username
+            func.edit_username(new_username, self.email)
+            self.switch_username_editor_in_dashboard()
+            return rx.window_alert("Username was changed successfully")
+    @rx.var
+    def pfp_exists(self):
+        os.path.exists(f"assets/pfps/{self.email}")
+
 class OnLoadHack(rx.Fragment):
     def _get_hooks(self):
         formatted_on_load = rx.components.tags.tag.Tag.format_prop(
@@ -563,7 +579,7 @@ def index():
                 ),
                 rx.vstack(
                     rx.box(height="1vh"),
-                    rx.text(rx.span("All visible content on this website is available under the ",rx.span(rx.link("Creative Commons Attribution-ShareAlike License 4.0", href="https://creativecommons.org/licenses/by-sa/4.0/", color="#ADD8E6"))), color="WHITE", font_size="1.4vh"),
+                    rx.text(rx.span("All visible content on this website is available under the ",rx.span(rx.link("GNU General Public License v3", href="https://www.gnu.org/licenses/quick-guide-gplv3.html", color="#ADD8E6"))), color="WHITE", font_size="1.4vh"),
                     spacing="3.15vh",
                     width="100%",
                     height="10vh",
@@ -894,7 +910,7 @@ def index():
                 ),
                 rx.vstack(
                     rx.box(height="1vh"),
-                    rx.text(rx.span("All visible content on this website is available under the ",rx.span(rx.link("Creative Commons Attribution-ShareAlike License 4.0", href="https://creativecommons.org/licenses/by-sa/4.0/", color="#ADD8E6"))), color="WHITE", font_size="1.4vh", style={"text-align":"center"}),
+                    rx.text(rx.span("All visible content on this website is available under the ",rx.span(rx.link("GNU General Public License v3", href="https://www.gnu.org/licenses/quick-guide-gplv3.html", color="#ADD8E6"))), color="WHITE", font_size="1.4vh", style={"text-align":"center"}),
                     rx.box(height="1vh"),
                     width="100%",
                     bg="#000f19"
@@ -905,6 +921,52 @@ def index():
         OnLoadHack.create(on_load=lambda: State.page_load(rx.get_local_storage("accounts"))),
     )
 
+def user_profile_pic(side=100):
+    return rx.cond(
+        State.pfp_exists,
+        rx.image(src=f"/pfps/{State.email}"),
+        rx.avatar(name=State.username, border_radius=f"{side/2}vh", height=f"{side}vh", width=f"{side}vh")
+    )
+
+def account_manager():
+    return rx.vstack(
+        rx.hstack(
+            rx.vstack(
+                rx.heading("Account Details", color="WHITE", font_size="5vh"),
+                rx.divider(),
+                rx.hstack(
+                    rx.hstack(
+                        rx.vstack(
+                            rx.text("Username:", width="14vh", color="WHITE", font_size="2.3vh"), 
+                            rx.text("E-mail:", width="14vh", color="WHITE", font_size="2.3vh"),
+                            spacing="0px"
+                            ),
+                        rx.vstack(
+                            rx.cond(
+                                State.enable_username_editor_in_dashboard,
+                                rx.input(default_value=State.username, on_blur=State.change_username_thru_dashboard, color="WHITE", height="2.3vh"),
+                                rx.text(State.username, color="WHITE", font_size="2.3vh", width="100%", on_click=State.switch_username_editor_in_dashboard),
+                            ),
+                            rx.text(State.email, color="WHITE", font_size="2.3vh", width="100%", on_click=rx.window_alert("E-mail cannot be edited (yet)")),
+                            spacing="0px"
+                            
+                        ),
+                        spacing="0px"
+                    ),
+                    rx.box(width="1vh"),
+                    user_profile_pic(10),
+                    spacing="0vh"
+                ),
+                border_radius="2vh",
+                bg="#0F0F10",
+                spacing="0.5vh"
+            )
+        ),
+        width="100%",
+        height="100vh",
+        bg="BLACK",
+    )
+
 
 
 def dashboard():
@@ -913,85 +975,98 @@ def dashboard():
 #                                                              SIDEBAR
 #-------------------------------------------------------------------------------------------------------------------------------------------------
         rx.vstack(
+            rx.box(height="5vh"),
             rx.button(
                 rx.span(
                     rx.image(src="/account.png"), 
-                    width="20px", 
-                    height="20px", 
-                    style={"margin-top": "3px"}
+                    width="2.1vh", 
+                    height="2.1vh", 
+                    style={"margin-top": "0.315vh"}
                     ), 
-                rx.span("", width="20px"), 
+                rx.span("", width="2.1vh"), 
                 rx.span("Manage Account"), 
                 rx.spacer(), 
                 color="WHITE", 
-                font_size="20px", 
+                font_size="2.1vh", 
                 bg="#0E0019", 
-                width="100%"
+                width="100%",
+                height="4.5vh",
+                _hover={"bg":"BLACK"}
                 ),
             rx.button(
                 rx.span(
                     rx.image(src="/file_host.png"), 
-                    width="20px", 
-                    height="20px", 
-                    style={"margin-top": "3px"}
+                    width="2.1vh", 
+                    height="2.1vh", 
+                    style={"margin-top": "0.315vh"}
                     ), 
-                rx.span("", width="20px"), 
+                rx.span("", width="2.1vh"), 
                 rx.span("File Hosting"), 
                 rx.spacer(), 
                 color="WHITE", 
-                font_size="20px", 
+                font_size="2.1vh", 
                 bg="#0E0019", 
-                width="100%"
+                width="100%",
+                height="4.5vh",
+                _hover={"bg":"BLACK"}
                 ),
             rx.button(
                 rx.span(
                     rx.image(src="/support.png"), 
-                    width="20px", 
-                    height="20px", 
-                    style={"margin-top": "3px"}
+                    width="2.1vh", 
+                    height="2.1vh", 
+                    style={"margin-top": "0.315vh"}
                     ), 
-                rx.span("", width="20px"), 
+                rx.span("", width="2.1vh"), 
                 rx.span("Support"), 
                 rx.spacer(), 
                 color="WHITE", 
-                font_size="20px", 
+                font_size="2.1vh", 
                 bg="#0E0019", 
-                width="100%"
+                width="100%",
+                height="4.5vh",
+                _hover={"bg":"BLACK"}
                 ),
             rx.button(
                 rx.span(
                     rx.icon(tag="delete"), 
-                    style={"margin-top": "-5px"}
+                    style={"margin-top": "-0.525vh"}
                     ), 
                 rx.span(
                     "", 
-                    width="20px"
+                    width="2.1vh"
                     ), 
                 rx.span("Delete Account"), 
                 rx.spacer(), 
                 color="RED", 
-                font_size="20px", 
+                font_size="2.1vh", 
                 bg="#0E0019", 
                 width="100%",
-                on_click=State.dashboard_delete_account
+                on_click=State.dashboard_delete_account,
+                height="4.5vh",
+                _hover={"bg":"BLACK"}
                 ),
+            spacing="1vh",
             width="15%",
             height="100vh",
             bg="#0E0019",
             position="fixed",
         ),
+        rx.vstack(
 #-------------------------------------------------------------------------------------------------------------------------------------------------
 #                                                              TOPBAR
 #-------------------------------------------------------------------------------------------------------------------------------------------------
-        rx.vstack(
             rx.hstack(
                 rx.box(width="6%"),
                 rx.image(src="/logo.png", height="6vh", width="auto"),
                 rx.spacer(),
                 bg="#000d19",
                 height="6vh",
-                width="100%"
+                width="85%",
+                position="fixed"
             ),
+            rx.box(height="6vh"),
+            account_manager(),
             height="100vh", 
             width="85%", 
             bg="BLACK", 
