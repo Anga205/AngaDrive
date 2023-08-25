@@ -3,6 +3,8 @@ import reflex as rx
 import website.library as func
 import random, os, time
 
+startup_time=time.time()
+
 class State(rx.State):
     username=""
     email = ""
@@ -108,7 +110,7 @@ class State(rx.State):
             self.SignUp_password=""
             self.SignUp_username=""
             self.SignUp_email=""
-            return [rx.clear_local_storage(), rx.window_alert("Account deletion was successful!"), rx.redirect("/login")]
+            return [rx.clear_local_storage(), rx.redirect("/login"), rx.window_alert("Account deletion was successful!")]
         else:
             return [rx.window_alert("An error occured while deleting your account")]
             
@@ -579,7 +581,7 @@ def index():
                 ),
                 rx.vstack(
                     rx.box(height="1vh"),
-                    rx.text(rx.span("All visible content on this website is available under the ",rx.span(rx.link("GNU General Public License v3", href="https://www.gnu.org/licenses/quick-guide-gplv3.html", color="#ADD8E6"))), color="WHITE", font_size="1.4vh"),
+                    rx.text(rx.span("All visible content on this website is available under the ",rx.span(rx.link("GNU affero general public license", href="https://github.com/Anga205/anga.pro/blob/main/LICENSE", color="#ADD8E6"))), color="WHITE", font_size="1.4vh"),
                     spacing="3.15vh",
                     width="100%",
                     height="10vh",
@@ -910,7 +912,7 @@ def index():
                 ),
                 rx.vstack(
                     rx.box(height="1vh"),
-                    rx.text(rx.span("All visible content on this website is available under the ",rx.span(rx.link("GNU General Public License v3", href="https://www.gnu.org/licenses/quick-guide-gplv3.html", color="#ADD8E6"))), color="WHITE", font_size="1.4vh", style={"text-align":"center"}),
+                    rx.text(rx.span("All visible content on this website is available under the ",rx.span(rx.link("GNU affero general public license", href="https://github.com/Anga205/anga.pro/blob/main/LICENSE", color="#ADD8E6"))), color="WHITE", font_size="1.4vh", style={"text-align":"center"}),
                     rx.box(height="1vh"),
                     width="100%",
                     bg="#000f19"
@@ -928,12 +930,12 @@ def user_profile_pic(side=100):
         rx.avatar(name=State.username, border_radius=f"{side/2}vh", height=f"{side}vh", width=f"{side}vh")
     )
 
-def account_manager():
+
+
+def account_editor():
     return rx.vstack(
-        rx.hstack(
-            rx.vstack(
                 rx.heading("Account Details", color="WHITE", font_size="5vh"),
-                rx.divider(),
+                rx.divider(border_color="WHITE"),
                 rx.hstack(
                     rx.hstack(
                         rx.vstack(
@@ -959,12 +961,43 @@ def account_manager():
                 ),
                 border_radius="2vh",
                 bg="#0F0F10",
-                spacing="0.5vh"
+                spacing="0.5vh",
+                border_color="#0F0F10",
+                border_width="1vh"
             )
+
+def notifications_tab():
+    return rx.vstack(
+        rx.heading("Account Notifications", color="WHITE", font_size="5vh"),
+        rx.divider(border_color="WHITE"),
+        rx.text("No Notifications found at the moment", color="WHITE", font_size="2vh"),
+        border_radius="2vh",
+        border_color="#0F0F10",
+        bg="#0F0F10",
+        border_width="1vh",
+        spacing="0.5vh"
+    )
+
+def announcements_tab():
+    return rx.vstack(
+        rx.heading("Site-Wide Announcements", color="WHITE", font_size="3vh"),
+        rx.divider(border_color="WHITE"),
+        bg="#0F0F10",
+        border_color="#0F0F10",
+        border_radius="1vh",
+        border_width="1vh",
+        spacing="0.5vh"
+    )
+
+def account_manager():
+    return rx.hstack(
+    rx.vstack(
+        account_editor(),
+        notifications_tab(),
+        spacing="2vh"
         ),
-        width="100%",
-        height="100vh",
-        bg="BLACK",
+    announcements_tab(),
+    spacing="5vh"
     )
 
 
