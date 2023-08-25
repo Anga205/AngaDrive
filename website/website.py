@@ -1052,6 +1052,7 @@ def dashboard():
             bg="#0E0019",
             position="fixed",
         ),
+        rx.spacer(),
         rx.vstack(
 #-------------------------------------------------------------------------------------------------------------------------------------------------
 #                                                              TOPBAR
@@ -1072,8 +1073,8 @@ def dashboard():
             bg="BLACK", 
             style={"margin-left":"15%"}
             ),
-
-        OnLoadHack.create(on_load=lambda: State.dashboard_load(rx.get_local_storage("accounts")))
+        OnLoadHack.create(on_load=lambda: State.dashboard_load(rx.get_local_storage("accounts"))),
+        spacing="0px",
     )
 
 # Add state and page to the app.
