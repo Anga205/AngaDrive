@@ -88,7 +88,7 @@ class State(rx.State):
         insertion = func.new_user_signup(self.SignUp_username, self.SignUp_email, self.SignUp_password)
         if insertion==True:
             self.username, self.email, self.password=self.SignUp_username, self.SignUp_email, self.SignUp_password
-            print(f"{self.username} just registered a new account!")
+            print(f"[{time.ctime(time.time())}] {self.username} just registered a new account!")
             return [rx.window_alert("Signup Successful!"), rx.redirect("/dashboard"), rx.set_local_storage("accounts",str({"username":self.username,"email":self.email,"password":self.password}))]
         else:
             return rx.window_alert(insertion)
@@ -133,7 +133,7 @@ class State(rx.State):
             if (True in login_data):
                 self.username=login_data[1]
                 
-                return [rx.set_local_storage("accounts",str({"username":self.username,"email":self.email,"password":self.password})),rx.window_alert(f"Login for {self.username} successful!"), rx.redirect("/dashboard")]
+                return [rx.set_local_storage("accounts",str({"username":self.username,"email":self.email,"password":self.password})), rx.redirect("/dashboard")]
             else:
                 print(login_data)
                 return rx.window_alert(login_data[1])
@@ -162,7 +162,7 @@ class State(rx.State):
                         self.email=login_data["email"]
                         self.password=login_data["password"]
                         rx.set_local_storage("accounts",{"username":self.username,"email":self.email,"password":self.password})
-                        print(f"{self.username} logged in thru session")
+                        print(f"[{time.ctime(time.time())}] {self.username} logged in thru session")
                     else:
                         print(f"Login with details '{login_data['email']}', '{login_data['password']}' failed with reason {response[1]}")
                         return rx.clear_local_storage()
@@ -229,33 +229,70 @@ def login() -> rx.Component:
         rx.hstack(
             rx.center( 
                 rx.vstack(
-                    rx.box(height="40vh", width="100%"),
-                    rx.center(
+                    rx.box(height="33vh", width="100%"),
+                 #   rx.center(
                         rx.vstack(
-                            rx.heading("Login"),
-                            rx.box(height="10px"),
+                            rx.box(height="1vh"),
+                            rx.heading("Login", font_size="4vh"),
+                            rx.box(height="1.05vh"),
                             rx.input(
                                 placeholder="Enter e-mail address",
                                 on_blur=State.set_email,
-                                bg=State.email_color_bg
+                                bg=State.email_color_bg,
+                                width="80%",
+                                font_size="1.65vh",
+                                height="4vh"
                                 ),
                             rx.password(
                                 placeholder="Enter password",
-                                on_blur=State.set_password
+                                on_blur=State.set_password,
+                                width="80%",
+                                font_size="1.65vh",
+                                height="4vh"
                             ),
-                            rx.button("LOGIN", bg="PURPLE", color="WHITE", on_click=State.submit_login),
+                            rx.button("LOGIN", bg="PURPLE", color="WHITE", on_click=State.submit_login, font_size="1.7vh", width="8vh", height="3.5vh"),
                             rx.hstack(
                                 rx.text("Dont have an account?"),
                                 rx.link("Sign up!",on_click=State.SignUpEnable),
+                                font_size="1.65vh"
                             ),
-                            spacing="20px"
-                        ),
+                            rx.hstack(
+                                rx.divider(border_color="GRAY"),
+                                rx.text("or"),
+                                rx.divider(border_color="GRAY"),
+                                width="100%"
+                            ),
+                            rx.button(
+                                rx.span(
+                                    rx.image(
+                                        src="/TPU-logo.png", 
+                                        height="3vh", 
+                                        width="auto"
+                                        )
+                                    ), 
+                                rx.span(
+                                    width="2vh"
+                                    ), 
+                                rx.span(
+                                    "Sign in with TPU", 
+                                    color="WHITE",
+                                    ),
+                                font_size="1.6vh",
+                                height="5vh", 
+                                bg="BLACK",
+                                width="20vh",
+                                _hover={"bg":"#1F1F3F"},
+                                on_click=rx.redirect("https://privateuploader.com/oauth/9f032bfb-7553-4a5d-9727-217f34537f1e")
+                                ),
+                            rx.box(height="1vh"),
+                            spacing="2.1vh",
+                      #  ),
                         height="50vh", 
                         bg="WHITE", 
                         width="100%",
-                        border_radius="20px 0px 20px 0px",
+                        border_radius="2.1vh 0vh",
                         border_color="BLUE",
-                        border_width="10px"
+                        border_width="1.05vh"
                         ),
                     rx.box(height="40vh", width="100%"),
                     width="20%",
@@ -982,6 +1019,7 @@ def announcements_tab():
     return rx.vstack(
         rx.heading("Site-Wide Announcements", color="WHITE", font_size="3vh"),
         rx.divider(border_color="WHITE"),
+        rx.text("None for now"),
         bg="#0F0F10",
         border_color="#0F0F10",
         border_radius="1vh",
