@@ -205,23 +205,6 @@ class State(rx.State):
     def pfp_exists(self):
         os.path.exists(f"assets/pfps/{self.email}")
 
-class OnLoadHack(rx.Fragment):
-    def _get_hooks(self):
-        formatted_on_load = rx.components.tags.tag.Tag.format_prop(
-            self.event_triggers["on_load"]
-        )[7:-6] + ")"
-        return f"""
-        useEffect(() => {{
-            {formatted_on_load}
-        }}, [])
-        """
-
-    def get_triggers(self):
-        return super().get_triggers() | {"on_load"}
-
-    def render(self) -> str:
-        return ""
-
 
 def login() -> rx.Component:
     return rx.box(
@@ -360,7 +343,7 @@ def login() -> rx.Component:
             width="100%"
         )
     ),
-    OnLoadHack.create(on_load=lambda: State.login_page_load(rx.get_local_storage("accounts")))
+    on_mount=lambda: State.login_page_load(rx.get_local_storage("accounts"))
 )
 
 def index():
@@ -599,6 +582,7 @@ def index():
                                 rx.chart(
                                     rx.line(
                                         data=State.loads_per_day,
+                                        width="100vh"
                                     ),
                                 )
                             ),
@@ -957,7 +941,7 @@ def index():
                 spacing="0px"
             )
         ),
-        OnLoadHack.create(on_load=lambda: State.page_load(rx.get_local_storage("accounts"))),
+        on_mount=lambda: State.page_load(rx.get_local_storage("accounts")),
     )
 
 def user_profile_pic(side=100):
@@ -1144,7 +1128,7 @@ def dashboard():
             bg="BLACK", 
             style={"margin-left":"15%"}
             ),
-        OnLoadHack.create(on_load=lambda: State.dashboard_load(rx.get_local_storage("accounts"))),
+        on_mount=lambda: State.dashboard_load(rx.get_local_storage("accounts")),
         spacing="0px",
     )
 
