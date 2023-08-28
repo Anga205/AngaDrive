@@ -2,6 +2,7 @@
 import reflex as rx
 import website.library as func
 import random, os, time
+import website.TPU_cmds as TPU
 
 startup_time=time.time()
 
@@ -213,64 +214,34 @@ def login() -> rx.Component:
             rx.center( 
                 rx.vstack(
                     rx.box(height="33vh", width="100%"),
-                 #   rx.center(
-                        rx.vstack(
-                            rx.box(height="1vh"),
-                            rx.heading("Login", font_size="4vh"),
-                            rx.box(height="1.05vh"),
-                            rx.input(
-                                placeholder="Enter e-mail address",
-                                on_blur=State.set_email,
-                                bg=State.email_color_bg,
-                                width="80%",
-                                font_size="1.65vh",
-                                height="4vh"
-                                ),
-                            rx.password(
-                                placeholder="Enter password",
-                                on_blur=State.set_password,
-                                width="80%",
-                                font_size="1.65vh",
-                                height="4vh"
+                    rx.vstack(
+                        rx.box(height="1vh"),
+                        rx.heading("Login", font_size="4vh"),
+                        rx.box(height="1.05vh"),
+                        rx.input(
+                            placeholder="Enter e-mail address",
+                            on_blur=State.set_email,
+                            bg=State.email_color_bg,
+                            width="80%",
+                            font_size="1.65vh",
+                            height="4vh"
                             ),
-                            rx.button("LOGIN", bg="PURPLE", color="WHITE", on_click=State.submit_login, font_size="1.7vh", width="8vh", height="3.5vh"),
-                            rx.hstack(
-                                rx.text("Dont have an account?"),
-                                rx.link("Sign up!",on_click=State.SignUpEnable),
-                                font_size="1.65vh"
-                            ),
-                            rx.hstack(
-                                rx.divider(border_color="GRAY"),
-                                rx.text("or"),
-                                rx.divider(border_color="GRAY"),
-                                width="100%"
-                            ),
-                            rx.button(
-                                rx.span(
-                                    rx.image(
-                                        src="/TPU-logo.png", 
-                                        height="3vh", 
-                                        width="auto"
-                                        )
-                                    ), 
-                                rx.span(
-                                    width="2vh"
-                                    ), 
-                                rx.span(
-                                    "Sign in with TPU", 
-                                    color="WHITE",
-                                    ),
-                                font_size="1.6vh",
-                                height="5vh", 
-                                bg="BLACK",
-                                width="20vh",
-                                _hover={"bg":"#1F1F3F"},
-                                on_click=rx.redirect("https://privateuploader.com/oauth/9f032bfb-7553-4a5d-9727-217f34537f1e")
-                                ),
-                            rx.box(height="1vh"),
-                            spacing="2.1vh",
-                      #  ),
-                        height="50vh", 
+                        rx.password(
+                            placeholder="Enter password",
+                            on_blur=State.set_password,
+                            width="80%",
+                            font_size="1.65vh",
+                            height="4vh"
+                        ),
+                        rx.button("LOGIN", bg="PURPLE", color="WHITE", on_click=State.submit_login, font_size="1.7vh", width="8vh", height="3.5vh"),
+                        rx.hstack(
+                            rx.text("Dont have an account?"),
+                            rx.link("Sign up!",on_click=State.SignUpEnable),
+                            font_size="1.65vh"
+                        ),
+                        TPU.login_page_TPU_button("Desktop"),
+                        rx.box(height="1vh"),
+                        spacing="2.1vh",
                         bg="WHITE", 
                         width="100%",
                         border_radius="2.1vh 0vh",
@@ -329,7 +300,8 @@ def login() -> rx.Component:
                 rx.button("LOGIN",bg="PURPLE", color="WHITE", on_click=State.submit_login),
                 rx.box(height="1vh"),
                 rx.text("Dont have an account? ", rx.span(rx.link("Sign up!", on_click=State.SignUpEnable))),
-                rx.box(height="7vh"),
+                TPU.login_page_TPU_button("Mobile"),
+                rx.box(height="7vh" if not TPU.enable_TPU else "3vh"),
                 spacing="0vh",
                 width="90%",
                 bg="WHITE",
