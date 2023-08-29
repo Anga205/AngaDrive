@@ -206,6 +206,23 @@ class State(rx.State):
     def pfp_exists(self):
         os.path.exists(f"assets/pfps/{self.email}")
 
+    TPU_verified=False
+
+    def TPU_verify(self):
+        data=self.get_query_params().get("code",None)
+        login_info=TPU.verifier(data)
+        if login_info:
+            self.TPU_verified=data
+            return rx.redirect('/dashboard')
+        else:
+            return [rx.redirect("/login"), rx.window_alert("login with TPU failed")]
+    
+    @rx.var
+    def TPU_login_info(self):
+        if self.TPU_verified:
+            data=TPU.verifier(self.TPU_verified)
+            self.username=data['username']
+            self.email=data['email']
 
 def login() -> rx.Component:
     return rx.box(
@@ -923,8 +940,6 @@ def user_profile_pic(side=100):
         rx.avatar(name=State.username, border_radius=f"{side/2}vh", height=f"{side}vh", width=f"{side}vh")
     )
 
-
-
 def account_editor():
     return rx.vstack(
                 rx.heading("Account Details", color="WHITE", font_size="5vh"),
@@ -993,8 +1008,6 @@ def account_manager():
     announcements_tab(),
     spacing="5vh"
     )
-
-
 
 def dashboard():
     return rx.hstack(
@@ -1104,9 +1117,16 @@ def dashboard():
         spacing="0px",
     )
 
+
+def TPU_login():
+    return rx.box(
+        rx.text("Please wait for a few seconds for your TPU login to be verified....."),
+    )
+
 # Add state and page to the app.
 app = rx.App()
 app.add_page(login, title="Login Page - anga.pro", description="Website is under construction")
 app.add_page(dashboard, title="Dashboard - anga.pro", description="Website is under construction")
 app.add_page(index, title="Home - anga.pro", description="Website is under construction", on_load=State.homepage_load)
+app.add_page(TPU_login, title="TPU - anga.pro", description="Temporary link", route="/tpulogin", on_load=State.TPU_verify)
 app.compile()
