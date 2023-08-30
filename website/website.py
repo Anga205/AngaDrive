@@ -16,7 +16,7 @@ class State(rx.State):
     SignUp_username=""
     SignUp_email=""
     SignUp_password=""
-
+    TPU_verified=False
     navbar_contact_color="WHITE"
     
     @rx.var
@@ -99,6 +99,7 @@ class State(rx.State):
         self.SignUp_password=""
         self.SignUp_username=""
         self.SignUp_email=""
+        self.TPU_verified=False
         return rx.clear_local_storage()
     
     def dashboard_delete_account(self):
@@ -148,12 +149,12 @@ class State(rx.State):
     def random_light_color(self):
         return random.choice(["#ffcccb","#90EE90","#ADD8E6"])
 
-    def page_load(self, storage):
+    def page_load(self, storage, TPU_var):
         if self.username=="":
             try:
-                if storage==None:
+                if storage==None and TPU_var==None:
                     pass
-                else:
+                elif TPU_var==None:
                     login_data=eval(storage)
                     response=func.login_user(login_data["email"],login_data["password"])
                     if response[0]:
@@ -165,20 +166,28 @@ class State(rx.State):
                     else:
                         print(f"Login with details '{login_data['email']}', '{login_data['password']}' failed with reason {response[1]}")
                         return rx.clear_local_storage()
+                elif storage==None:
+                    login_info=TPU.verifier(TPU_var)
+                    if login_info:
+                        self.TPU_verified=TPU_var
+                        self.username=login_info['username']
+                        self.email=login_info['email']
+                    else:
+                        return rx.clear_local_storage()
             except Exception as e:
                 print(e)
         else:
             pass
 
-    def login_page_load(self, storage):
-        self.page_load(storage)
+    def login_page_load(self, storage, TPU_token):
+        self.page_load(storage, TPU_token)
         if self.username=="":
             pass
         else:
             return rx.redirect("/dashboard")
     
-    def dashboard_load(self, local_storage):
-        self.page_load(local_storage)
+    def dashboard_load(self, account_var, TPU_var):
+        self.page_load(account_var, TPU_var)
         if self.username:
             pass
         else:
@@ -204,17 +213,18 @@ class State(rx.State):
     def pfp_exists(self):
         os.path.exists(f"assets/pfps/{self.email}")
 
-    TPU_verified=False
-
     def TPU_verify(self):
         data=self.get_query_params().get("code",None)
         login_info=TPU.verifier(data)
+        token=data
         if login_info:
             tpu_database_error=func.TPU_signin(login_info['id'], login_info['email'], login_info['username'], data, login_info['avatar'])
             if tpu_database_error:
                 return [rx.redirect("/login"), rx.window_alert(tpu_database_error)]
             self.TPU_verified=data
-            return rx.redirect('/dashboard')
+            self.username=data['username']
+            self.email=data['email']
+            return [rx.redirect('/dashboard'), rx.set_local_storage("TPU",token)]
         else:
             return [rx.redirect("/login"), rx.window_alert("login with TPU failed")]
     
@@ -333,7 +343,7 @@ def login() -> rx.Component:
             width="100%"
         )
     ),
-    on_mount=lambda: State.login_page_load(rx.get_local_storage("accounts"))
+    on_mount=lambda: State.login_page_load(rx.get_local_storage("accounts"), rx.get_local_storage("TPU"))
 )
 
 def index():
@@ -931,7 +941,7 @@ def index():
                 spacing="0px"
             )
         ),
-        on_mount=lambda: State.page_load(rx.get_local_storage("accounts")),
+        on_mount=lambda: State.page_load(rx.get_local_storage("accounts"), rx.get_local_storage("TPU")),
     )
 
 def user_profile_pic(side=100):
@@ -1114,7 +1124,7 @@ def dashboard():
             bg="BLACK", 
             style={"margin-left":"15%"}
             ),
-        on_mount=lambda: State.dashboard_load(rx.get_local_storage("accounts")),
+        on_mount=lambda: State.dashboard_load(rx.get_local_storage("accounts"),rx.get_local_storage("TPU")),
         spacing="0px",
     )
 

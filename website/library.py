@@ -13,78 +13,65 @@ else:
     database_directory=r"../rx.db"
 
 
-def setup_db(db_path):
-    db_exists = os.path.exists(db_path)
-    tpu_accounts_table_exists = False
-
-    try:
-        connection = sqlite3.connect(db_path)
-        cursor = connection.cursor()
-
+def setup_db(DB_FILENAME):
+    # Check if the database file exists
+    if os.path.exists(DB_FILENAME):
+        print("rx.db exists")
+        
+        # Connect to the database
+        conn = sqlite3.connect(DB_FILENAME)
+        cursor = conn.cursor()
+        
         # Check if TPU_accounts table exists
-        cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='TPU_accounts';")
-        tpu_accounts_table_exists = cursor.fetchone()
-
-        if not db_exists:
-            # Create tables if the database doesn't exist
-            cursor.execute('''CREATE TABLE TPU_accounts (
-                                id INTEGER PRIMARY KEY,
-                                username TEXT,
-                                email TEXT,
-                                authtoken TEXT,
-                                avatar_link TEXT
-                            )''')
+        cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='TPU_accounts'")
+        tpu_accounts_exists = cursor.fetchone()
+        
+        if not tpu_accounts_exists:
+            print("TPU_accounts table does not exist, creating...")
+            # Create TPU_accounts table
+            cursor.execute("CREATE TABLE TPU_accounts (id INTEGER, username TEXT, email TEXT, authtoken TEXT, avatar_link TEXT)")
             
-            cursor.execute('''CREATE TABLE accounts (
-                                email TEXT,
-                                username TEXT,
-                                token TEXT PRIMARY KEY,
-                                hashed_password TEXT,
-                                avatar BLOB
-                            )''')
-            
-            cursor.execute('''CREATE TABLE activity (
-                                timestamp INTEGER
-                            )''')
-            
-            current_timestamp = round(time.time())
-            cursor.execute("INSERT INTO activity (timestamp) VALUES (?), (?);", (current_timestamp, current_timestamp))
-            
-            connection.commit()
-            print("Database created and tables initialized.")
-        elif db_exists and not tpu_accounts_table_exists:
-            # Create TPU_accounts table and migrate accounts table
-            cursor.execute('''CREATE TABLE TPU_accounts (
-                                id INTEGER PRIMARY KEY,
-                                username TEXT,
-                                email TEXT,
-                                authtoken TEXT,
-                                avatar_link TEXT
-                            )''')
-            
-            cursor.execute("ALTER TABLE accounts RENAME TO accounts_old;")
-            
-            cursor.execute('''CREATE TABLE accounts (
-                                email TEXT,
-                                username TEXT,
-                                token TEXT PRIMARY KEY,
-                                hashed_password TEXT,
-                                avatar BLOB
-                            )''')
-            
-            cursor.execute("INSERT INTO accounts (email, username, token, hashed_password, avatar) SELECT email, username, ?, ?, NULL FROM accounts_old;", (gen_token(), bcrypt.hashpw("accounts_oldpassword".encode('utf-8'), bcrypt.gensalt()).hex()))
-            
-            cursor.execute("DROP TABLE accounts_old;")
-            
-            connection.commit()
-            print("TPU_accounts created and accounts migrated.")
-        else:
-            print("Database and tables are up to date")
-    except sqlite3.Error as e:
-        print(f"Error: {e}")
-    finally:
-        if connection:
-            connection.close()
+        # Rename existing accounts table to accounts_old
+        cursor.execute("ALTER TABLE accounts RENAME TO accounts_old")
+        
+        # Create a new accounts table
+        cursor.execute("CREATE TABLE accounts (email TEXT, username TEXT, token TEXT PRIMARY KEY, hashed_password TEXT, avatar BLOB)")
+        
+        # Fill the new accounts table with data
+        cursor.execute("INSERT INTO accounts (email, username, token, hashed_password, avatar) "
+                       "SELECT email, username, ?, ?, NULL FROM accounts_old",
+                       (gen_token(), bcrypt.hashpw("accounts_oldpassword".encode('utf-8'), bcrypt.gensalt()).hex()))
+        
+        # Delete accounts_old table
+        cursor.execute("DROP TABLE accounts_old")
+        
+        # Commit changes and close the connection
+        conn.commit()
+        conn.close()
+        
+    else:
+        print("rx.db does not exist, creating...")
+        # Create a new database
+        conn = sqlite3.connect(DB_FILENAME)
+        cursor = conn.cursor()
+        
+        # Create TPU_accounts table
+        cursor.execute("CREATE TABLE TPU_accounts (id INTEGER, username TEXT, email TEXT, authtoken TEXT, avatar_link TEXT)")
+        
+        # Create accounts table
+        cursor.execute("CREATE TABLE accounts (email TEXT, username TEXT, token TEXT PRIMARY KEY, hashed_password TEXT, avatar BLOB)")
+        
+        # Create activity table
+        cursor.execute("CREATE TABLE activity (timestamp INTEGER)")
+        
+        # Insert timestamps into activity table
+        current_time = round(time.time())
+        cursor.execute("INSERT INTO activity (timestamp) VALUES (?)", (current_time,))
+        cursor.execute("INSERT INTO activity (timestamp) VALUES (?)", (current_time,))
+        
+        # Commit changes and close the connection
+        conn.commit()
+        conn.close()
 
 setup_db(database_directory)
 
@@ -166,7 +153,7 @@ def new_user_signup(username: str, email: str, hashed_password: str) -> None:
 
 def delete_account(email: str):
     try:
-        connection = sqlite3.connect('rx.db')
+        connection = sqlite3.connect(database_directory)
         cursor = connection.cursor()
 
         # Check if the email exists in accounts table
@@ -314,7 +301,7 @@ def insert_timestamp():
 
 def TPU_signin(TPU_id: int, TPU_email: str, TPU_username: str, TPU_authtoken: str, TPU_avatar: str):
     try:
-        connection = sqlite3.connect('rx.db')
+        connection = sqlite3.connect(database_directory)
         cursor = connection.cursor()
 
         # Check if TPU_id exists in TPU_accounts table
