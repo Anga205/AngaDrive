@@ -26,8 +26,7 @@ activate the virtual environment
 `venv\Scripts\activate`
 
 install the required dependencies, reflex and requests
-`pip install git+https://github.com/reflex-dev/reflex@masenf/on_mount`
-`pip install requests`
+`pip install -r requirements.txt`
 
 initialize reflex
 `reflex init`

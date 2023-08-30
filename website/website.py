@@ -1,7 +1,7 @@
 """Welcome to Reflex! This file outlines the steps to create a basic app."""
 import reflex as rx
 import website.library as func
-import random, os, time
+import random, os, time, bcrypt
 import website.TPU_cmds as TPU
 
 startup_time=time.time()
@@ -16,25 +16,22 @@ class State(rx.State):
     SignUp_username=""
     SignUp_email=""
     SignUp_password=""
+
     navbar_contact_color="WHITE"
     
     @rx.var
     def loads_today(self):
-        return func.calls_per_day(func.get_timestamps())[-1]
+        return list(func.calls_per_day(func.get_timestamps()).values())[-1]
 
 
     @rx.var
     def loads_per_day(self) -> list[int]:
-        timestamps=func.get_timestamps()
-        earliest_day=timestamps[0]-86400
-        all_days=[]
-        for i in range(len(func.calls_per_day(timestamps))+1):
-            all_days.append(" ".join(time.ctime(earliest_day).split()[1:3]))
-            earliest_day+=86400
+        calls=list(func.calls_per_day(func.get_timestamps()).values())
+        timestamps=list(func.calls_per_day(func.get_timestamps()).keys())
         return rx.data(
             "line",
-            x=all_days,
-            y=[0]+func.calls_per_day(timestamps),
+            x=timestamps,
+            y=calls,
         )
     
     def homepage_load(self):
@@ -86,6 +83,7 @@ class State(rx.State):
         for i in [self.SignUp_username, self.SignUp_email, self.SignUp_password]:
             if func.find_sql_insertion(i):
                 return rx.window_alert('''Potential SQL insertion detected, please avoid charectors like ', ", } etc.''')
+        self.SignUp_password=bcrypt.hashpw(self.SignUp_password.encode('utf-8'), bcrypt.gensalt())
         insertion = func.new_user_signup(self.SignUp_username, self.SignUp_email, self.SignUp_password)
         if insertion==True:
             self.username, self.email, self.password=self.SignUp_username, self.SignUp_email, self.SignUp_password
@@ -130,11 +128,11 @@ class State(rx.State):
         if self.email=="" or self.password=="":
             return rx.window_alert("Please enter a valid email id and password")
         else:
-            login_data=func.login_user(self.email, self.password)
+            login_data=func.login_user(self.email, bcrypt.hashpw(self.password.encode('utf-8'), bcrypt.gensalt()))
             if (True in login_data):
                 self.username=login_data[1]
                 
-                return [rx.set_local_storage("accounts",str({"username":self.username,"email":self.email,"password":self.password})), rx.redirect("/dashboard")]
+                return [rx.set_local_storage("accounts",str({"username":self.username,"email":self.email,"password":bcrypt.hashpw(self.password.encode('utf-8'), bcrypt.gensalt())})), rx.redirect("/dashboard")]
             else:
                 print(login_data)
                 return rx.window_alert(login_data[1])
@@ -212,6 +210,9 @@ class State(rx.State):
         data=self.get_query_params().get("code",None)
         login_info=TPU.verifier(data)
         if login_info:
+            tpu_database_error=func.TPU_signin(login_info['id'], login_info['email'], login_info['username'], data, login_info['avatar'])
+            if tpu_database_error:
+                return [rx.redirect("/login"), rx.window_alert(tpu_database_error)]
             self.TPU_verified=data
             return rx.redirect('/dashboard')
         else:
