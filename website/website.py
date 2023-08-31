@@ -93,9 +93,10 @@ class State(rx.State):
         for i in [self.SignUp_username, self.SignUp_email, self.SignUp_password]:
             if func.find_sql_insertion(i):
                 return rx.window_alert('''Potential SQL insertion detected, please avoid charectors like ', ", } etc.''')
-        self.SignUp_password=bcrypt.hashpw(self.SignUp_password.encode('utf-8'), bcrypt.gensalt())
-        insertion = func.new_user_signup(self.SignUp_username, self.SignUp_email, self.SignUp_password)
-        if insertion==True:
+        print("Checkpoint 1")
+        insertion = func.new_user_signup(self.SignUp_username, self.SignUp_email, bcrypt.hashpw(self.SignUp_password.encode('utf-8'), bcrypt.gensalt()))
+        print("Checkpoint 2")
+        if not insertion:
             self.username, self.email, self.password=self.SignUp_username, self.SignUp_email, self.SignUp_password
             print(f"[{time.ctime(time.time())}] {self.username} just registered a new account!")
             return [rx.window_alert("Signup Successful!"), rx.redirect("/dashboard"), rx.set_local_storage("accounts",str({"username":self.username,"email":self.email,"password":self.password}))]
@@ -166,7 +167,7 @@ class State(rx.State):
                     pass
                 elif TPU_var==None:
                     login_data=eval(storage)
-                    response=func.login_user(login_data["email"],login_data["password"])
+                    response=func.login_user(login_data["email"],bcrypt.hashpw(login_data['password'].encode('utf-8'), bcrypt.gensalt()))
                     if response[0]:
                         self.username=response[1]
                         self.email=login_data["email"]
