@@ -1,3 +1,3 @@
-git+https://github.com/reflex-dev/reflex@masenf/on_mount
+git+https://github.com/reflex-dev/reflex@f416413d9e3bbbb9cb18b78daf781e3620133fc1
 requests
 bcrypt
