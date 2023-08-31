@@ -108,9 +108,9 @@ def delete_account(email: str):
             cursor.execute("DELETE FROM TPU_accounts WHERE email = ?;", (email,))
             
             connection.commit()
-            return False  # Deletion successful
+            return True  # Deletion successful
         else:
-            return "No matching account found"
+            return False
 
     except sqlite3.Error as e:
         return f"Deletion error: {e}"
@@ -126,16 +126,18 @@ def login_user(email: str, prehashed_password: str):
         # Check if the email exists in TPU_accounts table
         cursor.execute("SELECT * FROM TPU_accounts WHERE email = ?;", (email,))
         tpu_account = cursor.fetchone()
+        cursor.execute("SELECT * FROM accounts WHERE email = ?;", (email,))
+        account = cursor.fetchone()
 
-        if tpu_account:
-            # Check if the email exists in accounts table
-            cursor.execute("SELECT * FROM accounts WHERE email = ?;", (email,))
-            account = cursor.fetchone()
+        if tpu_account or account:
 
             if account:
                 # Compare prehashed_password with the hashed password in the database
-                stored_hashed_password = bytes.fromhex(account[3])
-                if bcrypt.checkpw(prehashed_password.encode('utf-8'), stored_hashed_password):
+                print(account)
+                stored_hashed_password = bytes.fromhex(account[3]) if not type(account[3])==type(b"") else account[3]
+                prehashed_password=prehashed_password.encode('utf-8') if type(prehashed_password)==type("") else prehashed_password
+                print("type(stored_hashed_password),type(prehashed_password)", type(stored_hashed_password),type(prehashed_password))
+                if bcrypt.checkpw(prehashed_password, stored_hashed_password):
                     account_data = {
                         "email": account[0],
                         "username": account[1],

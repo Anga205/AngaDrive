@@ -74,15 +74,6 @@ class State(rx.State):
             self.signup_email_color_bg="RED"
             self.SignUp_email=""
 
-    @rx.var
-    def is_admin(self):
-        if self.email=="":
-            return False
-        elif self.email.split("@")[1]=="angadbhalla.com":
-            return True
-        else:
-            return False
-
     def submit_signup(self):
         if self.SignUp_username=="":
             return rx.window_alert("Username is empty")
@@ -94,12 +85,12 @@ class State(rx.State):
             if func.find_sql_insertion(i):
                 return rx.window_alert('''Potential SQL insertion detected, please avoid charectors like ', ", } etc.''')
         print("Checkpoint 1")
-        insertion = func.new_user_signup(self.SignUp_username, self.SignUp_email, bcrypt.hashpw(self.SignUp_password.encode('utf-8'), bcrypt.gensalt()))
+        insertion = func.new_user_signup(self.SignUp_username, self.SignUp_email, bcrypt.hashpw(self.SignUp_password.encode('utf-8'), bcrypt.gensalt()).hex())
         print("Checkpoint 2")
         if not insertion:
             self.username, self.email, self.password=self.SignUp_username, self.SignUp_email, self.SignUp_password
             print(f"[{time.ctime(time.time())}] {self.username} just registered a new account!")
-            return [rx.window_alert("Signup Successful!"), rx.redirect("/dashboard"), rx.set_local_storage("accounts",str({"username":self.username,"email":self.email,"password":self.password}))]
+            return [rx.redirect("/dashboard"), rx.set_local_storage("accounts",str({"username":self.username,"email":self.email,"password":self.password})), rx.window_alert("Signup Successful!")]
         else:
             return rx.window_alert(insertion)
 
@@ -167,15 +158,19 @@ class State(rx.State):
                     pass
                 elif TPU_var==None:
                     login_data=eval(storage)
-                    response=func.login_user(login_data["email"],bcrypt.hashpw(login_data['password'].encode('utf-8'), bcrypt.gensalt()))
-                    if response[0]:
-                        self.username=response[1]
+                    print(login_data)
+                    print(type(login_data['password']))
+                    response=func.login_user(login_data["email"],bcrypt.hashpw(str(login_data['password']).encode('utf-8'), bcrypt.gensalt()))
+                    print("a")
+                    if not type(response)==type(""):
+                        print(f"response: {response}")
+                        self.username=response['username']
                         self.email=login_data["email"]
                         self.password=login_data["password"]
                         rx.set_local_storage("accounts",{"username":self.username,"email":self.email,"password":self.password})
                         print(f"[{time.ctime(time.time())}] {self.username} logged in thru session")
                     else:
-                        print(f"Login with details '{login_data['email']}', '{login_data['password']}' failed with reason {response[1]}")
+                        print(f"Login with details '{login_data['email']}', '{login_data['password']}' failed with reason {response}")
                         return rx.clear_local_storage()
                 elif storage==None:
                     login_info=TPU.verifier(TPU_var)
@@ -235,7 +230,8 @@ class State(rx.State):
             self.TPU_verified=data
             self.username=login_info['username']
             self.email=login_info['email']
-            return [rx.redirect('/dashboard'), rx.set_local_storage("TPU",token), print(f"{self.username} logged in thru TPU")]
+            print(f"{self.username} logged in thru TPU")
+            return [rx.redirect('/dashboard'), rx.set_local_storage("TPU",token)]
         else:
             return [rx.redirect("/login"), rx.window_alert("login with TPU failed")]
     
@@ -245,6 +241,16 @@ class State(rx.State):
             data=TPU.verifier(self.TPU_verified)
             self.username=data['username']
             self.email=data['email']
+
+    @rx.var
+    def is_admin(self):
+        if self.email=="":
+            return False
+        elif self.email.split("@")[1]=="angadbhalla.com" and self.TPU_verified:
+            return True
+        else:
+            return False
+
 
 def login() -> rx.Component:
     return rx.box(
