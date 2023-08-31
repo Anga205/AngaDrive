@@ -1,4 +1,4 @@
-import re, sqlite3, sqlite3, datetime, time, platform, os, random, bcrypt
+import re, sqlite3, sqlite3, datetime, time, platform, random, bcrypt
 
 def gen_token():
     a="qwertyuiopasdfghjklzxcvbnm"

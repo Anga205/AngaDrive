@@ -3,6 +3,7 @@ import reflex as rx
 import website.library as func
 import random, os, time, bcrypt
 import website.TPU_cmds as TPU
+import website.updating_components as updating_components
 
 startup_time=time.time()
 
@@ -73,6 +74,15 @@ class State(rx.State):
             self.signup_email_color_bg="RED"
             self.SignUp_email=""
 
+    @rx.var
+    def is_admin(self):
+        if self.email=="":
+            return False
+        elif self.email.split("@")[1]=="angadbhalla.com":
+            return True
+        else:
+            return False
+
     def submit_signup(self):
         if self.SignUp_username=="":
             return rx.window_alert("Username is empty")
@@ -130,13 +140,13 @@ class State(rx.State):
             return rx.window_alert("Please enter a valid email id and password")
         else:
             login_data=func.login_user(self.email, bcrypt.hashpw(self.password.encode('utf-8'), bcrypt.gensalt()))
-            if (True in login_data):
-                self.username=login_data[1]
-                
+            if type(login_data)==type({}):
+                self.username=login_data['username']
+                self.email=login_data['email']
                 return [rx.set_local_storage("accounts",str({"username":self.username,"email":self.email,"password":bcrypt.hashpw(self.password.encode('utf-8'), bcrypt.gensalt())})), rx.redirect("/dashboard")]
             else:
                 print(login_data)
-                return rx.window_alert(login_data[1])
+                return rx.window_alert(login_data)
 
     @rx.var
     def welcome_message(self):
@@ -224,7 +234,7 @@ class State(rx.State):
             self.TPU_verified=data
             self.username=login_info['username']
             self.email=login_info['email']
-            return [rx.redirect('/dashboard'), rx.set_local_storage("TPU",token)]
+            return [rx.redirect('/dashboard'), rx.set_local_storage("TPU",token), print(f"{self.username} logged in thru TPU")]
         else:
             return [rx.redirect("/login"), rx.window_alert("login with TPU failed")]
     
@@ -465,6 +475,7 @@ def index():
                     height="90vh",
                     spacing="2.1vh"
                 ),
+                updating_components.changelog(State.is_admin),
                 rx.vstack(
                     rx.box(height="10vh"),
                     rx.heading(
@@ -1127,7 +1138,6 @@ def dashboard():
         on_mount=lambda: State.dashboard_load(rx.get_local_storage("accounts"),rx.get_local_storage("TPU")),
         spacing="0px",
     )
-
 
 def TPU_login():
     return rx.box(
