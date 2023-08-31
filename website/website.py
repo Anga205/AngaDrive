@@ -222,8 +222,8 @@ class State(rx.State):
             if tpu_database_error:
                 return [rx.redirect("/login"), rx.window_alert(tpu_database_error)]
             self.TPU_verified=data
-            self.username=data['username']
-            self.email=data['email']
+            self.username=login_info['username']
+            self.email=login_info['email']
             return [rx.redirect('/dashboard'), rx.set_local_storage("TPU",token)]
         else:
             return [rx.redirect("/login"), rx.window_alert("login with TPU failed")]
