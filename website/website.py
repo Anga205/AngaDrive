@@ -455,34 +455,51 @@ def index():
                             font_size="4vh"
                         )
                     ),
-                    rx.cond(
-                        State.username,
-                        rx.button(
-                            rx.span("Go to panel ", on_click=rx.redirect("/dashboard")),
-                            rx.span(rx.icon(tag="external_link")),
-                            font_size="1.6vh",
-                            bg="GREEN",
-                            color="WHITE",
-                            height="4vh",
-                            width="13vh"
+                    rx.hstack(
+                        rx.cond(
+                            State.username,
+                            rx.button(
+                                rx.span("Go to panel ", on_click=rx.redirect("/dashboard")),
+                                rx.span(rx.icon(tag="external_link")),
+                                font_size="1.6vh",
+                                bg="GREEN",
+                                color="WHITE",
+                                height="4vh",
+                                width="13vh"
+                            ),
+                            rx.button(
+                                rx.span("Login to your account"),
+                                rx.span(rx.icon(tag="lock")),
+                                font_size="1.6vh",
+                                color="WHITE",
+                                bg="BLUE",
+                                on_click=rx.redirect("/login"),
+                                width="20vh",
+                                height="4vh"
+                            )
                         ),
                         rx.button(
-                            rx.span("Login to your account"),
-                            rx.span(rx.icon(tag="lock")),
-                            font_size="1.6vh",
+                            rx.span("View project on Github", font_size="1.4vh"),
+                            rx.span(width="0.9vh"),
+                            rx.image(
+                                src="/github.png",
+                                height="1.7vh",
+                                width="1.7vh"
+                            ),
+                            spacing="0vh",
+                            height="4vh",
+                            bg="BLACK",
                             color="WHITE",
-                            bg="BLUE",
-                            on_click=rx.redirect("/login"),
                             width="20vh",
-                            height="4vh"
-                        )
+                            on_click=rx.redirect("https://github.com/Anga205/anga.pro/")
+                        ),
+                        spacing="1vh"
                     ),
                     bg="#0E0019",
                     width="100%",
                     height="90vh",
                     spacing="2.1vh"
                 ),
-                updating_components.changelog(State.is_admin),
                 rx.vstack(
                     rx.box(height="10vh"),
                     rx.heading(
@@ -727,24 +744,41 @@ def index():
                             style={"text-align":"center"}
                         )
                     ),
-                    rx.cond(
-                        State.username,
-                        rx.button(
-                            rx.span("Go to panel ", on_click=rx.redirect("/dashboard"), font_size="2vh"),
-                            rx.span(rx.icon(tag="external_link"), font_size="2vh"),
-                            bg="GREEN",
-                            color="WHITE",
-                            height="5vh"
+                    rx.vstack(
+                        rx.cond(
+                            State.username,
+                            rx.button(
+                                rx.span("Go to panel ", on_click=rx.redirect("/dashboard"), font_size="2vh"),
+                                rx.span(rx.icon(tag="external_link"), font_size="2vh"),
+                                bg="GREEN",
+                                color="WHITE",
+                                height="5vh"
+                            ),
+                            rx.button(
+                                rx.span("Login to your account", font_size="2vh"),
+                                rx.span(rx.icon(tag="lock"), font_size="2vh"),
+                                color="WHITE",
+                                bg="BLUE",
+                                on_click=rx.redirect("/login"),
+                                height="5vh",
+                                width="26vh"
+                            )
                         ),
                         rx.button(
-                            rx.span("Login to your account", font_size="2vh"),
-                            rx.span(rx.icon(tag="lock"), font_size="2vh"),
-                            color="WHITE",
-                            bg="BLUE",
-                            on_click=rx.redirect("/login"),
+                            rx.span("View project on Github", font_size="2vh"),
+                            rx.span(width="1vh"),
+                            rx.image(
+                                src="/github.png",
+                                height="1.7vh",
+                                width="1.7vh"
+                            ),
                             height="5vh",
-                            width="26vh"
-                        )
+                            width="27vh",
+                            bg="BLACK",
+                            color="WHITE",
+                            on_click=rx.redirect("https://github.com/Anga205/anga.pro/")
+                        ),
+                        spacing="1vh"
                     ),
                     bg="#0E0019",
                     height="80vh",
