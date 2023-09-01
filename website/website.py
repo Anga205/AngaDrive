@@ -1,7 +1,7 @@
 """Welcome to Reflex! This file outlines the steps to create a basic app."""
 import reflex as rx
 import website.library as func
-import random, os, time, bcrypt
+import random, os, time, bcrypt, asyncio
 import website.TPU_cmds as TPU
 import website.updating_components as updating_components
 
@@ -19,6 +19,17 @@ class State(rx.State):
     SignUp_password=""
     TPU_verified=False
     navbar_contact_color="WHITE"
+
+    open_time=0
+    @rx.var
+    def uptime(self):
+        if self.open_time==0:
+            self.open_time=time.time()
+            global startup_time
+            round(time.time()-startup_time)
+        else:
+            time.sleep(0.5)
+            self.uptime+1
     
     @rx.var
     def loads_today(self):
@@ -629,6 +640,15 @@ def index():
                             border_color="#00fff5",
                             height="36vh"
                         ),
+                        rx.vstack(
+                            rx.heading("Time since last update (to this website):", font_size="1.7vh"),
+                            rx.heading(State.uptime, font_size="2.4vh"),
+                            rx.heading(rx.span("You can "), rx.span("click here"), rx.span(" to see details about updates"), font_size="1.7vh"),
+                            width="36vh",
+                            height="36vh",
+                            bg="#00fff5"
+                        ),
+                        spacing="10vh"
                     ),
                     height="60vh",
                     width="100%",
