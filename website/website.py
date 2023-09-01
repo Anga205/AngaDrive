@@ -46,8 +46,14 @@ class State(rx.State):
             y=calls,
         )
     
+
+    def start_updater(self):
+        asyncio.sleep(1)
+        return State.start_updater()
+
     def homepage_load(self):
         func.insert_timestamp()
+        self.start_updater()
 
     def navbar_contact_hover(self):
         self.navbar_contact_color="#D3D3D3"
