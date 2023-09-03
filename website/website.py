@@ -19,22 +19,15 @@ class State(rx.State):
     SignUp_password=""
     TPU_verified=False
     navbar_contact_color="WHITE"
-
-    open_time=0
-    @rx.var
-    def uptime(self):
-        if self.open_time==0:
-            self.open_time=time.time()
-            global startup_time
-            round(time.time()-startup_time)
-        else:
-            time.sleep(0.5)
-            self.uptime+1
     
     @rx.var
     def loads_today(self):
         return list(func.calls_per_day(func.get_timestamps()).values())[-1]
 
+    @rx.var
+    def uptime(self):
+        startup_time
+        return func.convert_to_time_value(time.time()-startup_time)
 
     @rx.var
     def loads_per_day(self) -> list[int]:
@@ -45,15 +38,10 @@ class State(rx.State):
             x=timestamps,
             y=calls,
         )
-    
-
-    def start_updater(self):
-        asyncio.sleep(1)
-        return State.start_updater()
 
     def homepage_load(self):
         func.insert_timestamp()
-        self.start_updater()
+        
 
     def navbar_contact_hover(self):
         self.navbar_contact_color="#D3D3D3"
@@ -201,6 +189,26 @@ class State(rx.State):
                 print(e)
         else:
             pass
+
+    timer_started=False
+
+    async def tick(self):
+        try:
+            await asyncio.sleep(1)
+            if self.timer_started:
+                return State.tick
+        except KeyboardInterrupt:
+            exit()
+
+
+    def start_timer(self):
+        self.timer_started=True
+        return State.tick
+
+
+    def index_page_load(self, local_storage, TPU_storage):
+        self.page_load(local_storage, TPU_storage)
+        return self.start_timer()
 
     def login_page_load(self, storage, TPU_token):
         self.page_load(storage, TPU_token)
@@ -633,30 +641,40 @@ def index():
                             rx.box(
                                 rx.chart(
                                     rx.line(
-                                        data=State.loads_per_day,
-                                        width="100vh"
+                                        data=State.loads_per_day
                                     ),
                                 )
                             ),
-                            rx.heading(rx.span("Number of times this page was loaded today: "), rx.span(State.loads_today), font_size="2vh", bg="#00fff5"),
+                            rx.heading(
+                                rx.span("Number of times this page was loaded today: "), 
+                                rx.span(State.loads_today), 
+                                font_size="2vh", 
+                                bg="#00fff5"
+                                ),
                             bg="#00fff5",
-                            border_radius="5px",
+                            border_radius="1vh",
                             spacing="0vh",
+                            width="50vh",
                             border_width="5px",
-                            border_color="#00fff5",
-                            height="36vh"
+                            border_color="#00fff5"
                         ),
                         rx.vstack(
                             rx.heading("Time since last update (to this website):", font_size="1.7vh"),
                             rx.heading(State.uptime, font_size="2.4vh"),
                             rx.heading(rx.span("You can "), rx.span("click here"), rx.span(" to see details about updates"), font_size="1.7vh"),
                             width="36vh",
-                            height="36vh",
-                            bg="#00fff5"
+                            height="100%",
+                            bg="#00fff5",
+                            border_radius="1vh",
+                            border_color="#00fff5",
+                            border_width="5px",
                         ),
                         spacing="10vh"
                     ),
-                    height="60vh",
+                    rx.box(
+                            height="10vh"
+                        ),
+                   # height="60vh",
                     width="100%",
                     bg="#001918",
                     spacing="0.3vh"
@@ -1019,7 +1037,7 @@ def index():
                 spacing="0px"
             )
         ),
-        on_mount=lambda: State.page_load(rx.get_local_storage("accounts"), rx.get_local_storage("TPU")),
+        on_mount=lambda: State.index_page_load(rx.get_local_storage("accounts"), rx.get_local_storage("TPU")),
     )
 
 def user_profile_pic(side=100):
