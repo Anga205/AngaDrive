@@ -18,7 +18,6 @@ class State(rx.State):
     SignUp_email=""
     SignUp_password=""
     TPU_verified=False
-    navbar_contact_color="WHITE"
     
     @rx.var
     def loads_today(self):
@@ -41,21 +40,6 @@ class State(rx.State):
 
     def homepage_load(self):
         func.insert_timestamp()
-        
-
-    def navbar_contact_hover(self):
-        self.navbar_contact_color="#D3D3D3"
-    
-    def navbar_contact_unhover(self):
-        self.navbar_contact_color="WHITE"
-
-    navbar_my_account_color="WHITE"
-
-    def navbar_my_account_hover(self):
-        self.navbar_my_account_color="#D3D3D3"
-    
-    def navbar_my_account_unhover(self):
-        self.navbar_my_account_color="WHITE"
 
     @rx.var
     def account_manager_navbar_menu_text(self):
@@ -89,9 +73,7 @@ class State(rx.State):
         for i in [self.SignUp_username, self.SignUp_email, self.SignUp_password]:
             if func.find_sql_insertion(i):
                 return rx.window_alert('''Potential SQL insertion detected, please avoid charectors like ', ", } etc.''')
-        print("Checkpoint 1")
         insertion = func.new_user_signup(self.SignUp_username, self.SignUp_email, bcrypt.hashpw(self.SignUp_password.encode('utf-8'), bcrypt.gensalt()).hex())
-        print("Checkpoint 2")
         if not insertion:
             self.username, self.email, self.password=self.SignUp_username, self.SignUp_email, self.SignUp_password
             print(f"[{time.ctime(time.time())}] {self.username} just registered a new account!")
@@ -163,12 +145,8 @@ class State(rx.State):
                     pass
                 elif TPU_var==None:
                     login_data=eval(storage)
-                    print(login_data)
-                    print(type(login_data['password']))
-                    response=func.login_user(login_data["email"],bcrypt.hashpw(str(login_data['password']).encode('utf-8'), bcrypt.gensalt()))
-                    print("a")
+                    response=func.login_user(login_data["email"],login_data['password'])
                     if not type(response)==type(""):
-                        print(f"response: {response}")
                         self.username=response['username']
                         self.email=login_data["email"]
                         self.password=login_data["password"]
@@ -233,10 +211,13 @@ class State(rx.State):
 
     def change_username_thru_dashboard(self, new_username):
         if new_username.strip()==self.username.strip():
-            pass
+            func.edit_username(new_username, self.email)
         else:
             self.username=new_username
-            func.edit_username(new_username, self.email)
+            try:
+                func.edit_username(new_username, self.email)
+            except:
+                pass
             self.switch_username_editor_in_dashboard()
             return rx.window_alert("Username was changed successfully")
     @rx.var
@@ -400,11 +381,8 @@ def index():
                             rx.menu_button(
                                 rx.heading(
                                     "Contact", 
-                                    color=State.navbar_contact_color, 
                                     font_size="2.1vh"
                                     ), 
-                                on_mouse_enter=State.navbar_contact_hover, 
-                                on_mouse_leave=State.navbar_contact_unhover
                                 ),
                             rx.menu_list(
                                 rx.menu_item("Discord", on_click=rx.redirect("https://discord.gg/DgxppCZnJb")),
@@ -420,8 +398,7 @@ def index():
                             rx.menu_button(
                                 rx.hstack(
                                     rx.heading(
-                                        State.account_manager_navbar_menu_text, 
-                                        color=State.navbar_my_account_color, 
+                                        State.account_manager_navbar_menu_text,
                                         font_size="2.1vh"
                                         ),
                                     rx.icon(
@@ -432,8 +409,6 @@ def index():
                                     ),
                                     spacing="0px"
                                 ), 
-                                on_mouse_enter=State.navbar_my_account_hover, 
-                                on_mouse_leave=State.navbar_my_account_unhover
                             ),
                             rx.cond(
                                 State.username,
@@ -1023,6 +998,16 @@ def index():
                         width="90%"
                         )
                     ),
+                    rx.vstack(
+                        rx.heading("Time since last update (to this website):", font_size="1.7vh"),
+                        rx.heading(State.uptime, font_size="2.4vh"),
+                        rx.heading(rx.span("You can "), rx.span("click here"), rx.span(" to see details about updates"), font_size="1.7vh"),
+                        width="90%",
+                        bg="#00fff5",
+                        border_radius="1vh",
+                        border_color="#00fff5",
+                        border_width="5px",
+                    ),
                     rx.box(height="3vh"),
                     bg="#001918"
                 ),
@@ -1097,7 +1082,7 @@ def announcements_tab():
     return rx.vstack(
         rx.heading("Site-Wide Announcements", color="WHITE", font_size="3vh"),
         rx.divider(border_color="WHITE"),
-        rx.text("None for now"),
+        rx.text("None for now", color="WHITE"),
         bg="#0F0F10",
         border_color="#0F0F10",
         border_radius="1vh",
@@ -1112,7 +1097,10 @@ def account_manager():
         notifications_tab(),
         spacing="2vh"
         ),
-    announcements_tab(),
+    rx.vstack(
+        announcements_tab(),
+        updating_components.add_TPU_to_account_widget(State.TPU_verified)
+        ),
     spacing="5vh"
     )
 
