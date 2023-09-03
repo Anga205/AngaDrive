@@ -181,11 +181,9 @@ def login_user(email: str, prehashed_password: str):
         if tpu_account or account:
 
             if account:
-                # Compare prehashed_password with the hashed password in the database
-                print(account)
                 stored_hashed_password = bytes.fromhex(account[3]) if not type(account[3])==type(b"") else account[3]
                 prehashed_password=prehashed_password.encode('utf-8') if type(prehashed_password)==type("") else prehashed_password
-                print("type(stored_hashed_password),type(prehashed_password)", type(stored_hashed_password),type(prehashed_password))
+
                 if bcrypt.checkpw(prehashed_password, stored_hashed_password):
                     account_data = {
                         "email": account[0],

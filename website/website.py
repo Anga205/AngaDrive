@@ -136,11 +136,11 @@ class State(rx.State):
         if self.email=="" or self.password=="":
             return rx.window_alert("Please enter a valid email id and password")
         else:
-            login_data=func.login_user(self.email, bcrypt.hashpw(self.password.encode('utf-8'), bcrypt.gensalt()))
+            login_data=func.login_user(self.email, self.password)
             if type(login_data)==type({}):
                 self.username=login_data['username']
                 self.email=login_data['email']
-                return [rx.set_local_storage("accounts",str({"username":self.username,"email":self.email,"password":bcrypt.hashpw(self.password.encode('utf-8'), bcrypt.gensalt())})), rx.redirect("/dashboard")]
+                return [rx.set_local_storage("accounts",str({"username":self.username,"email":self.email,"password":self.password})), rx.redirect("/dashboard")]
             else:
                 print(login_data)
                 return rx.window_alert(login_data)
@@ -200,15 +200,14 @@ class State(rx.State):
         except KeyboardInterrupt:
             exit()
 
-
-    def start_timer(self):
+    def index_page_load(self, local_storage, TPU_storage):
+        self.page_load(local_storage, TPU_storage)
         self.timer_started=True
         return State.tick
 
-
-    def index_page_load(self, local_storage, TPU_storage):
-        self.page_load(local_storage, TPU_storage)
-        return self.start_timer()
+    def unload_homepage(self):
+        self.timer_started=False
+    
 
     def login_page_load(self, storage, TPU_token):
         self.page_load(storage, TPU_token)
@@ -415,7 +414,7 @@ def index():
                                 rx.menu_item("Email", on_click=rx.redirect("mailto:support@anga.pro")),
                                 rx.menu_item("GitHub", on_click=rx.redirect("https://github.com/Anga205")),
                                 rx.menu_item("Telegram", on_click=rx.redirect("https://t.me/Anga205"))
-                            )
+                            ),
                         ),
                         rx.menu(
                             rx.menu_button(
@@ -1038,6 +1037,7 @@ def index():
             )
         ),
         on_mount=lambda: State.index_page_load(rx.get_local_storage("accounts"), rx.get_local_storage("TPU")),
+        on_unmount=State.unload_homepage
     )
 
 def user_profile_pic(side=100):
