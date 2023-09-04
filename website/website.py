@@ -415,7 +415,7 @@ def index():
                             rx.cond(
                                 State.username,
                                 rx.menu_list(
-                                    rx.menu_item("Manage Account"),
+                                    rx.menu_item("Manage Account", on_click=lambda: rx.redirect("/dashboard")),
                                     rx.menu_item("My Services"),
                                     rx.menu_divider(),
                                     rx.menu_item("Logout", on_click=State.logout)
