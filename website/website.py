@@ -381,6 +381,7 @@ def index():
                             rx.menu_button(
                                 rx.heading(
                                     "Contact", 
+                                    color="WHITE",
                                     font_size="2.1vh"
                                     ), 
                                 ),
@@ -398,7 +399,8 @@ def index():
                             rx.menu_button(
                                 rx.hstack(
                                     rx.heading(
-                                        State.account_manager_navbar_menu_text,
+                                        State.account_manager_navbar_menu_text,                                    
+                                        color="WHITE",
                                         font_size="2.1vh"
                                         ),
                                     rx.icon(
