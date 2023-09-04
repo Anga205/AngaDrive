@@ -1082,9 +1082,9 @@ def notifications_tab():
 
 def announcements_tab():
     return rx.vstack(
-        rx.heading("Site-Wide Announcements", color="WHITE", font_size="3vh"),
+        rx.heading("Site-Wide Announcements", color="WHITE", font_size="3.5vh"),
         rx.divider(border_color="WHITE"),
-        rx.text("None for now", color="WHITE"),
+        rx.text("None for now", color="WHITE", font_size="1.65vh"),
         bg="#0F0F10",
         border_color="#0F0F10",
         border_radius="1vh",

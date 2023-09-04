@@ -5,7 +5,7 @@ def add_TPU_to_account_widget(tpu_verified_var):
     return rx.cond(
     tpu_verified_var,
     rx.vstack(
-        rx.heading("Manage TPU account"),
+        rx.heading("Manage TPU account", color="WHITE"),
         rx.divider(border_color="WHITE"),
         bg="#0F0F10",
         border_color="#0F0F10",
@@ -37,6 +37,7 @@ def add_TPU_to_account_widget(tpu_verified_var):
             height="5vh", 
             bg="BLACK",
             width="22vh",
+            border_radius="1vh",
             _hover={"bg":"#1F1F3F"},
             on_click=rx.redirect("https://privateuploader.com/oauth/9f032bfb-7553-4a5d-9727-217f34537f1e")
         ),
