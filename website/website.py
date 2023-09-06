@@ -1,7 +1,7 @@
 """Welcome to Reflex! This file outlines the steps to create a basic app."""
 import reflex as rx
 import website.library as func
-import random, os, time, bcrypt, asyncio
+import random, time, bcrypt, asyncio, threading
 import website.TPU_cmds as TPU
 import website.updating_components as updating_components
 
@@ -171,7 +171,7 @@ class State(rx.State):
             exit()
 
     def index_page_load(self, local_storage, TPU_storage):
-        self.page_load(local_storage, TPU_storage)
+        threading.Thread(target= lambda: self.page_load(local_storage, TPU_storage)).start()
 #        self.timer_started=True
 #        return State.tick
 
