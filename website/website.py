@@ -202,8 +202,11 @@ class State(rx.State):
             return rx.redirect("/login")
 
     mobile_homepage_drawer=False
-    def switch_mobile_homepage_drawer(self):
-        self.mobile_homepage_drawer=not self.mobile_homepage_drawer
+    def turn_on_mobile_homepage_drawer(self):
+        self.mobile_homepage_drawer=True
+
+    def turn_off_mobile_homepage_drawer(self):
+        self.mobile_homepage_drawer=False
 
     enable_username_editor_in_dashboard=False
     def switch_username_editor_in_dashboard(self):
@@ -671,7 +674,7 @@ def index():
             rx.vstack(
                 rx.hstack(
                     rx.box(width="2%"),
-                    rx.icon(tag="hamburger", color="WHITE", font_size="3xl", on_click=State.switch_mobile_homepage_drawer),
+                    rx.icon(tag="hamburger", color="WHITE", font_size="3xl", on_click=State.turn_on_mobile_homepage_drawer),
                     rx.drawer(
                             rx.drawer_overlay(
                                 rx.drawer_content(
@@ -684,13 +687,13 @@ def index():
                                                     rx.accordion_icon(),
                                                 ),
                                                 rx.accordion_panel(
-                                                    rx.text("Discord", on_click=rx.redirect("https://discord.gg/DgxppCZnJb"), color="GRAY"),
-                                                    rx.text("Instagram", on_click=rx.redirect("https://instagram.com/_anga205"), color="GRAY"),
-                                                    rx.text("Threads", on_click=rx.redirect("https://threads.net/@_anga205"), color="GRAY"),
-                                                    rx.text("𝕏.com", on_click=rx.redirect("https://x.com/_anga205"), color="GRAY"),
-                                                    rx.text("Email", on_click=rx.redirect("mailto:support@anga.pro"), color="GRAY"),
-                                                    rx.text("GitHub", on_click=rx.redirect("https://github.com/Anga205"), color="GRAY"),
-                                                    rx.text("Telegram", on_click=rx.redirect("https://t.me/Anga205"), color="GRAY"),
+                                                    rx.text("Discord", on_click=rx.redirect("https://discord.gg/DgxppCZnJb"), color="WHITE"),
+                                                    rx.text("Instagram", on_click=rx.redirect("https://instagram.com/_anga205"), color="WHITE"),
+                                                    rx.text("Threads", on_click=rx.redirect("https://threads.net/@_anga205"), color="WHITE"),
+                                                    rx.text("𝕏.com", on_click=rx.redirect("https://x.com/_anga205"), color="WHITE"),
+                                                    rx.text("Email", on_click=rx.redirect("mailto:support@anga.pro"), color="WHITE"),
+                                                    rx.text("GitHub", on_click=rx.redirect("https://github.com/Anga205"), color="WHITE"),
+                                                    rx.text("Telegram", on_click=rx.redirect("https://t.me/Anga205"), color="WHITE"),
                                                 ),
                                             ),
                                             allow_toggle=True,
@@ -729,7 +732,7 @@ def index():
                                     ),
                                     rx.drawer_footer(
                                         rx.button(
-                                            "Close", on_click=State.switch_mobile_homepage_drawer
+                                            "Close", on_click=State.turn_off_mobile_homepage_drawer
                                         )
                                     ),
                                     bg="rgba(0, 0, 0, 0.3)",
