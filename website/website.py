@@ -214,16 +214,19 @@ class State(rx.State):
         self.enable_username_editor_in_dashboard = not self.enable_username_editor_in_dashboard
 
     def change_username_thru_dashboard(self, new_username):
-        if new_username.strip()==self.username.strip():
-            func.edit_username(new_username, self.email)
-        else:
-            self.username=new_username
-            try:
+        if not self.TPU_verified:
+            if new_username.strip()==self.username.strip():
                 func.edit_username(new_username, self.email)
-            except:
-                pass
-            self.switch_username_editor_in_dashboard()
-            return rx.window_alert("Username was changed successfully")
+            else:
+                self.username=new_username
+                try:
+                    func.edit_username(new_username, self.email)
+                except:
+                    pass
+                self.switch_username_editor_in_dashboard()
+                return rx.window_alert("Username was changed successfully")
+        else:
+            return rx.window_alert("TPU accounts can only be renamed thru TPU dashboard")
 
 #    @rx.var
 #    def pfp_exists(self):
