@@ -19,23 +19,16 @@ class State(rx.State):
     SignUp_password=""
     TPU_verified=False
     
-    @rx.var
-    def loads_today(self):
-        return list(func.calls_per_day(func.get_timestamps()).values())[-1]
+    loads_today=list(func.calls_per_day(func.get_timestamps()).values())[-1]
 
-    @rx.var
-    def uptime(self):
-        startup_time
-        return func.convert_to_time_value(time.time()-startup_time)
+    global startup_time
+    uptime=func.convert_to_time_value(time.time()-startup_time)
 
-    @rx.var
-    def loads_per_day(self) -> list[int]:
-        calls=list(func.calls_per_day(func.get_timestamps()).values())
-        timestamps=list(func.calls_per_day(func.get_timestamps()).keys())
-        return rx.data(
+
+    loads_per_day=rx.data(
             "line",
-            x=timestamps,
-            y=calls,
+            x=list(func.calls_per_day(func.get_timestamps()).keys()),
+            y=list(func.calls_per_day(func.get_timestamps()).values()),
         )
 
     def homepage_load(self):
@@ -134,9 +127,7 @@ class State(rx.State):
         else:
             return f"Welcome back, {self.username}"
     
-    @rx.var
-    def random_light_color(self):
-        return random.choice(["#ffcccb","#90EE90","#ADD8E6"])
+    random_light_color=random.choice(["#ffcccb","#90EE90","#ADD8E6"])
 
     def page_load(self, storage, TPU_var):
         if self.username=="":
@@ -172,19 +163,29 @@ class State(rx.State):
 
     async def tick(self):
         try:
-            await asyncio.sleep(1)
             if self.timer_started:
+                await asyncio.sleep(0.3)
+                self.uptime=func.convert_to_time_value(time.time()-startup_time)
                 return State.tick
         except KeyboardInterrupt:
             exit()
 
     def index_page_load(self, local_storage, TPU_storage):
         self.page_load(local_storage, TPU_storage)
-        self.timer_started=True
-        return State.tick
+#        self.timer_started=True
+#        return State.tick
+
+    def start_timer(self):
+        if not self.timer_started:
+            self.timer_started=True
+            return State.tick
+    
+    def stop_timer(self):
+        if self.timer_started:
+            self.timer_started=False
 
     def unload_homepage(self):
-        self.timer_started=False
+        self.stop_timer()
     
 
     def login_page_load(self, storage, TPU_token):
@@ -223,9 +224,12 @@ class State(rx.State):
                 pass
             self.switch_username_editor_in_dashboard()
             return rx.window_alert("Username was changed successfully")
-    @rx.var
-    def pfp_exists(self):
-        os.path.exists(f"assets/pfps/{self.email}")
+
+#    @rx.var
+#    def pfp_exists(self):
+#        os.path.exists(f"assets/pfps/{self.email}")
+
+    pfp_exists=False
 
     def TPU_verify(self):
         data=self.get_query_params().get("code",None)
@@ -243,12 +247,17 @@ class State(rx.State):
         else:
             return [rx.redirect("/login"), rx.window_alert("login with TPU failed")]
     
-    @rx.var
-    def TPU_login_info(self):
-        if self.TPU_verified:
-            data=TPU.verifier(self.TPU_verified)
-            self.username=data['username']
-            self.email=data['email']
+#    @rx.var
+#    def TPU_login_info(self):
+#        if self.TPU_verified:
+#            data=TPU.verifier(self.TPU_verified)
+#            self.username=data['username']
+#            self.email=data['email']
+
+    if TPU_verified:
+        data=TPU.verifier(TPU_verified)
+        username=data['username']
+        email=data['email']
 
     @rx.var
     def is_admin(self):
@@ -440,7 +449,7 @@ def index():
                     width="100%",
                     bg="black",
                     position="fixed",
-                    height="10.4vh"
+                    height="10.4vh",
                 ),
                 rx.vstack(
                     rx.box(height="40vh"),
@@ -502,7 +511,8 @@ def index():
                     bg="#0E0019",
                     width="100%",
                     height="90vh",
-                    spacing="2.1vh"
+                    spacing="2.1vh",
+                    on_mouse_over=State.stop_timer,on_mouse_enter=State.stop_timer,
                 ),
                 rx.vstack(
                     rx.box(height="10vh"),
@@ -656,7 +666,8 @@ def index():
                    # height="60vh",
                     width="100%",
                     bg="#001918",
-                    spacing="0.3vh"
+                    spacing="0.3vh",
+                    on_mouse_over=State.start_timer,on_mouse_enter=State.start_timer,
                 ),
                 rx.vstack(
                     rx.box(height="1vh"),
@@ -805,7 +816,8 @@ def index():
                     ),
                     bg="#0E0019",
                     height="80vh",
-                    width="100%"
+                    width="100%",
+                    on_mouse_over=State.stop_timer,on_mouse_enter=State.stop_timer,
                 ),
                 rx.vstack(
                     rx.box(height="5vh"),
@@ -1014,7 +1026,9 @@ def index():
                         border_width="5px",
                     ),
                     rx.box(height="3vh"),
-                    bg="#001918"
+                    bg="#001918",
+                    on_mouse_over=State.start_timer,on_mouse_enter=State.start_timer,
+                    on_mouse_leave=State.stop_timer,
                 ),
                 rx.vstack(
                     rx.box(height="1vh"),
