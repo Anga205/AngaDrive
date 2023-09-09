@@ -7,7 +7,7 @@ enable_TPU=os.path.exists(TPU_path)
 
 
 def login_page_TPU_button(view):
-    if enable_TPU and view=="Desktop":
+    if (enable_TPU and view=="Desktop"):
         return rx.vstack(
         rx.hstack(
         rx.divider(border_color="GRAY"),
