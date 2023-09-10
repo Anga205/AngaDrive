@@ -81,7 +81,6 @@ def verifier(token):
     response=requests.get(url, headers=params)
 
     if response.status_code == 200:
-        print(response.json())
         return response.json()
     else:
         return None

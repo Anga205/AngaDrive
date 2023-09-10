@@ -4,6 +4,7 @@ import website.library as func
 import random, time, bcrypt, asyncio, threading
 import website.TPU_cmds as TPU
 import website.updating_components as updating_components
+import website.dashboard_pages as dashboard_pages
 
 startup_time=time.time()
 
@@ -19,16 +20,22 @@ class State(rx.State):
     SignUp_password=""
     TPU_verified=False
     
-    loads_today=list(func.calls_per_day(func.get_timestamps()).values())[-1]
+    @rx.var
+    def loads_today(self):
+        return list(func.calls_per_day(func.get_timestamps()).values())[-1]
 
     global startup_time
     uptime=func.convert_to_time_value(time.time()-startup_time)
 
 
-    loads_per_day=rx.data(
+    @rx.var
+    def loads_per_day(self) -> list[int]:
+        calls=list(func.calls_per_day(func.get_timestamps()).values())
+        timestamps=list(func.calls_per_day(func.get_timestamps()).keys())
+        return rx.data(
             "line",
-            x=list(func.calls_per_day(func.get_timestamps()).keys()),
-            y=list(func.calls_per_day(func.get_timestamps()).values()),
+            x=timestamps,
+            y=calls,
         )
 
     def homepage_load(self):
@@ -211,22 +218,23 @@ class State(rx.State):
 
     enable_username_editor_in_dashboard=False
     def switch_username_editor_in_dashboard(self):
-        self.enable_username_editor_in_dashboard = not self.enable_username_editor_in_dashboard
-
-    def change_username_thru_dashboard(self, new_username):
         if not self.TPU_verified:
-            if new_username.strip()==self.username.strip():
-                func.edit_username(new_username, self.email)
-            else:
-                self.username=new_username
-                try:
-                    func.edit_username(new_username, self.email)
-                except:
-                    pass
-                self.switch_username_editor_in_dashboard()
-                return rx.window_alert("Username was changed successfully")
+            self.enable_username_editor_in_dashboard = not self.enable_username_editor_in_dashboard
         else:
             return rx.window_alert("TPU accounts can only be renamed thru TPU dashboard")
+
+
+    def change_username_thru_dashboard(self, new_username):
+        if new_username.strip()==self.username.strip():
+            func.edit_username(new_username, self.email)
+        else:
+            self.username=new_username
+            try:
+                func.edit_username(new_username, self.email)
+            except:
+                pass
+            self.switch_username_editor_in_dashboard()
+            return rx.window_alert("Username was changed successfully")
 
 #    @rx.var
 #    def pfp_exists(self):
@@ -270,6 +278,19 @@ class State(rx.State):
             return True
         else:
             return False
+
+
+    dashboard_page="account"
+
+    def switch_dashboard_page_to_hosting_page(self):
+        if self.dashboard_page=="hosting":
+            pass
+        else:
+            self.dashboard_page="hosting"
+    
+    @rx.var
+    def dashboard_is_hosting_page(self):
+        return self.dashboard_page=="hosting"        
 
 
 def login() -> rx.Component:
