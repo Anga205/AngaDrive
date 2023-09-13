@@ -5,7 +5,7 @@ def add_TPU_to_account_widget(tpu_verified_var):
     return rx.cond(
     tpu_verified_var,
     rx.vstack(
-        rx.heading("Manage TPU account", color="WHITE"),
+        rx.heading("Manage TPU account", color="WHITE", font_size="3.5vh"),
         rx.divider(border_color="WHITE"),
         bg="#0F0F10",
         border_color="#0F0F10",

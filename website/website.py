@@ -282,15 +282,25 @@ class State(rx.State):
 
     dashboard_page="account"
 
-    def switch_dashboard_page_to_hosting_page(self):
+    def set_dashboard_to_file_hosting(self):
         if self.dashboard_page=="hosting":
             pass
         else:
             self.dashboard_page="hosting"
-    
+
     @rx.var
     def dashboard_is_hosting_page(self):
-        return self.dashboard_page=="hosting"        
+        return self.dashboard_page=="hosting" 
+
+    def set_dashboard_to_account_manager(self):
+        if self.dashboard_page=="account":
+            pass
+        else:
+            self.dashboard_page="account"
+
+    @rx.var 
+    def dashboard_is_account_page(self):
+        return self.dashboard_page=="account"
 
 
 def login() -> rx.Component:
@@ -1167,8 +1177,10 @@ def dashboard():
                 color="WHITE", 
                 font_size="2.1vh", 
                 bg="#0E0019", 
+                on_click=State.set_dashboard_to_account_manager,
                 width="100%",
                 height="4.5vh",
+                spacing="0px",
                 _hover={"bg":"BLACK"}
                 ),
             rx.button(
@@ -1182,6 +1194,7 @@ def dashboard():
                 rx.span("File Hosting"), 
                 rx.spacer(), 
                 color="WHITE", 
+                on_click=State.set_dashboard_to_file_hosting,
                 font_size="2.1vh", 
                 bg="#0E0019", 
                 width="100%",
@@ -1222,7 +1235,8 @@ def dashboard():
                 width="100%",
                 on_click=State.dashboard_delete_account,
                 height="4.5vh",
-                _hover={"bg":"BLACK"}
+                _hover={"bg":"BLACK"},
+                spacing="0vh"
                 ),
             spacing="1vh",
             width="15%",
@@ -1242,14 +1256,20 @@ def dashboard():
                 bg="#000d19",
                 height="6vh",
                 width="85%",
-                position="fixed"
+                position="fixed",
+                spacing="0px"
             ),
             rx.box(height="6vh"),
-            account_manager(),
+            rx.cond(
+                State.dashboard_is_account_page,
+                account_manager(),
+                dashboard_pages.file_hosting_page()
+            ),
             height="100vh", 
             width="85%", 
             bg="BLACK", 
-            style={"margin-left":"15%"}
+            style={"margin-left":"15%"},
+            spacing="0px"
             ),
         on_mount=lambda: State.dashboard_load(rx.get_local_storage("accounts"),rx.get_local_storage("TPU")),
         spacing="0px",
