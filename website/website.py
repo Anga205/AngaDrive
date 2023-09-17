@@ -151,7 +151,7 @@ class State(rx.State):
                         rx.set_local_storage("accounts",{"username":self.username,"email":self.email,"password":self.password})
                         print(f"[{time.ctime(time.time())}] {self.username} logged in thru session")
                     else:
-                        print(f"Login with details '{login_data['email']}', '{login_data['password']}' failed with reason {response}")
+                        print(f"[{time.ctime(time.time())}] Login with details '{login_data['email']}', '{login_data['password']}' failed with reason {response}")
                         return rx.clear_local_storage()
                 elif storage==None:
                     login_info=TPU.verifier(TPU_var)

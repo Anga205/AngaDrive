@@ -36,5 +36,8 @@ startup the website
 
 *once you have run all these commands, the website should be avalible on http://localhost:3000*
 
+
+### ⚠️⚠️⚠️ WARNING: AS IT STANDS RIGHT NOW, REFLEX DOESNT SEEM TO RUN PROPERLY ON UBUNTU
+
 # Contributing
 anga.pro is an open source project, and I welcome contributions from everyone. If you would like to contribute, please fork the repository and submit a pull request.
