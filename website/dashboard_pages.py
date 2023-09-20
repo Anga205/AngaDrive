@@ -3,16 +3,16 @@ import reflex as rx
 
 def text_inside_uploader(files):
     def text_widget(text):
-         return rx.text(text, font_size="1.65vh")
+         return rx.text(text, font_size="1.65vh", color="WHITE")
     return rx.cond(
         files,
-        rx.text("Drag and drop files or click to select", font_size="1.65vh"),
-        rx.hstack(
+        rx.vstack(
             rx.foreach(
                  files,
                  text_widget
             )
-        )
+        ),
+        rx.text("Drag and drop files or click to select", font_size="1.65vh", color="WHITE"),
     )
 
 
