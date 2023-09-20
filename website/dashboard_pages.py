@@ -1,6 +1,21 @@
 import reflex as rx
 
 
+def text_inside_uploader(files):
+    def text_widget(text):
+         return rx.text(text, font_size="1.65vh")
+    return rx.cond(
+        files,
+        rx.text("Drag and drop files or click to select", font_size="1.65vh"),
+        rx.hstack(
+            rx.foreach(
+                 files,
+                 text_widget
+            )
+        )
+    )
+
+
 def upload_popup_in_dashboard(state_enable_popup_to_upload, state_turn_off_popup_to_upload):
     return rx.alert_dialog(
             rx.alert_dialog_overlay(
@@ -8,8 +23,13 @@ def upload_popup_in_dashboard(state_enable_popup_to_upload, state_turn_off_popup
                     rx.alert_dialog_header("Upload Files", color="BLUE"),
                     rx.alert_dialog_body(
                         rx.upload(
-                            rx.text("Upload files here"),
-                            border=("1px dotted #ffffff")
+                            rx.vstack(
+                                rx.box(height="3.4vh"),
+                                text_inside_uploader(rx.selected_files),
+                                rx.box(height="3.4vh"),
+                                spacing="0px"
+                            ),
+                            border=("1px dotted #ffffff"),
                         ),
                         color="WHITE",
                     ),
