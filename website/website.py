@@ -301,6 +301,13 @@ class State(rx.State):
     @rx.var 
     def dashboard_is_account_page(self):
         return self.dashboard_page=="account"
+    
+
+    enable_popup_to_upload=False
+    def turn_off_popup_to_upload(self):
+        self.enable_popup_to_upload=False
+    def turn_on_popup_to_upload(self):
+        self.enable_popup_to_upload=True
 
 
 def login() -> rx.Component:
@@ -1259,11 +1266,11 @@ def dashboard():
                 position="fixed",
                 spacing="0px"
             ),
-            rx.box(height="6vh"),
+            rx.box(height="7vh"),
             rx.cond(
                 State.dashboard_is_account_page,
                 account_manager(),
-                dashboard_pages.file_hosting_page()
+                dashboard_pages.file_hosting_page(State.enable_popup_to_upload, State.turn_off_popup_to_upload, State.turn_on_popup_to_upload)
             ),
             height="100vh", 
             width="85%", 
