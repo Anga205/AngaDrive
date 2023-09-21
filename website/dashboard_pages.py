@@ -16,7 +16,7 @@ def text_inside_uploader(files):
     )
 
 
-def upload_popup_in_dashboard(state_enable_popup_to_upload, state_turn_off_popup_to_upload):
+def upload_popup_in_dashboard(state_enable_popup_to_upload, state_turn_off_popup_to_upload, upload_handler):
     return rx.alert_dialog(
             rx.alert_dialog_overlay(
                 rx.alert_dialog_content(
@@ -30,6 +30,11 @@ def upload_popup_in_dashboard(state_enable_popup_to_upload, state_turn_off_popup
                                 spacing="0px"
                             ),
                             border=("1px dotted #ffffff"),
+                        ),
+                        rx.cond(
+                            rx.selected_files,
+                            rx.box("",height="0vh", width="0vh",on_mount=lambda: upload_handler(rx.upload_files())),
+                            rx.box("", height="0vh", width="0vh"),
                         ),
                         color="WHITE",
                     ),
@@ -49,7 +54,7 @@ def upload_popup_in_dashboard(state_enable_popup_to_upload, state_turn_off_popup
 
 
 
-def file_hosting_page(state_enable_popup_to_upload, state_turn_off_popup_to_upload, state_turn_on_popup_to_upload):
+def file_hosting_page(state_enable_popup_to_upload, state_turn_off_popup_to_upload, state_turn_on_popup_to_upload, upload_handler):
     return rx.vstack(
         rx.box(height="2vh"),
         rx.hstack(
@@ -73,7 +78,7 @@ def file_hosting_page(state_enable_popup_to_upload, state_turn_off_popup_to_uplo
                     border_radius="1vh",
                     width="13vh"
                 ),
-            upload_popup_in_dashboard(state_enable_popup_to_upload, state_turn_off_popup_to_upload),
+            upload_popup_in_dashboard(state_enable_popup_to_upload, state_turn_off_popup_to_upload, upload_handler),
             ),
             rx.box(width="5%"),
             width="100%",

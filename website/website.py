@@ -310,6 +310,30 @@ class State(rx.State):
         self.enable_popup_to_upload=True
 
 
+    img: list[str]
+
+    async def handle_upload(
+        self, files: list[rx.UploadFile]
+    ):
+        """Handle the upload of file(s).
+
+        Args:
+            files: The uploaded files.
+        """
+        print("1")
+        for file in files:
+            print(f"handling {file.filename}")
+            upload_data = await file.read()
+            outfile = "\\uploads\\"
+
+            # Save the file.
+            with open(outfile, "wb") as file_object:
+                file_object.write(upload_data)
+
+            # Update the img var.
+            self.img.append(file.filename)
+
+
 def login() -> rx.Component:
     return rx.box(
     rx.desktop_only(
@@ -1270,7 +1294,7 @@ def dashboard():
             rx.cond(
                 State.dashboard_is_account_page,
                 account_manager(),
-                dashboard_pages.file_hosting_page(State.enable_popup_to_upload, State.turn_off_popup_to_upload, State.turn_on_popup_to_upload)
+                dashboard_pages.file_hosting_page(State.enable_popup_to_upload, State.turn_off_popup_to_upload, State.turn_on_popup_to_upload, State.handle_upload)
             ),
             height="100vh", 
             width="85%", 
