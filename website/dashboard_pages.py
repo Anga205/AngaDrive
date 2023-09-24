@@ -31,19 +31,25 @@ def upload_popup_in_dashboard(state_enable_popup_to_upload, state_turn_off_popup
                             ),
                             border=("1px dotted #ffffff"),
                         ),
-                        rx.cond(
-                            rx.selected_files,
-                            rx.box("",height="0vh", width="0vh",on_mount=lambda: upload_handler(rx.upload_files())),
-                            rx.box("", height="0vh", width="0vh"),
-                        ),
                         color="WHITE",
                     ),
                     rx.alert_dialog_footer(
-                        rx.button(
-                            "Close",    
-                            color="WHITE",
-                            on_click=state_turn_off_popup_to_upload,
-                            bg="RED",
+                        rx.hstack(
+                            rx.cond(
+                                rx.selected_files,
+                                rx.button(
+                                    "Upload",
+                                    color="BLACK",
+                                    on_click=lambda: upload_handler(rx.upload_files()),
+                                ),
+                                rx.box()
+                            ),
+                            rx.button(
+                                "Close",    
+                                color="WHITE",
+                                on_click=state_turn_off_popup_to_upload,
+                                bg="RED",
+                            )
                         )
                     ),
                     bg="#111112"

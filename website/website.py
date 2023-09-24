@@ -1,7 +1,7 @@
 """Welcome to Reflex! This file outlines the steps to create a basic app."""
 import reflex as rx
 import website.library as func
-import random, time, bcrypt, asyncio, threading
+import random, time, bcrypt, asyncio, threading, os
 import website.TPU_cmds as TPU
 import website.updating_components as updating_components
 import website.dashboard_pages as dashboard_pages
@@ -324,14 +324,14 @@ class State(rx.State):
         for file in files:
             print(f"handling {file.filename}")
             upload_data = await file.read()
-            outfile = "\\uploads\\"
+            print(os.getcwd())
 
             # Save the file.
-            with open(outfile, "wb") as file_object:
-                file_object.write(upload_data)
+            #with open(outfile, "wb") as file_object:
+            #    file_object.write(upload_data)
 
             # Update the img var.
-            self.img.append(file.filename)
+            #self.img.append(file.filename)
 
 
 def login() -> rx.Component:
