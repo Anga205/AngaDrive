@@ -312,26 +312,18 @@ class State(rx.State):
 
     img: list[str]
 
-    async def handle_upload(
-        self, files: list[rx.UploadFile]
-    ):
-        """Handle the upload of file(s).
-
-        Args:
-            files: The uploaded files.
-        """
-        print("1")
+    async def handle_upload(self, files: list[rx.UploadFile]):
         for file in files:
             print(f"handling {file.filename}")
             upload_data = await file.read()
-            print(os.getcwd())
+            outfile=os.path.join(os.getcwd(),"..","another_reflex_instance","assets",file.filename)
 
             # Save the file.
-            #with open(outfile, "wb") as file_object:
-            #    file_object.write(upload_data)
+            with open(outfile, "wb") as file_object:
+                file_object.write(upload_data)
 
             # Update the img var.
-            #self.img.append(file.filename)
+            self.img.append(file.filename)
 
 
 def login() -> rx.Component:
