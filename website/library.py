@@ -1,4 +1,4 @@
-import re, sqlite3, sqlite3, datetime, time, platform, random, bcrypt
+import re, sqlite3, sqlite3, datetime, time, platform, random, bcrypt, os, string
 
 def gen_token():
     a="qwertyuiopasdfghjklzxcvbnm"
@@ -318,3 +318,56 @@ def TPU_signin(TPU_id: int, TPU_email: str, TPU_username: str, TPU_authtoken: st
     finally:
         if connection:
             connection.close()
+
+def obfuscate_filename(filename):
+    # Get the file extension
+    file_extension = os.path.splitext(filename)[1]
+
+    # Define the allowed characters for obfuscation
+    allowed_chars = string.ascii_lowercase + string.digits
+
+    # Generate a random string of length between 10 and 15
+    obfuscated_part = ''.join(random.choice(allowed_chars) for _ in range(random.randint(10, 15)))
+
+    # Combine the obfuscated string and file extension
+    obfuscated_filename = obfuscated_part + file_extension
+
+    return obfuscated_filename
+
+def create_sqlite_database(DB_PATH):
+    # Connect to the SQLite database or create a new one if it doesn't exist
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+
+    # Create the 'activity' table
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS activity (
+            timestamps INTEGER
+        )
+    ''')
+
+    # Create the 'accounts' table
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS accounts (
+            email TEXT,
+            username TEXT,
+            token TEXT PRIMARY KEY,
+            hashed_password TEXT,
+            avatar BLOB
+        )
+    ''')
+
+    # Create the 'TPU_accounts' table
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS TPU_accounts (
+            id INTEGER,
+            username TEXT,
+            email TEXT,
+            authtoken TEXT PRIMARY KEY,
+            avatar_link TEXT
+        )
+    ''')
+
+    # Commit the changes and close the connection
+    conn.commit()
+    conn.close()

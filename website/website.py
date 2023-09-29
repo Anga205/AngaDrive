@@ -316,7 +316,7 @@ class State(rx.State):
         for file in files:
             print(f"handling {file.filename}")
             upload_data = await file.read()
-            outfile=os.path.join(os.getcwd(),"..","another_reflex_instance","assets",file.filename)
+            outfile=os.path.join(os.getcwd(),"..","cdn.anga.pro","assets",func.obfuscate_filename(file.filename))
 
             # Save the file.
             with open(outfile, "wb") as file_object:
