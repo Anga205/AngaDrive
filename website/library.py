@@ -335,38 +335,42 @@ def obfuscate_filename(filename):
     return obfuscated_filename
 
 def create_sqlite_database(DB_PATH):
-    # Connect to the SQLite database or create a new one if it doesn't exist
+    # Connect to the SQLite database or create it if it doesn't exist
     conn = sqlite3.connect(DB_PATH)
+
+    # Create a cursor object to execute SQL commands
     cursor = conn.cursor()
 
     # Create the 'activity' table
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS activity (
-            timestamps INTEGER
-        )
-    ''')
+    cursor.execute('''CREATE TABLE IF NOT EXISTS activity (
+                        timestamps INTEGER
+                    )''')
 
     # Create the 'accounts' table
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS accounts (
-            email TEXT,
-            username TEXT,
-            token TEXT PRIMARY KEY,
-            hashed_password TEXT,
-            avatar BLOB
-        )
-    ''')
+    cursor.execute('''CREATE TABLE IF NOT EXISTS accounts (
+                        email TEXT,
+                        username TEXT,
+                        token TEXT PRIMARY KEY,
+                        hashed_password TEXT,
+                        avatar BLOB
+                    )''')
 
     # Create the 'TPU_accounts' table
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS TPU_accounts (
-            id INTEGER,
-            username TEXT,
-            email TEXT,
-            authtoken TEXT PRIMARY KEY,
-            avatar_link TEXT
-        )
-    ''')
+    cursor.execute('''CREATE TABLE IF NOT EXISTS TPU_accounts (
+                        id INTEGER,
+                        username TEXT,
+                        email TEXT,
+                        authtoken TEXT PRIMARY KEY,
+                        avatar_link TEXT
+                    )''')
+
+    # Create the 'file_data' table
+    cursor.execute('''CREATE TABLE IF NOT EXISTS file_data (
+                        file_name TEXT PRIMARY KEY,
+                        account_token TEXT,
+                        time_uploaded INTEGER,
+                        file_size DECIMAL
+                    )''')
 
     # Commit the changes and close the connection
     conn.commit()
