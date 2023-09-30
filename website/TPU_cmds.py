@@ -1,7 +1,7 @@
-import platform, os, requests
+import os, requests
 import reflex as rx
 
-TPU_path="..\\login.txt" if platform.system()=='Windows' else "../login.txt"
+TPU_path=os.path.join(os.getcwd(),"..","login.txt")
 
 enable_TPU=os.path.exists(TPU_path) 
 
