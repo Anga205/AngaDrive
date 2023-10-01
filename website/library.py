@@ -1,16 +1,12 @@
-import re, sqlite3, sqlite3, datetime, time, platform, random, bcrypt, os, string
+import re, sqlite3, sqlite3, datetime, time, random, bcrypt, os, string
+
+database_directory=os.path.join("..","rx.db")
 
 def gen_token():
     a="qwertyuiopasdfghjklzxcvbnm"
     a=a+a.upper()
     a=a+"1234567890"
     return "".join(random.choices(a, k=10))+"."+"".join(random.choices(a, k=20))+"."+str(round(time.time()))
-
-
-if platform.system()=='Windows':
-    database_directory="..\\rx.db"
-else:
-    database_directory=r"../rx.db"
 
 def convert_to_time_value(number):
     # Check if the input number is negative
@@ -335,15 +331,13 @@ def obfuscate_filename(filename):
     return obfuscated_filename
 
 def create_sqlite_database(DB_PATH):
-    # Connect to the SQLite database or create it if it doesn't exist
+    # Create or connect to the SQLite database
     conn = sqlite3.connect(DB_PATH)
-
-    # Create a cursor object to execute SQL commands
     cursor = conn.cursor()
 
     # Create the 'activity' table
     cursor.execute('''CREATE TABLE IF NOT EXISTS activity (
-                        timestamps INTEGER
+                        timestamp INTEGER
                     )''')
 
     # Create the 'accounts' table
@@ -369,9 +363,10 @@ def create_sqlite_database(DB_PATH):
                         file_name TEXT PRIMARY KEY,
                         account_token TEXT,
                         time_uploaded INTEGER,
-                        file_size DECIMAL
+                        file_size DECIMAL,
+                        original_file_name TEXT
                     )''')
 
-    # Commit the changes and close the connection
+    # Commit changes and close the connection
     conn.commit()
     conn.close()
