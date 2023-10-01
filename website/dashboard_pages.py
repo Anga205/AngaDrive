@@ -63,7 +63,7 @@ def upload_popup_in_dashboard(state_enable_popup_to_upload, state_turn_off_popup
 def dashboard_file_hosted_widget(file_name="Fetching...", file_size="Fetching...", timestamp="Fetching...", link="Fetching..."):
     return rx.vstack(
         rx.span(
-            "Head.txt",
+            file_name,
             color="WHITE",
             font_size="2vh"
         ),
@@ -73,6 +73,7 @@ def dashboard_file_hosted_widget(file_name="Fetching...", file_size="Fetching...
                 rx.text("File Size: "),
                 rx.text("Upload Date: "),
                 rx.text("File Link: "),
+                font_size="1.65vh",
                 color="WHITE",
                 spacing="0.3vh"
             ),
@@ -82,10 +83,30 @@ def dashboard_file_hosted_widget(file_name="Fetching...", file_size="Fetching...
                 rx.tooltip(
                     rx.text(link, on_click=rx.set_clipboard(link)),
                     label="click to copy"
-                )
+                ),
                 spacing="0.3vh",
-                color="WHITE"
+                color="WHITE",
+                font_size="1.65vh"
             ),
+        ),
+        rx.hstack(
+            rx.spacer(),
+            rx.button(
+                rx.icon(tag="delete", color='RED'),
+                bg="#301b19",
+                font_size="1.65vh",
+                border_radius="1.5vh",
+                height="3vh",
+            ),
+            rx.spacer(),
+            rx.button(
+                rx.icon(tag="copy", color="#009688"),
+                bg="#132523",
+                height="3vh",
+                border_radius="1.5vh",
+                font_size="1.65vh"
+            ),
+            rx.spacer()
         ),
         border_width="0.5vh",
         border_color="#0a0a0a",

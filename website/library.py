@@ -388,6 +388,32 @@ def get_file_size(file_path):
     except Exception as e:
         return f"An error occurred: {str(e)}"   
 
+## THIS IS TEMP AND TO BE REMOVED AFTER THE LOGIN SYSTEM IS REWORKED
+def get_token_from_username(username):
+    con= sqlite3.connect(database_directory)
+    cur=con.cursor()
+    cur.execute(f"select token from accounts where username='{username}'")
+    token=cur.fetchone()
+    token=token[0]
+    con.close()
+    return token
+
+def get_files(account_token: str) -> list[str]:
+    # Connect to the SQLite database
+    conn = sqlite3.connect(database_directory)  # Make sure to specify the correct DB_PATH
+    cursor = conn.cursor()
+
+    # Fetch file names associated with the given account_token
+    cursor.execute('''SELECT file_name FROM file_data WHERE account_token = ?''', (account_token,))
+    file_records = cursor.fetchall()
+
+    # Extract file names from the result set
+    file_names = [record[0] for record in file_records]
+
+    # Close the database connection
+    conn.close()
+
+    return file_names
 
 def add_file(file_name: str, account_token: str, time_uploaded: int, file_size: float, original_file_name: str):
     con=sqlite3.connect(database_directory)
