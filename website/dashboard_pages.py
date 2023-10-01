@@ -60,6 +60,42 @@ def upload_popup_in_dashboard(state_enable_popup_to_upload, state_turn_off_popup
 
 
 
+def dashboard_file_hosted_widget(file_name="Fetching...", file_size="Fetching...", timestamp="Fetching...", link="Fetching..."):
+    return rx.vstack(
+        rx.span(
+            "Head.txt",
+            color="WHITE",
+            font_size="2vh"
+        ),
+        rx.divider(border_color="GRAY"),
+        rx.hstack(
+            rx.vstack(
+                rx.text("File Size: "),
+                rx.text("Upload Date: "),
+                rx.text("File Link: "),
+                color="WHITE",
+                spacing="0.3vh"
+            ),
+            rx.vstack(
+                rx.text(file_size),
+                rx.text(timestamp),
+                rx.tooltip(
+                    rx.text(link, on_click=rx.set_clipboard(link)),
+                    label="click to copy"
+                )
+                spacing="0.3vh",
+                color="WHITE"
+            ),
+        ),
+        border_width="0.5vh",
+        border_color="#0a0a0a",
+        border_radius="1vh",
+        spacing="0px",
+        bg="#0a0a0a"
+    )
+
+
+
 def file_hosting_page(state_enable_popup_to_upload, state_turn_off_popup_to_upload, state_turn_on_popup_to_upload, upload_handler):
     return rx.vstack(
         rx.box(height="2vh"),
@@ -84,12 +120,14 @@ def file_hosting_page(state_enable_popup_to_upload, state_turn_off_popup_to_uplo
                     border_radius="1vh",
                     width="13vh"
                 ),
-            upload_popup_in_dashboard(state_enable_popup_to_upload, state_turn_off_popup_to_upload, upload_handler),
+                upload_popup_in_dashboard(state_enable_popup_to_upload, state_turn_off_popup_to_upload, upload_handler),
             ),
             rx.box(width="5%"),
             width="100%",
             spacing="0px"
         ),
+        rx.box(height="3vh"),
+        dashboard_file_hosted_widget(),
         width="100%",
         spacing="1vh"
     )

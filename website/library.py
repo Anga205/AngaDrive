@@ -370,3 +370,28 @@ def create_sqlite_database(DB_PATH):
     # Commit changes and close the connection
     conn.commit()
     conn.close()
+
+def get_file_size(file_path: str) -> int:
+    # Convert to an absolute path if it's a relative path
+    file_path = os.path.abspath(file_path)
+    # Get the size of the file in bytes
+    file_size = os.path.getsize(file_path)
+    return file_size
+    
+def get_file_size(file_path):
+    try:
+        # Get the size of the file in bytes
+        file_size = os.path.getsize(file_path)
+        return file_size
+    except FileNotFoundError:
+        return "File not found"
+    except Exception as e:
+        return f"An error occurred: {str(e)}"   
+
+
+def add_file(file_name: str, account_token: str, time_uploaded: int, file_size: float, original_file_name: str):
+    con=sqlite3.connect(database_directory)
+    cur=con.cursor()
+    cur.execute(f'''insert into file_data values ("{file_name}", "{account_token}", {round(time_uploaded)}, {file_size}, "{original_file_name}")''')
+    con.commit()
+    con.close()
