@@ -1,4 +1,5 @@
 import re, sqlite3, sqlite3, datetime, time, random, bcrypt, os, string
+from typing import Optional, List, Union, Tuple
 
 database_directory=os.path.join("..","rx.db")
 
@@ -377,19 +378,11 @@ def get_file_size(file_path: str) -> int:
     # Get the size of the file in bytes
     file_size = os.path.getsize(file_path)
     return file_size
-    
-def get_file_size(file_path):
-    try:
-        # Get the size of the file in bytes
-        file_size = os.path.getsize(file_path)
-        return file_size
-    except FileNotFoundError:
-        return "File not found"
-    except Exception as e:
-        return f"An error occurred: {str(e)}"   
 
 ## THIS IS TEMP AND TO BE REMOVED AFTER THE LOGIN SYSTEM IS REWORKED
 def get_token_from_username(username):
+    if username=="":
+        return ""
     con= sqlite3.connect(database_directory)
     cur=con.cursor()
     cur.execute(f"select token from accounts where username='{username}'")
@@ -415,7 +408,30 @@ def get_files(account_token: str) -> list[str]:
 
     return file_names
 
-def add_file(file_name: str, account_token: str, time_uploaded: int, file_size: float, original_file_name: str):
+def get_file_info(file_name: str) -> Optional[List[Union[str, int, float]]]:
+    DB_PATH=database_directory
+    try:
+        # Connect to the database
+        conn = sqlite3.connect(DB_PATH)
+        cursor = conn.cursor()
+
+        # Query the file_data table for the given file_name
+        cursor.execute('''SELECT * FROM file_data WHERE file_name = ?''', (file_name,))
+        result = cursor.fetchone()  # Fetch the first matching row
+        conn.close()
+        if result:
+            # Convert the result tuple to a list for easy access
+            file_info = list(result)
+            return file_info
+        else:
+            return None  # No data found for the given file_name
+
+    except sqlite3.Error as e:
+        print("SQLite error:", e)
+        return None
+
+def add_file(file_name: str, account_token: str, time_uploaded: int, original_file_name: str):
+    file_size: float = get_file_size(os.path.join("..","i.anga.pro","assets", file_name))
     con=sqlite3.connect(database_directory)
     cur=con.cursor()
     cur.execute(f'''insert into file_data values ("{file_name}", "{account_token}", {round(time_uploaded)}, {file_size}, "{original_file_name}")''')

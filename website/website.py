@@ -20,6 +20,13 @@ class State(rx.State):
     SignUp_password=""
     TPU_verified=False
     
+
+    #THIS IS TEMPORARY AND SHOULD BE REMOVED AFTER SECURITY REWORK
+    @rx.var
+    def user_token(self):
+        return func.get_token_from_username(self.username)
+
+
     @rx.var
     def loads_today(self):
         return list(func.calls_per_day(func.get_timestamps()).values())[-1]
