@@ -391,24 +391,30 @@ def get_token_from_username(username):
     con.close()
     return token
 
-def get_files(account_token: str) -> list[str]:
+def get_files(account_token):
     # Connect to the SQLite database
-    conn = sqlite3.connect(database_directory)  # Make sure to specify the correct DB_PATH
+    conn = sqlite3.connect(database_directory)
     cursor = conn.cursor()
 
-    # Fetch file names associated with the given account_token
-    cursor.execute('''SELECT file_name FROM file_data WHERE account_token = ?''', (account_token,))
-    file_records = cursor.fetchall()
+    # Query the file_data table for original_file_names
+    cursor.execute('''SELECT original_file_name
+                      FROM file_data
+                      WHERE account_token = ?
+                      ORDER BY time_uploaded ASC''', (account_token,))
+    
+    # Fetch all the results into a list
+    file_names = [row[0] for row in cursor.fetchall()]
 
-    # Extract file names from the result set
-    file_names = [record[0] for record in file_records]
-
-    # Close the database connection
+    # Close the connection
     conn.close()
 
     return file_names
 
-def get_file_info(file_name: str) -> Optional[List[Union[str, int, float]]]:
+get_file_info_cache={}
+def get_file_info(file_name: str) -> list[str]:
+    global get_file_info_cache
+    if file_name in get_file_info_cache:
+        return get_file_info_cache[file_name]
     DB_PATH=database_directory
     try:
         # Connect to the database
@@ -422,6 +428,7 @@ def get_file_info(file_name: str) -> Optional[List[Union[str, int, float]]]:
         if result:
             # Convert the result tuple to a list for easy access
             file_info = list(result)
+            get_file_info_cache[file_name]=file_info
             return file_info
         else:
             return None  # No data found for the given file_name
@@ -429,6 +436,53 @@ def get_file_info(file_name: str) -> Optional[List[Union[str, int, float]]]:
     except sqlite3.Error as e:
         print("SQLite error:", e)
         return None
+
+def turn_size_to_string(file_size):
+    # Define the units and their corresponding sizes
+    units = ['B', 'KB', 'MB', 'GB', 'TB']
+    sizes = [1024 ** i for i in range(len(units))]
+
+    # Find the appropriate unit for the file size
+    for i in range(len(units)):
+        if file_size < sizes[i] * 1024 or i == len(units) - 1:
+            # Format the file size with one decimal place
+            formatted_size = "{:.1f}".format(file_size / sizes[i])
+            return f"{formatted_size} {units[i]}"
+
+
+def get_new_file_names(account_token):
+    conn = sqlite3.connect(database_directory)
+    cursor = conn.cursor()
+
+    # Query the file names in increasing order of timestamp for the given account_token
+    cursor.execute('''SELECT file_name
+                      FROM file_data
+                      WHERE account_token = ?
+                      ORDER BY time_uploaded ASC''', (account_token,))
+
+    file_names = [row[0] for row in cursor.fetchall()]
+
+    conn.close()
+    
+    return file_names
+
+def get_file_sizes(account_token):
+    # Connect to the SQLite database
+    conn = sqlite3.connect(database_directory)
+    cursor = conn.cursor()
+
+    # Retrieve file sizes in increasing order of timestamp for the given account_token
+    cursor.execute('''SELECT file_size
+                      FROM file_data
+                      WHERE account_token = ?
+                      ORDER BY time_uploaded ASC''', (account_token,))
+    
+    file_sizes = [turn_size_to_string(row[0]) for row in cursor.fetchall()]
+
+    # Close the database connection
+    conn.close()
+
+    return file_sizes
 
 def add_file(file_name: str, account_token: str, time_uploaded: int, original_file_name: str):
     file_size: float = get_file_size(os.path.join("..","i.anga.pro","assets", file_name))

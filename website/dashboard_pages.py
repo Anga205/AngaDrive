@@ -1,4 +1,5 @@
 import reflex as rx
+import website.library as func
 
 
 def text_inside_uploader(files):
@@ -115,9 +116,16 @@ def dashboard_file_hosted_widget(file_name="Fetching...", file_size="Fetching...
         bg="#0a0a0a"
     )
 
+def side_gaps(text):
+    return rx.hstack(
+        rx.box(width="1vh"),
+        rx.text(text, color="WHITE", font_size="1.65vh"),
+        rx.box(width="1vh"),
+        spacing="0px"
+    )
 
 
-def file_hosting_page(state_enable_popup_to_upload, state_turn_off_popup_to_upload, state_turn_on_popup_to_upload, upload_handler):
+def file_hosting_page(State, bool_files_associated_with_account, state_enable_popup_to_upload, state_turn_off_popup_to_upload, state_turn_on_popup_to_upload, upload_handler):
     return rx.vstack(
         rx.box(height="2vh"),
         rx.hstack(
@@ -148,7 +156,41 @@ def file_hosting_page(state_enable_popup_to_upload, state_turn_off_popup_to_uplo
             spacing="0px"
         ),
         rx.box(height="3vh"),
-        dashboard_file_hosted_widget(),
+        rx.cond(
+            bool_files_associated_with_account,
+            rx.hstack(
+                rx.vstack(
+                    rx.heading("File Name", _as="b", font_size="2.5vh", color="WHITE"),
+                    rx.divider(border_color="WHITE"),
+                    rx.foreach(
+                        State.files_associated_with_account,
+                        lambda file: side_gaps(file)
+                    ),
+                ),
+                rx.box(width="1px", height="100%", bg="WHITE"),
+                rx.vstack(
+                    rx.heading("Link", _as="b", font_size="2.5vh", color="WHITE"),
+                    rx.divider(border_color="WHITE"),
+                    rx.foreach(
+                        State.new_file_names_associated_with_account,
+                        lambda file: side_gaps(file)
+                    )
+                ),
+                rx.box(width="1px",bg="WHITE", height="100%"),
+                rx.vstack(
+                    rx.heading("File Size", _as="b", font_size="2.5vh", color="WHITE"),
+                    rx.divider(border_color="WHITE"),
+                    rx.foreach(
+                        State.file_sizes_associated_with_account,
+                        lambda file: side_gaps(file)
+                    )
+                ),
+                bg="#0f0f0f",
+                spacing="0px",
+                border_radius="2vh"
+            ),
+            rx.text("You have not uploaded anything yet, click 'upload' to start hosting files on i.anga.pro!", color="WHITE"),
+        ),
         width="100%",
         spacing="1vh"
     )

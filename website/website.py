@@ -19,13 +19,6 @@ class State(rx.State):
     SignUp_email=""
     SignUp_password=""
     TPU_verified=False
-    
-
-    #THIS IS TEMPORARY AND SHOULD BE REMOVED AFTER SECURITY REWORK
-    @rx.var
-    def user_token(self):
-        return func.get_token_from_username(self.username)
-
 
     @rx.var
     def loads_today(self):
@@ -321,16 +314,38 @@ class State(rx.State):
 
     async def handle_upload(self, files: list[rx.UploadFile]):
         for file in files:
-            print(f"handling {file.filename}")
             upload_data = await file.read()
-            outfile=os.path.join(os.getcwd(),"..","cdn.anga.pro","assets",func.obfuscate_filename(file.filename))
+            new_file_name=func.obfuscate_filename(file.filename)
+            outfile=os.path.join(os.getcwd(),"..","i.anga.pro","assets",new_file_name)
 
             # Save the file.
             with open(outfile, "wb") as file_object:
                 file_object.write(upload_data)
 
+            func.add_file(new_file_name, func.get_token_from_username(self.username), time.time(), file.filename)
+
             # Update the img var.
             self.img.append(file.filename)
+            print(f"handled {file.filename}")
+            print(func.get_file_info(new_file_name))
+        self.enable_popup_to_upload=False
+
+
+    @rx.var
+    def files_associated_with_account(self) -> list[str]:
+        return func.get_files(func.get_token_from_username(self.username))
+    
+    @rx.var
+    def bool_files_associated_with_account(self) -> bool:
+        return bool(self.files_associated_with_account)
+    
+    @rx.var
+    def new_file_names_associated_with_account(self) -> list[str]:
+        return func.get_new_file_names(func.get_token_from_username(self.username))
+
+    @rx.var
+    def file_sizes_associated_with_account(self) -> list[str]:
+        return func.get_file_sizes(func.get_token_from_username(self.username))
 
 
 def login() -> rx.Component:
@@ -1293,7 +1308,7 @@ def dashboard():
             rx.cond(
                 State.dashboard_is_account_page,
                 account_manager(),
-                dashboard_pages.file_hosting_page(State.enable_popup_to_upload, State.turn_off_popup_to_upload, State.turn_on_popup_to_upload, State.handle_upload)
+                dashboard_pages.file_hosting_page(State, State.bool_files_associated_with_account,State.enable_popup_to_upload, State.turn_off_popup_to_upload, State.turn_on_popup_to_upload, State.handle_upload)
             ),
             height="100vh", 
             width="85%", 
