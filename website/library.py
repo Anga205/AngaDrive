@@ -485,7 +485,7 @@ def get_file_sizes(account_token):
     return file_sizes
 
 def add_file(file_name: str, account_token: str, time_uploaded: int, original_file_name: str):
-    file_size: float = get_file_size(os.path.join("..","i.anga.pro","assets", file_name))
+    file_size: float = get_file_size(os.path.join("..","cdn_app","assets", file_name))
     con=sqlite3.connect(database_directory)
     cur=con.cursor()
     cur.execute(f'''insert into file_data values ("{file_name}", "{account_token}", {round(time_uploaded)}, {file_size}, "{original_file_name}")''')
