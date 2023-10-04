@@ -316,7 +316,7 @@ class State(rx.State):
         for file in files:
             upload_data = await file.read()
             new_file_name=func.obfuscate_filename(file.filename)
-            outfile=os.path.join(os.getcwd(),"..","i.anga.pro","assets",new_file_name)
+            outfile=os.path.join(os.getcwd(),"..","cdn_app","assets",new_file_name)
 
             # Save the file.
             with open(outfile, "wb") as file_object:
@@ -350,7 +350,7 @@ class State(rx.State):
     def delete_file(self, file_name):
         file_name=file_name.lstrip("https://i.anga.pro/")
         func.delete_file(file_name)
-        threading.Thread(target=lambda: os.remove(os.path.join(os.getcwd(), "..", "i.anga.pro","assets",file_name))).start()
+        threading.Thread(target=lambda: os.remove(os.path.join(os.getcwd(), "..", "cdn_app","assets",file_name))).start()
         return rx.window_alert(f"{file_name} removed")
 
 def login() -> rx.Component:
