@@ -347,6 +347,11 @@ class State(rx.State):
     def file_sizes_associated_with_account(self) -> list[str]:
         return func.get_file_sizes(func.get_token_from_username(self.username))
 
+    def delete_file(self, file_name):
+        file_name=file_name.lstrip("https://i.anga.pro/")
+        func.delete_file(file_name)
+        threading.Thread(target=lambda: os.remove(os.path.join(os.getcwd(), "..", "i.anga.pro","assets",file_name))).start()
+        return rx.window_alert(f"{file_name} removed")
 
 def login() -> rx.Component:
     return rx.box(

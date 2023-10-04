@@ -460,10 +460,10 @@ def get_new_file_names(account_token):
                       WHERE account_token = ?
                       ORDER BY time_uploaded ASC''', (account_token,))
 
-    file_names = [row[0] for row in cursor.fetchall()]
+    file_names = [f"https://i.anga.pro/{row[0]}" for row in cursor.fetchall()]
 
     conn.close()
-    
+
     return file_names
 
 def get_file_sizes(account_token):
@@ -491,3 +491,20 @@ def add_file(file_name: str, account_token: str, time_uploaded: int, original_fi
     cur.execute(f'''insert into file_data values ("{file_name}", "{account_token}", {round(time_uploaded)}, {file_size}, "{original_file_name}")''')
     con.commit()
     con.close()
+
+
+def delete_file(file_name):
+    # Connect to the SQLite database
+    conn = sqlite3.connect(database_directory)
+    cursor = conn.cursor()
+
+    try:
+        # Delete the row associated with the given file_name
+        cursor.execute('''DELETE FROM file_data WHERE file_name = ?''', (file_name,))
+        conn.commit()
+        print(f"File '{file_name}' deleted successfully.")
+    except sqlite3.Error as e:
+        print(f"Error deleting file '{file_name}': {e}")
+    finally:
+        # Close the database connection
+        conn.close()
