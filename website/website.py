@@ -327,7 +327,6 @@ class State(rx.State):
             # Update the img var.
             self.img.append(file.filename)
             print(f"handled {file.filename}")
-            print(func.get_file_info(new_file_name))
         self.enable_popup_to_upload=False
 
 
