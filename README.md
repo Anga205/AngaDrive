@@ -12,7 +12,7 @@ here are the exact commands to run to use anga.pro:
 # For windows command prompt
 
 first download the repository
-`git clone hhtps://github.com/Anga205/anga.pro`
+`git clone https://github.com/Anga205/anga.pro`
 
 enter the cloned repository
 `cd anga.pro`
