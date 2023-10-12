@@ -597,113 +597,113 @@ def index():
                     spacing="2.1vh",
                     on_mouse_over=State.stop_timer,on_mouse_enter=State.stop_timer,
                 ),
- #               rx.vstack(
- #                   rx.box(height="10vh"),
- #                   rx.heading(
- #                       rx.span("Why use "),
- #                       rx.span("anga", color="#ffcccb"),
- #                       rx.span(".", color="#90EE90"),
- #                       rx.span("pro", color="#ADD8E6"),
- #                       rx.span("?"),
- #                       color='WHITE',
- #                       font_size="4vh"
- #                   ),
- #                   rx.center(
- #                       rx.hstack(
- #                           rx.vstack(
- #                               rx.image(src="open-source.png", height="8vh", width="auto"),
- #                               rx.heading("Open Source", _as="b", color="WHITE", font_size="3vh", text_align="center"),
- #                               rx.center(
- #                                   rx.text("All of my projects (including this website!) are open source, and availible on my github page, if you doubt my hosting, you can always download and host by yourself", text_align="center", color="WHITE", font_size="1.66vh")
- #                               ),
- #                               width="22vh",
- #                               border_radius="0.525vh",
- #                               bg="BLACK",
- #                               border_width="2.1vh",
- #                               border_color="BLACK",
- #                               height="41vh",
- #                               spacing="0.5vh"
- #                           ),
- #                           rx.vstack(
- #                               rx.image(src="attention.png", height="8vh", width="auto"),
- #                               rx.heading("Personalized Attention", _as="b", color="WHITE", font_size="3vh", text_align="center"),
- #                               rx.center(
- #                                   rx.text("Due to the small-scale nature of anga.pro, any issues you have, will be personally looked into (and hopefully solved) by me, there is no elaborate beaureocracy to navigate for support", text_align="center", color="WHITE", font_size="1.66vh")
- #                               ),
- #                               width="22vh",
- #                               border_radius="0.525vh",
- #                               bg="BLACK",
- #                               border_width="2.1vh",
- #                               border_color="BLACK",
- #                               height="41vh",
- #                               spacing="0.5vh"
- #                           ),
- #                           rx.vstack(
- #                               rx.image(src="money.png", height="8vh", width="auto"),
- #                               rx.heading("Cost Effective", _as="b", color="WHITE", font_size="3vh", text_align="center"),
- #                               rx.center(
- #                                   rx.text("anga.pro is an indie project and therefore prioritizes cost effectiveness over everything, although i will always try to maintain quality in my work", text_align="center", color="WHITE", font_size="1.66vh")
- #                               ),
-#                                width="22vh",
-#                                border_radius="0.525vh",
-#                                bg="BLACK",
-#                                border_width="2.1vh",
-#                                border_color="BLACK",
-#                                height="41vh",
-#                                spacing="0.5vh"
-#                            ),
-#                            rx.vstack(
-#                                rx.image(src="flower.png", height="8vh", width="auto"),
-#                                rx.heading("Customized Solutions", _as="b", color="WHITE", font_size="3vh", text_align="center"),
-#                                rx.center(
-#                                    rx.text("If a public project of mine does not suit exactly your hosting needs, just contact me and tell me exactly what you desire, i will try to help you out", text_align="center", color="WHITE", font_size="1.66vh")
-#                                ),
-#                                width="22vh",
-#                                border_radius="0.525vh",
-#                                bg="BLACK",
-#                                border_width="2.1vh",
-#                                border_color="BLACK",
-#                                height="41vh",
-#                                spacing="0.5vh"
-#                            ),
-#                            rx.vstack(
-#                                rx.image(src="lock.png", height="8vh", width="auto"),
-#                                rx.heading("Privacy", _as="b", color="WHITE", font_size="3vh", text_align="center"),
-#                                rx.center(
-#                                    rx.text("Any projects i make specifically for you will not be published to open source without your explicit consent, on the off chance i do publish it, ill refund you and you can use it for free", text_align="center", color="WHITE", font_size="1.66vh")
-#                                ),
-#                                width="22vh",
-#                                border_radius="0.525vh",
-#                                bg="BLACK",
-#                                border_width="2.1vh",
-#                                border_color="BLACK",
-#                                height="41vh",
-#                                spacing="0.5vh"
-#                            ),
-#                            rx.vstack(
-#                                rx.image(src="kling.png", height="8vh", width="auto"),
-#                                rx.heading("Track Record", _as="b", color="WHITE", font_size="3vh", text_align="center"),
-#                                rx.center(
-#                                    rx.text("I have somewhat of a positive track record, You may know my previous project, KlingMC, which remained up to date while it was active.", text_align="center", color="WHITE", font_size="1.66vh")
-#                                ),
-#                                width="22vh",
-#                                border_radius="0.525vh",
-#                                bg="BLACK",
-#                                border_width="2.1vh",
-#                                border_color="BLACK",
-#                                height="41vh",
-#                                spacing="0.5vh"
-#                            ),
-#                            spacing="3.15vh",
-#                            width="80%"
-#                        ),
-#                        width="100%"
-#                    ),
-#                    bg="#190000",
-#                    width="100%",
-#                    height="75vh",
-#                    spacing="3.15vh",
-#                ),
+                rx.vstack(
+                    rx.box(height="10vh"),
+                    rx.heading(
+                        rx.span("Why use "),
+                        rx.span("anga", color="#ffcccb"),
+                        rx.span(".", color="#90EE90"),
+                        rx.span("pro", color="#ADD8E6"),
+                        rx.span("?"),
+                        color='WHITE',
+                        font_size="4vh"
+                    ),
+                    rx.center(
+                        rx.hstack(
+                            rx.vstack(
+                                rx.image(src="open-source.png", height="8vh", width="auto"),
+                                rx.heading("Open Source", _as="b", color="WHITE", font_size="3vh", text_align="center"),
+                                rx.center(
+                                    rx.text("All of my projects (including this website!) are open source, and availible on my github page, if you doubt my hosting, you can always download and host by yourself", text_align="center", color="WHITE", font_size="1.66vh")
+                                ),
+                                width="22vh",
+                                border_radius="0.525vh",
+                                bg="BLACK",
+                                border_width="2.1vh",
+                                border_color="BLACK",
+                                height="41vh",
+                                spacing="0.5vh"
+                            ),
+                            rx.vstack(
+                                rx.image(src="attention.png", height="8vh", width="auto"),
+                                rx.heading("Personalized Attention", _as="b", color="WHITE", font_size="3vh", text_align="center"),
+                                rx.center(
+                                    rx.text("Due to the small-scale nature of anga.pro, any issues you have, will be personally looked into (and hopefully solved) by me, there is no elaborate beaureocracy to navigate for support", text_align="center", color="WHITE", font_size="1.66vh")
+                                ),
+                                width="22vh",
+                                border_radius="0.525vh",
+                                bg="BLACK",
+                                border_width="2.1vh",
+                                border_color="BLACK",
+                                height="41vh",
+                                spacing="0.5vh"
+                            ),
+                            rx.vstack(
+                                rx.image(src="money.png", height="8vh", width="auto"),
+                                rx.heading("Cost Effective", _as="b", color="WHITE", font_size="3vh", text_align="center"),
+                                rx.center(
+                                    rx.text("anga.pro is an indie project and therefore prioritizes cost effectiveness over everything, although i will always try to maintain quality in my work", text_align="center", color="WHITE", font_size="1.66vh")
+                                ),
+                                width="22vh",
+                                border_radius="0.525vh",
+                                bg="BLACK",
+                                border_width="2.1vh",
+                                border_color="BLACK",
+                                height="41vh",
+                                spacing="0.5vh"
+                            ),
+                            rx.vstack(
+                                rx.image(src="flower.png", height="8vh", width="auto"),
+                                rx.heading("Customized Solutions", _as="b", color="WHITE", font_size="3vh", text_align="center"),
+                                rx.center(
+                                    rx.text("If a public project of mine does not suit exactly your hosting needs, just contact me and tell me exactly what you desire, i will try to help you out", text_align="center", color="WHITE", font_size="1.66vh")
+                                ),
+                                width="22vh",
+                                border_radius="0.525vh",
+                                bg="BLACK",
+                                border_width="2.1vh",
+                                border_color="BLACK",
+                                height="41vh",
+                                spacing="0.5vh"
+                            ),
+                            rx.vstack(
+                                rx.image(src="lock.png", height="8vh", width="auto"),
+                                rx.heading("Privacy", _as="b", color="WHITE", font_size="3vh", text_align="center"),
+                                rx.center(
+                                    rx.text("Any projects i make specifically for you will not be published to open source without your explicit consent, on the off chance i do publish it, ill refund you and you can use it for free", text_align="center", color="WHITE", font_size="1.66vh")
+                                ),
+                                width="22vh",
+                                border_radius="0.525vh",
+                                bg="BLACK",
+                                border_width="2.1vh",
+                                border_color="BLACK",
+                                height="41vh",
+                                spacing="0.5vh"
+                            ),
+                            rx.vstack(
+                                rx.image(src="kling.png", height="8vh", width="auto"),
+                                rx.heading("Track Record", _as="b", color="WHITE", font_size="3vh", text_align="center"),
+                                rx.center(
+                                    rx.text("I have somewhat of a positive track record, You may know my previous project, KlingMC, which remained up to date while it was active.", text_align="center", color="WHITE", font_size="1.66vh")
+                                ),
+                                width="22vh",
+                                border_radius="0.525vh",
+                                bg="BLACK",
+                                border_width="2.1vh",
+                                border_color="BLACK",
+                                height="41vh",
+                                spacing="0.5vh"
+                            ),
+                            spacing="3.15vh",
+                            width="80%"
+                        ),
+                        width="100%"
+                    ),
+                    bg="#190000",
+                    width="100%",
+                    height="75vh",
+                    spacing="3.15vh",
+                ),
                 rx.vstack(
                     rx.box(height="6vh"),
                     rx.heading("Some interesting statistics about this website:", color="WHITE", font_size="3.5vh"),
