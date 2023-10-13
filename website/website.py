@@ -349,7 +349,10 @@ class State(rx.State):
     def delete_file(self, file_name):
         file_name=file_name.lstrip("https://i.anga.pro/")
         func.delete_file(file_name)
-        threading.Thread(target=lambda: os.remove(os.path.join(os.getcwd(), "..", "cdn_app","assets",file_name))).start()
+        try:
+            os.remove(os.path.join(os.getcwd(), "..", "cdn_app","assets",file_name))
+        except Exception as e:
+            print(e)
         return rx.window_alert(f"{file_name} removed")
 
 def login() -> rx.Component:

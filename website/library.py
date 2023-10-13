@@ -1,5 +1,4 @@
 import re, sqlite3, sqlite3, datetime, time, random, bcrypt, os, string
-from typing import Optional, List, Union, Tuple
 
 database_directory=os.path.join("..","rx.db")
 
@@ -495,6 +494,7 @@ def add_file(file_name: str, account_token: str, time_uploaded: int, original_fi
 
 def delete_file(file_name):
     # Connect to the SQLite database
+    print(f"deleting {file_name}")
     conn = sqlite3.connect(database_directory)
     cursor = conn.cursor()
 
