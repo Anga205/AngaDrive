@@ -1253,23 +1253,23 @@ def dashboard():
                 height="4.5vh",
                 _hover={"bg":"BLACK"}
                 ),
-            rx.button(
-                rx.span(
-                    rx.image(src="/support.png"), 
-                    width="2.1vh", 
-                    height="2.1vh", 
-                    style={"margin-top": "0.315vh"}
-                    ), 
-                rx.span("", width="2.1vh"), 
-                rx.span("Support"), 
-                rx.spacer(), 
-                color="WHITE", 
-                font_size="2.1vh", 
-                bg="#0E0019", 
-                width="100%",
-                height="4.5vh",
-                _hover={"bg":"BLACK"}
-                ),
+#            rx.button(
+#                rx.span(
+#                    rx.image(src="/support.png"), 
+#                    width="2.1vh", 
+#                    height="2.1vh", 
+#                    style={"margin-top": "0.315vh"}
+#                    ), 
+#                rx.span("", width="2.1vh"), 
+#                rx.span("Support"), 
+#                rx.spacer(), 
+#                color="WHITE", 
+#                font_size="2.1vh", 
+#                bg="#0E0019", 
+#                width="100%",
+#                height="4.5vh",
+#                _hover={"bg":"BLACK"}
+#                ),
             rx.button(
                 rx.span(
                     rx.icon(tag="delete"), 
