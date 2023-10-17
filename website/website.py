@@ -287,10 +287,20 @@ class State(rx.State):
             pass
         else:
             self.dashboard_page="hosting"
+    
+    def set_dashboard_to_support_page(self):
+        if self.dashboard_page=="support":
+            pass
+        else:
+            self.dashboard_page="support"
 
     @rx.var
     def dashboard_is_hosting_page(self):
         return self.dashboard_page=="hosting" 
+    
+    @rx.var
+    def dashboard_is_support_page(self):
+        return self.dashboard_page=="support" 
 
     def set_dashboard_to_account_manager(self):
         if self.dashboard_page=="account":
@@ -354,6 +364,8 @@ class State(rx.State):
         except Exception as e:
             print(e)
         return rx.window_alert(f"{file_name} removed")
+    
+
 
 def login() -> rx.Component:
     return rx.box(
@@ -1253,23 +1265,24 @@ def dashboard():
                 height="4.5vh",
                 _hover={"bg":"BLACK"}
                 ),
-#            rx.button(
-#                rx.span(
-#                    rx.image(src="/support.png"), 
-#                    width="2.1vh", 
-#                    height="2.1vh", 
-#                    style={"margin-top": "0.315vh"}
-#                    ), 
-#                rx.span("", width="2.1vh"), 
-#                rx.span("Support"), 
-#                rx.spacer(), 
-#                color="WHITE", 
-#                font_size="2.1vh", 
-#                bg="#0E0019", 
-#                width="100%",
-#                height="4.5vh",
-#                _hover={"bg":"BLACK"}
-#                ),
+            rx.button(
+                rx.span(
+                    rx.image(src="/support.png"), 
+                    width="2.1vh", 
+                    height="2.1vh", 
+                    style={"margin-top": "0.315vh"}
+                    ), 
+                rx.span("", width="2.1vh"), 
+                rx.span("Support"), 
+                rx.spacer(), 
+                color="WHITE", 
+                font_size="2.1vh", 
+                bg="#0E0019", 
+                width="100%",
+                height="4.5vh",
+                _hover={"bg":"BLACK"},
+                on_click=State.set_dashboard_to_support_page
+                ),
             rx.button(
                 rx.span(
                     rx.icon(tag="delete"), 
@@ -1315,7 +1328,11 @@ def dashboard():
             rx.cond(
                 State.dashboard_is_account_page,
                 account_manager(),
-                dashboard_pages.file_hosting_page(State, State.bool_files_associated_with_account,State.enable_popup_to_upload, State.turn_off_popup_to_upload, State.turn_on_popup_to_upload, State.handle_upload)
+                rx.cond(
+                    State.dashboard_is_hosting_page,
+                    dashboard_pages.file_hosting_page(State, State.bool_files_associated_with_account,State.enable_popup_to_upload, State.turn_off_popup_to_upload, State.turn_on_popup_to_upload, State.handle_upload),
+                    dashboard_pages.support_page(State)
+                )
             ),
             height="100vh", 
             width="85%", 

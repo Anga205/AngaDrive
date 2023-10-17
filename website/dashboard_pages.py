@@ -61,10 +61,11 @@ def upload_popup_in_dashboard(state_enable_popup_to_upload, state_turn_off_popup
 
 
 
-def dashboard_file_hosted_widget(file_name="Fetching...", file_size="Fetching...", timestamp="Fetching...", link="Fetching..."):
+def dashboard_file_hosted_widget(file_object):
+    file_size, timestamp, link=0,0,0
     return rx.vstack(
         rx.span(
-            file_name,
+            file_object,
             color="WHITE",
             font_size="2vh"
         ),
@@ -211,5 +212,163 @@ def file_hosting_page(State, bool_files_associated_with_account, state_enable_po
             rx.text("You have not uploaded anything yet, click 'upload' to start hosting files on i.anga.pro!", color="WHITE"),
         ),
         width="100%",
+        spacing="1vh"
+    )
+
+def support_card(title, *components):
+    return rx.vstack(
+        rx.heading(
+            title,
+            font_size="3.5vh",
+            color="white",
+            ),
+        rx.divider(
+            border_color="GRAY"
+        ),
+        *components,
+        border_radius="2vh",
+        bg="#10112b",
+        border_color="#10112b",
+        border_width="1vh",
+        width="35vh",
+        spacing="1vh"
+    )
+
+def support_page(State):
+    return rx.vstack(
+        rx.heading(
+            "You can get support from the following platforms:",
+            font_size="3vh",
+            color="WHITE"
+        ),
+        rx.hstack(
+            rx.spacer(),
+            rx.wrap(
+                support_card(
+                    "Discord",
+                    rx.box(
+                        element="iframe",
+                        src="https://discordapp.com/widget?id=760062846423269416&theme=dark",
+                        width="100%",
+                        height="40vh"
+                    ),
+                ),
+                support_card(
+                    "Instagram",
+                    rx.link(
+                        rx.image(
+                            src="/instagram_qr.png",
+                            height="auto",
+                            width="auto",
+                            border_radius="1vh"
+                        ),
+                        href="https://instagram.com/_anga205"
+                    )
+                ),
+                support_card(
+                    "𝕏 (formerly twitter)",
+                    rx.vstack(
+                        rx.vstack(
+                            rx.spacer(),
+                            rx.hstack(
+                                rx.heading("𝕏", font_size="7vh", color="WHITE"),
+                                rx.spacer(),
+                                rx.text("custom profile iframe", font_size="1.65vh", color="WHITE"),
+                                spacing="0px",
+                                width="85%"
+                            ),
+                            rx.spacer(),
+                            bg="BLACK",
+                            spacing="0px",
+                            height="8vh",
+                            width="100%",
+                            border_radius="1vh 1vh 0vh 0vh"
+                        ),
+                        rx.hstack(
+                            rx.image(src="https://pbs.twimg.com/profile_images/1113432700126322688/4jSs4ljT_400x400.png", height="auto", width="8vh", border_radius="4vh"),
+                            rx.spacer(),
+                            rx.heading("@_anga205", _as="b", font_size="1.65vh"),
+                            spacing="0vh",
+                            width="85%"
+                        ),
+                        rx.divider(border_radius="GRAY"),
+                        rx.text("idk what to put here", font_size="1vh"),
+                        rx.spacer(),
+                        rx.button("Follow me on 𝕏",bg="BLACK", font_size="2.5vh", height="3.5vh", width="90%", color="WHITE", _hover={"color":"BLACK", "bg":"WHITE"}),
+                        rx.box(height="0vh", width="0px"),
+                        spacing="1vh",
+                        width="100%",
+                        height="100%",
+                        bg="WHITE",
+                        border_radius="1.5vh 1.5vh 1vh 1vh",
+                        on_click=rx.redirect("https://twitter.com/_anga205/")
+                    )
+                ),
+                support_card(
+                    "GitHub",
+                    rx.vstack(
+                        rx.spacer(),
+                        rx.heading("This website doesnt provide an inbuilt social media widget that i can embed so im working on a custom card to put here :/",font_size="2vh",width="85%"),
+                        rx.spacer(),
+                        width="100%",
+                        height="100%",
+                        bg="WHITE",
+                        border_radius="1vh",
+                    )
+                ),
+                support_card(
+                    "Threads",
+                    rx.vstack(
+                        rx.spacer(),
+                        rx.heading("This website doesnt provide an inbuilt social media widget that i can embed so im working on a custom card to put here :/",font_size="2vh",width="85%"),
+                        rx.spacer(),
+                        width="100%",
+                        height="100%",
+                        bg="WHITE",
+                        border_radius="1vh",
+                    )
+                ),
+                support_card(
+                    "Email",
+                    rx.vstack(
+                        rx.spacer(),
+                        rx.heading("This website doesnt provide an inbuilt social media widget that i can embed so im working on a custom card to put here :/",font_size="2vh",width="85%"),
+                        rx.spacer(),
+                        width="100%",
+                        height="100%",
+                        bg="WHITE",
+                        border_radius="1vh",
+                    )
+                ),
+                support_card(
+                    "Telegram",
+                    rx.vstack(
+                        rx.spacer(),
+                        rx.heading("This website doesnt provide an inbuilt social media widget that i can embed so im working on a custom card to put here :/",font_size="2vh",width="85%"),
+                        rx.spacer(),
+                        width="100%",
+                        height="100%",
+                        bg="WHITE",
+                        border_radius="1vh",
+                    )
+                ),
+                support_card(
+                    "Live Chat",
+                    rx.vstack(
+                        rx.spacer(),
+                        rx.heading("Chat with me in this website itself without logging into any social media, This is a work in progress :)",font_size="2vh",width="85%"),
+                        rx.spacer(),
+                        width="100%",
+                        height="100%",
+                        bg="WHITE",
+                        border_radius="1vh",
+                    )
+                ),
+#                align_items="baseline",
+                width="85%"
+            ),
+            rx.spacer(),
+            width="100%"
+        ),
         spacing="1vh"
     )
