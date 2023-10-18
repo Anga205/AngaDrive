@@ -61,8 +61,8 @@ def upload_popup_in_dashboard(state_enable_popup_to_upload, state_turn_off_popup
 
 
 
-def dashboard_file_hosted_widget(file_object):
-    file_size, timestamp, link=0,0,0
+def dashboard_file_hosted_widget(State ,file_object):
+    file_size, timestamp, link="test", "test", "test"
     return rx.vstack(
         rx.span(
             file_object,
@@ -99,6 +99,7 @@ def dashboard_file_hosted_widget(file_object):
                 font_size="1.65vh",
                 border_radius="1.5vh",
                 height="3vh",
+                on_click=State.delete_file(file_object)
             ),
             rx.spacer(),
             rx.button(
@@ -116,15 +117,6 @@ def dashboard_file_hosted_widget(file_object):
         spacing="0px",
         bg="#0a0a0a"
     )
-
-def side_gaps(text, fontsize="1.65vh"):
-    return rx.hstack(
-        rx.box(width="1vh"),
-        rx.text(text, color="WHITE", font_size=fontsize, height="2.5vh") if fontsize=="1.65vh" else rx.heading(text, color="WHITE", font_size=fontsize, _as="b"),
-        rx.box(width="1vh"),
-        spacing="0px"
-    )
-
 
 def file_hosting_page(State, bool_files_associated_with_account, state_enable_popup_to_upload, state_turn_off_popup_to_upload, state_turn_on_popup_to_upload, upload_handler):
     return rx.vstack(
@@ -159,55 +151,11 @@ def file_hosting_page(State, bool_files_associated_with_account, state_enable_po
         rx.box(height="3vh"),
         rx.cond(
             bool_files_associated_with_account,
-            rx.hstack(
-                rx.vstack(
-                    rx.heading("File Name", _as="b", font_size="2.5vh", color="WHITE"),
-                    rx.divider(border_color="WHITE"),
-                    rx.foreach(
-                        State.files_associated_with_account,
-                        lambda file: side_gaps(file)
-                    ),
-                    spacing="0.5vh"
-                ),
-                rx.box(width="1px",bg="WHITE", height="100%"),
-                rx.vstack(
-                    side_gaps("File Size", "2.5vh"),
-                    rx.divider(border_color="WHITE"),
-                    rx.foreach(
-                        State.file_sizes_associated_with_account,
-                        lambda file: side_gaps(file)
-                    ),
-                    spacing="0.5vh"
-                ),
-                rx.box(width="1px", height="100%", bg="WHITE"),
-                rx.vstack(
-                    rx.heading("Manage", _as="b", font_size="2.5vh", color="WHITE"),
-                    rx.divider(border_color="WHITE"),
-                    rx.foreach(
-                        State.new_file_names_associated_with_account,
-                        lambda file: rx.hstack(
-                            rx.box(width="0.5vh"),
-                            rx.button(
-                                rx.icon(tag="copy", color="#009688"),
-                                on_click=rx.set_clipboard(file),
-                                height="2.5vh",
-                                bg="#132523"
-                            ),
-                            rx.button(
-                                rx.icon(tag="delete", color="RED"),
-                                bg="#301b19",
-                                height="2.5vh",
-                                on_click=State.delete_file(file)
-                            ),
-                            rx.box(width="0.5vh"),
-                            spacing="0.5vh"
-                        )
-                    ),
-                    spacing="0.5vh"
-                ),
-                bg="#0f0f0f",
-                spacing="0px",
-                border_radius="2vh"
+            rx.wrap(
+                rx.foreach(
+                    State.new_file_names_associated_with_account,
+                    lambda file_obj: dashboard_file_hosted_widget(State, file_obj)
+                )
             ),
             rx.text("You have not uploaded anything yet, click 'upload' to start hosting files on i.anga.pro!", color="WHITE"),
         ),
