@@ -332,12 +332,15 @@ def obfuscate_filename(filename):
 
 def create_sqlite_database(DB_PATH):
     # Create or connect to the SQLite database
+    if os.path.isfile(DB_PATH):
+        return None
+
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
 
     # Create the 'activity' table
     cursor.execute('''CREATE TABLE IF NOT EXISTS activity (
-                        timestamp INTEGER
+                        timestamps INTEGER
                     )''')
 
     # Create the 'accounts' table
@@ -385,10 +388,13 @@ def get_token_from_username(username):
     con= sqlite3.connect(database_directory)
     cur=con.cursor()
     cur.execute(f"select token from accounts where username='{username}'")
-    token=cur.fetchone()
-    token=token[0]
-    con.close()
-    return token
+    try:
+        token=cur.fetchone()
+        token=token[0]
+        con.close()
+        return token
+    except:
+        return ""
 
 def get_files(account_token):
     # Connect to the SQLite database
