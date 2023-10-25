@@ -62,10 +62,10 @@ def upload_popup_in_dashboard(state_enable_popup_to_upload, state_turn_off_popup
 
 
 def dashboard_file_hosted_widget(State ,file_object):
-    file_size, timestamp, link="test", "test", "test"
+    file_size, timestamp, new_file_name, link=file_object[3], file_object[2], file_object[0], file_object[-1]
     return rx.vstack(
         rx.span(
-            file_object,
+            file_object[4],
             color="WHITE",
             font_size="2vh"
         ),
@@ -77,16 +77,18 @@ def dashboard_file_hosted_widget(State ,file_object):
                 rx.text("File Link: "),
                 font_size="1.65vh",
                 color="WHITE",
-                spacing="0.3vh"
+                spacing="0.3vh",
+                align_items="flex-end"
             ),
             rx.vstack(
                 rx.text(file_size),
                 rx.text(timestamp),
                 rx.tooltip(
-                    rx.text(link, on_click=rx.set_clipboard(link)),
+                    rx.text(new_file_name, on_click=rx.set_clipboard(link)),
                     label="click to copy"
                 ),
                 spacing="0.3vh",
+                align_items="flex-start",
                 color="WHITE",
                 font_size="1.65vh"
             ),
@@ -99,7 +101,7 @@ def dashboard_file_hosted_widget(State ,file_object):
                 font_size="1.65vh",
                 border_radius="1.5vh",
                 height="3vh",
-                on_click=State.delete_file(file_object)
+                on_click=State.delete_file(file_object[0])
             ),
             rx.spacer(),
             rx.button(
@@ -107,6 +109,7 @@ def dashboard_file_hosted_widget(State ,file_object):
                 bg="#132523",
                 height="3vh",
                 border_radius="1.5vh",
+                on_click=rx.set_clipboard(link),
                 font_size="1.65vh"
             ),
             rx.spacer()
@@ -153,7 +156,7 @@ def file_hosting_page(State, bool_files_associated_with_account, state_enable_po
             bool_files_associated_with_account,
             rx.wrap(
                 rx.foreach(
-                    State.new_file_names_associated_with_account,
+                    State.file_data_list_associated_with_account,
                     lambda file_obj: dashboard_file_hosted_widget(State, file_obj)
                 )
             ),

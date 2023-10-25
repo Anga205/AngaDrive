@@ -1,6 +1,6 @@
 import re, sqlite3, sqlite3, datetime, time, random, bcrypt, os, string
 
-database_directory=os.path.join("..","rx.db")
+database_directory=os.path.join("rx.db")
 
 def gen_token():
     a="qwertyuiopasdfghjklzxcvbnm"
@@ -433,6 +433,8 @@ def get_file_info(file_name: str) -> list[str]:
         if result:
             # Convert the result tuple to a list for easy access
             file_info = list(result)
+            file_info[2] = time.ctime(file_info[2])
+            file_info[3] = turn_size_to_string(file_info[3])
             get_file_info_cache[file_name]=file_info
             return file_info
         else:
@@ -465,7 +467,7 @@ def get_new_file_names(account_token):
                       WHERE account_token = ?
                       ORDER BY time_uploaded ASC''', (account_token,))
 
-    file_names = [f"https://i.anga.pro/{row[0]}" for row in cursor.fetchall()]
+    file_names = [f"{row[0]}" for row in cursor.fetchall()]
 
     conn.close()
 
@@ -490,13 +492,19 @@ def get_file_sizes(account_token):
     return file_sizes
 
 def add_file(file_name: str, account_token: str, time_uploaded: int, original_file_name: str):
-    file_size: float = get_file_size(os.path.join("..","cdn_app","assets", file_name))
+    file_size: float = get_file_size(os.path.join("assets", "i", file_name))
     con=sqlite3.connect(database_directory)
     cur=con.cursor()
     cur.execute(f'''insert into file_data values ("{file_name}", "{account_token}", {round(time_uploaded)}, {file_size}, "{original_file_name}")''')
     con.commit()
     con.close()
 
+def get_file_info_from_account_token(account_token: str) -> list[list[str]]: #returns [[file_name, account_token, time_uploaded, file_size, original_file_name]]
+    file_names=get_new_file_names(account_token)
+    file_info=[]
+    for i in file_names:
+        file_info.append(get_file_info(i))
+    return file_info
 
 def delete_file(file_name):
     # Connect to the SQLite database

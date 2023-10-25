@@ -233,10 +233,6 @@ class State(rx.State):
             self.switch_username_editor_in_dashboard()
             return rx.window_alert("Username was changed successfully")
 
-#    @rx.var
-#    def pfp_exists(self):
-#        os.path.exists(f"assets/pfps/{self.email}")
-
     pfp_exists=False
 
     def TPU_verify(self):
@@ -254,13 +250,6 @@ class State(rx.State):
             return [rx.redirect('/dashboard'), rx.set_local_storage("TPU",token)]
         else:
             return [rx.redirect("/login"), rx.window_alert("login with TPU failed")]
-    
-#    @rx.var
-#    def TPU_login_info(self):
-#        if self.TPU_verified:
-#            data=TPU.verifier(self.TPU_verified)
-#            self.username=data['username']
-#            self.email=data['email']
 
     if TPU_verified:
         data=TPU.verifier(TPU_verified)
@@ -323,7 +312,7 @@ class State(rx.State):
         for file in files:
             upload_data = await file.read()
             new_file_name=func.obfuscate_filename(file.filename)
-            outfile=os.path.join(os.getcwd(),"..","cdn_app","assets",new_file_name)
+            outfile=os.path.join("assets","i",new_file_name)
 
             # Save the file.
             with open(outfile, "wb") as file_object:
@@ -347,7 +336,16 @@ class State(rx.State):
     
     @rx.var
     def new_file_names_associated_with_account(self) -> list[str]:
+#        print(func.get_new_file_names(func.get_token_from_username(self.username)))
         return func.get_new_file_names(func.get_token_from_username(self.username))
+    
+    @rx.var
+    def file_data_list_associated_with_account(self) -> list[list[str]]:
+        data_list=func.get_file_info_from_account_token(func.get_token_from_username(self.username))
+        final_list=[]
+        for i in data_list:
+            final_list.append(i+[f"{self.get_headers().get('origin')}/i/{i[0]}"])
+        return final_list
 
     @rx.var
     def file_sizes_associated_with_account(self) -> list[str]:
@@ -357,7 +355,7 @@ class State(rx.State):
         file_name=file_name.lstrip("https://i.anga.pro/")
         func.delete_file(file_name)
         try:
-            os.remove(os.path.join(os.getcwd(), "..", "cdn_app","assets",file_name))
+            os.remove(os.path.join("assets","i",file_name))
         except Exception as e:
             print(e)
         return rx.window_alert(f"{file_name} removed")
