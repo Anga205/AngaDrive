@@ -365,19 +365,16 @@ def index():
                     rx.text("This data is live updated, refresh this page to see the numbers change!", color="WHITE", font_size="1.5vh"),
                     rx.hstack(
                         rx.vstack(
-                            rx.box(
-                                rx.recharts.line_chart(
-                                    rx.recharts.line(
-                                        data_key="Page loads",
-                                        type_="monotone",
-                                        stroke="BLACK"
-                                    ),
-                                    rx.recharts.x_axis(data_key="Date"),
-                                    rx.recharts.y_axis(),
-                                    data=State.loads_per_day,
-                                    width="100%",
-                                    height=250
+                            rx.recharts.line_chart(
+                                rx.recharts.line(
+                                    data_key="Page loads",
+                                    type_="monotone",
+                                    stroke="BLACK"
                                 ),
+                                rx.recharts.x_axis(data_key="Date"),
+                                rx.recharts.y_axis(),
+                                data=State.loads_per_day,
+                                height=250,
                                 width="100%"
                             ),
                             rx.heading(
@@ -391,7 +388,7 @@ def index():
                             border_radius="1vh",
                             spacing="0vh",
                             width="50vh",
-                            border_width="5px",
+                            border_width="1vh",
                             border_color="#00fff5"
                         ),
                         rx.vstack(
@@ -750,11 +747,18 @@ def index():
                     rx.text("This data is live updated, refresh this page to see the numbers change!", color="WHITE", font_size="1.2vh"),
                     rx.vstack(
                         rx.box(
-#                            rx.chart(
-#                                rx.line(
-#                                    data=State.loads_per_day,
-#                                ),
-#                            ),
+                            rx.recharts.line_chart(
+                                rx.recharts.line(
+                                    data_key="Page loads",
+                                    type_="monotone",
+                                    stroke="BLACK"
+                                ),
+                                rx.recharts.x_axis(data_key="Date"),
+                                rx.recharts.y_axis(),
+                                data=State.loads_per_day,
+                                height=250,
+                                width="100%"
+                            ),
                         rx.box(
                             rx.heading(rx.span("Number of times this page was loaded today: "), rx.span(State.loads_today), font_size="1.7vh", style={"text-align":"center"})
                             ),
