@@ -6,16 +6,19 @@ import website.TPU_cmds as TPU
 startup_time=time.time()
 
 class State(rx.State):
-    username=""
-    email = ""
-    password = ""
+    username: str = ""
+    token: str = ""
+    email: str = ""
+    password: str = ""
     signup_email_color_bg="WHITE"
     email_color_bg="WHITE"
     SignUpEnabled = False
-    SignUp_username=""
-    SignUp_email=""
-    SignUp_password=""
+    sign_up_username:str=""
+    SignUp_email:str=""
+    sign_up_password:str=""
     TPU_verified=False
+
+    accounts: str = rx.LocalStorage("None", name="accounts")
 
     @rx.var
     def loads_today(self):
@@ -26,17 +29,17 @@ class State(rx.State):
 
 
     @rx.var
-    def loads_per_day(self) -> list[int]:
+    def loads_per_day(self) -> list[dict]:
         calls=list(func.calls_per_day(func.get_timestamps()).values())
         timestamps=list(func.calls_per_day(func.get_timestamps()).keys())
-        return rx.data(
-            "line",
-            x=timestamps,
-            y=calls,
-        )
+        output_list=[]
+        for i in range(7):
+            output_list.append({"Page loads":calls[i],"Date":timestamps[i]})
+        return output_list
 
     def homepage_load(self):
         func.insert_timestamp()
+        self.page_load()
 
     @rx.var
     def account_manager_navbar_menu_text(self):
@@ -61,20 +64,20 @@ class State(rx.State):
             self.SignUp_email=""
 
     def submit_signup(self):
-        if self.SignUp_username=="":
+        if self.sign_up_username=="":
             return rx.window_alert("Username is empty")
         if self.SignUp_email=="":
             return rx.window_alert("Please enter a valid email address")
-        if self.SignUp_password=="":
+        if self.sign_up_password=="":
             return rx.window_alert("Password field is empty")
-        for i in [self.SignUp_username, self.SignUp_email, self.SignUp_password]:
+        for i in [self.sign_up_username, self.SignUp_email, self.sign_up_password]:
             if func.find_sql_insertion(i):
                 return rx.window_alert('''Potential SQL insertion detected, please avoid charectors like ', ", } etc.''')
-        insertion = func.new_user_signup(self.SignUp_username, self.SignUp_email, bcrypt.hashpw(self.SignUp_password.encode('utf-8'), bcrypt.gensalt()).hex())
+        insertion = func.new_user_signup(self.sign_up_username, self.SignUp_email, bcrypt.hashpw(self.sign_up_password.encode('utf-8'), bcrypt.gensalt()).hex())
         if not insertion:
-            self.username, self.email, self.password=self.SignUp_username, self.SignUp_email, self.SignUp_password
+            self.username, self.email, self.password=self.sign_up_username, self.SignUp_email, self.sign_up_password
             print(f"[{time.ctime(time.time())}] {self.username} just registered a new account!")
-            return [rx.redirect("/dashboard"), rx.set_local_storage("accounts",str({"username":self.username,"email":self.email,"password":self.password})), rx.window_alert("Signup Successful!")]
+            return [rx.redirect("/dashboard"), rx.window_alert("Signup Successful!")]
         else:
             return rx.window_alert(insertion)
 
@@ -82,8 +85,8 @@ class State(rx.State):
         self.username=""
         self.email=""
         self.password=""
-        self.SignUp_password=""
-        self.SignUp_username=""
+        self.sign_up_password=""
+        self.sign_up_username=""
         self.SignUp_email=""
         self.TPU_verified=False
         return rx.clear_local_storage()
@@ -93,12 +96,12 @@ class State(rx.State):
             self.username=""
             self.email=""
             self.password=""
-            self.SignUp_password=""
-            self.SignUp_username=""
+            self.sign_up_password=""
+            self.sign_up_username=""
             self.SignUp_email=""
             return [rx.clear_local_storage(), rx.redirect("/login"), rx.window_alert("Account deletion was successful!")]
         else:
-            return [rx.window_alert("An error occured while deleting your account")]
+            return rx.window_alert("An error occured while deleting your account")
             
 
     def set_email(self, email):
@@ -119,7 +122,8 @@ class State(rx.State):
             if type(login_data)==type({}):
                 self.username=login_data['username']
                 self.email=login_data['email']
-                return [rx.set_local_storage("accounts",str({"username":self.username,"email":self.email,"password":self.password})), rx.redirect("/dashboard")]
+                self.accounts=str({"username":self.username,"email":self.email,"password":self.password})
+                return rx.redirect("/dashboard")
             else:
                 print(login_data)
                 return rx.window_alert(login_data)
@@ -133,35 +137,22 @@ class State(rx.State):
     
     random_light_color=random.choice(["#ffcccb","#90EE90","#ADD8E6"])
 
-    def page_load(self, storage, TPU_var):
-        if self.username=="":
-            try:
-                if storage==None and TPU_var==None:
-                    pass
-                elif TPU_var==None:
-                    login_data=eval(storage)
-                    response=func.login_user(login_data["email"],login_data['password'])
-                    if not type(response)==type(""):
-                        self.username=response['username']
-                        self.email=login_data["email"]
-                        self.password=login_data["password"]
-                        rx.set_local_storage("accounts",{"username":self.username,"email":self.email,"password":self.password})
-                        print(f"[{time.ctime(time.time())}] {self.username} logged in thru session")
-                    else:
-                        print(f"[{time.ctime(time.time())}] Login with details '{login_data['email']}', '{login_data['password']}' failed with reason {response}")
-                        return rx.clear_local_storage()
-                elif storage==None:
-                    login_info=TPU.verifier(TPU_var)
-                    if login_info:
-                        self.TPU_verified=TPU_var
-                        self.username=login_info['username']
-                        self.email=login_info['email']
-                    else:
-                        return rx.clear_local_storage()
-            except Exception as e:
-                print(e)
-        else:
+    def page_load(self):
+        if self.username!="" or (str(self.accounts) in ["null","None"]):
             pass
+        else:
+            local_data=eval(self.accounts)
+            user_info=func.login_user(local_data.get("email"), local_data.get("password")) if ("password" in local_data) else TPU.get_info(local_data.get("TPU_token"))
+            if type(user_info)==type({}):
+                self.username=user_info.get("username", "DictFetch Error")
+                self.email=user_info.get("email", "DictFetch Error")
+                if user_info['username']!=local_data['username']:
+                    local_data['username']=user_info['username']
+                    self.accounts=str(local_data)
+                print(f"[{time.ctime(time.time())}] {user_info['username']} logged in thru session")
+            else:
+                return rx.remove_local_storage(key="accounts")
+                
 
     timer_started=False
 
@@ -173,11 +164,6 @@ class State(rx.State):
                 return State.tick
         except KeyboardInterrupt:
             exit()
-
-    def index_page_load(self, local_storage, TPU_storage):
-        threading.Thread(target= lambda: self.page_load(local_storage, TPU_storage)).start()
-#        self.timer_started=True
-#        return State.tick
 
     def start_timer(self):
         if not self.timer_started:
@@ -192,15 +178,19 @@ class State(rx.State):
         self.stop_timer()
     
 
-    def login_page_load(self, storage, TPU_token):
-        self.page_load(storage, TPU_token)
+    def login_page_load(self):
+        resolve_output_of_page_load=self.page_load()
+        final_output=[]
+        if resolve_output_of_page_load!=None:
+            final_output.append(resolve_output_of_page_load)
         if self.username=="":
             pass
         else:
-            return rx.redirect("/dashboard")
-    
-    def dashboard_load(self, account_var, TPU_var):
-        self.page_load(account_var, TPU_var)
+            final_output.append(rx.redirect("/dashboard"))
+        return final_output
+
+    def dashboard_load(self):
+        self.page_load()
         if self.username:
             pass
         else:
@@ -236,25 +226,16 @@ class State(rx.State):
     pfp_exists=False
 
     def TPU_verify(self):
-        data=self.get_query_params().get("code",None)
-        login_info=TPU.verifier(data)
-        token=data
-        if login_info:
-            tpu_database_error=func.TPU_signin(login_info['id'], login_info['email'], login_info['username'], data, login_info['avatar'])
-            if tpu_database_error:
-                return [rx.redirect("/login"), rx.window_alert(tpu_database_error)]
-            self.TPU_verified=data
-            self.username=login_info['username']
-            self.email=login_info['email']
-            print(f"{self.username} logged in thru TPU")
-            return [rx.redirect('/dashboard'), rx.set_local_storage("TPU",token)]
+        token=self.router.page.params.get("code",None)
+        TPU_info=TPU.get_info(token)
+        account_data=func.TPU_signin(TPU_info['email'], TPU_info["username"], token)
+        if account_data.get("error") is None:
+            self.username=account_data.get('username',"$username")
+            self.email=account_data.get('email',"error@email.com")
+            self.TPU_verified=token
+            return rx.redirect('/dashboard')
         else:
-            return [rx.redirect("/login"), rx.window_alert("login with TPU failed")]
-
-    if TPU_verified:
-        data=TPU.verifier(TPU_verified)
-        username=data['username']
-        email=data['email']
+            return [rx.redirect("/login"),rx.window_alert(account_data.get("error"))]
 
     @rx.var
     def is_admin(self):

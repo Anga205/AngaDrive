@@ -2,6 +2,19 @@ import re, sqlite3, sqlite3, datetime, time, random, bcrypt, os, string
 
 database_directory=os.path.join("rx.db")
 
+def dbify(var):
+    if var==None:
+        return "NULL"
+    if type(var)==type(0):
+        return str(var)
+    if type(var)==type(""):
+        if "'" not in var:
+            return "'"+var+"'"
+        elif '"' not in var:
+            return '"'+var+'"'
+        else:
+            return "'"+("".join([("''" if x=="'" else x) for x in var]))+"'"
+
 def gen_token():
     a="qwertyuiopasdfghjklzxcvbnm"
     a=a+a.upper()
@@ -97,7 +110,7 @@ def is_valid_email(email):
     else:
         return True
 
-def new_user_signup(username: str, email: str, hashed_password: str) -> None:
+def new_user_signup(username: str, email: str, hashed_password: str=None, TPU_token: str=None) -> None:
     try:
         connection = sqlite3.connect(database_directory)
         cursor = connection.cursor()
@@ -119,9 +132,7 @@ def new_user_signup(username: str, email: str, hashed_password: str) -> None:
             return "Username must be between 3 and 16 characters long"
 
         token = gen_token()
-
-        cursor.execute('''INSERT INTO accounts (email, username, token, hashed_password, avatar)
-                          VALUES (?, ?, ?, ?, NULL);''', (email, username, token, hashed_password))
+        cursor.execute(f'''INSERT INTO accounts (email, username, token, hashed_password{', TPU_token' if TPU_token else ''}) VALUES ({dbify(email)}, {dbify(username)}, {dbify(token)}, {dbify(hashed_password)}{(', '+dbify(TPU_token)) if TPU_token else ''});''')
         
         connection.commit()
         print("User signup successful.")
@@ -168,15 +179,11 @@ def login_user(email: str, prehashed_password: str):
         connection = sqlite3.connect(database_directory)
         cursor = connection.cursor()
 
-        # Check if the email exists in TPU_accounts table
-        cursor.execute("SELECT * FROM TPU_accounts WHERE email = ?;", (email,))
-        tpu_account = cursor.fetchone()
-        cursor.execute("SELECT * FROM accounts WHERE email = ?;", (email,))
+        cursor.execute(f"SELECT email,username,token,hashed_password,TPU_token FROM accounts WHERE email = {dbify(email)}")
         account = cursor.fetchone()
 
-        if tpu_account or account:
-
-            if account:
+        if account!=None:
+            if account[3]!=None:
                 stored_hashed_password = bytes.fromhex(account[3]) if not type(account[3])==type(b"") else account[3]
                 prehashed_password=prehashed_password.encode('utf-8') if type(prehashed_password)==type("") else prehashed_password
 
@@ -186,7 +193,7 @@ def login_user(email: str, prehashed_password: str):
                         "username": account[1],
                         "token": account[2],
                         "hashed_password": account[3],
-                        "avatar": account[4]
+                        "TPU_token": account[4]
                     }
                     return account_data
                 else:
@@ -280,40 +287,25 @@ def insert_timestamp():
     finally:
         connection.close()
 
-def TPU_signin(TPU_id: int, TPU_email: str, TPU_username: str, TPU_authtoken: str, TPU_avatar: str):
+def TPU_signin(TPU_email: str, TPU_username: str, TPU_authtoken: str):
     try:
-        connection = sqlite3.connect(database_directory)
-        cursor = connection.cursor()
-
-        # Check if TPU_id exists in TPU_accounts table
-        cursor.execute("SELECT * FROM TPU_accounts WHERE id = ?;", (TPU_id,))
-        existing_tpu = cursor.fetchone()
-
-        if not existing_tpu:
-            # Check if TPU_email already exists in accounts table
-            cursor.execute("SELECT * FROM accounts WHERE email = ?;", (TPU_email,))
-            existing_email_account = cursor.fetchone()
-
-            # Check if TPU_email already exists in TPU_accounts table
-            cursor.execute("SELECT * FROM TPU_accounts WHERE email = ?;", (TPU_email,))
-            existing_email_tpu = cursor.fetchone()
-
-            if existing_email_account and not existing_email_tpu:
-                return "This account is already registered on anga.pro, login to it to add your TPU account"
-
-            # Insert values into TPU_accounts table
-            cursor.execute('''INSERT INTO TPU_accounts (id, username, email, authtoken, avatar_link)
-                              VALUES (?, ?, ?, ?, ?);''', (TPU_id, TPU_username, TPU_email, TPU_authtoken, TPU_avatar))
-            connection.commit()
-            return False  # TPU signin successful
+        con=sqlite3.connect(database_directory)
+        cur=con.cursor()
+        cur.execute(f"select email, username from accounts where TPU_token={dbify(TPU_authtoken)}")
+        data=cur.fetchone()
+        if data is None:
+            cur.execute(f"select email, username from accounts where email={dbify(TPU_email)}")
+            email_matching_account=cur.fetchone()
+            if email_matching_account is None:
+                new_user_signup(TPU_username, TPU_email, hashed_password=None, TPU_token=TPU_authtoken)
+                return {"email":TPU_email, "username":TPU_username}
+            else:
+                return {"error":"email already registered"}
         else:
-            return False  # TPU account already exists or account not found
-
-    except sqlite3.Error as e:
-        return f"TPU signin error: {e}"
-    finally:
-        if connection:
-            connection.close()
+            return {"email":data[0],"username":data[1]}
+    except Exception as e:
+        print(f"TPU signin error: {e}")
+        return {"error":f"TPU signin error: {e}"}
 
 def obfuscate_filename(filename):
     # Get the file extension
@@ -349,7 +341,7 @@ def create_sqlite_database(DB_PATH):
                         username TEXT,
                         token TEXT PRIMARY KEY,
                         hashed_password TEXT,
-                        avatar BLOB
+                        TPU_token TEXT
                     )''')
 
     # Create the 'TPU_accounts' table

@@ -1,5 +1,5 @@
 import os, website.library, reflex as rx
-website.library.create_sqlite_database(os.path.join("rx.db"))
+website.library.create_sqlite_database(website.library.database_directory)
 class WebsiteConfig(rx.Config):
     pass
 

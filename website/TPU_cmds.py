@@ -72,7 +72,7 @@ def login_page_TPU_button(view):
     else:
         return rx.box(width="0px", height="0px")
 
-def verifier(token):
+def get_info(token):
     url="https://images.flowinity.com/api/v3/oauth/user"
     params= {
         "Authorization" : token,

@@ -61,9 +61,9 @@ def login() -> rx.Component:
                         rx.alert_dialog_header("Sign Up"),
                         rx.alert_dialog_body(
                             rx.vstack(
-                                rx.input(placeholder="Enter a username", on_blur=State.set_SignUp_username),
+                                rx.input(placeholder="Enter a username", on_blur=State.set_sign_up_username),
                                 rx.input(placeholder="Enter an e-mail ID", bg=State.signup_email_color_bg, on_blur=State.set_SignUp_email),
-                                rx.password(placeholder="Enter a password", on_blur=State.set_SignUp_password),
+                                rx.password(placeholder="Enter a password", on_blur=State.set_sign_up_password),
                                 rx.heading(rx.span("This should go without saying but, please "), rx.span("DO NOT USE THE SAME PASSWORD EVERYWHERE", color="RED", _as="b"), font_size="xs")
                             )
                         ),
@@ -116,7 +116,6 @@ def login() -> rx.Component:
             width="100%"
         )
     ),
-    on_mount=lambda: State.login_page_load(rx.get_local_storage("accounts"), rx.get_local_storage("TPU"))
 )
 
 def index():
@@ -367,18 +366,27 @@ def index():
                     rx.hstack(
                         rx.vstack(
                             rx.box(
-                                rx.chart(
-                                    rx.line(
-                                        data=State.loads_per_day
+                                rx.recharts.line_chart(
+                                    rx.recharts.line(
+                                        data_key="Page loads",
+                                        type_="monotone",
+                                        stroke="BLACK"
                                     ),
-                                )
+                                    rx.recharts.x_axis(data_key="Date"),
+                                    rx.recharts.y_axis(),
+                                    data=State.loads_per_day,
+                                    width="100%",
+                                    height=250
+                                ),
+                                width="100%"
                             ),
                             rx.heading(
                                 rx.span("Number of times this page was loaded today: "), 
                                 rx.span(State.loads_today), 
                                 font_size="2vh", 
                                 bg="#00fff5"
-                                ),
+                            ),
+                            align_items="flex-start",
                             bg="#00fff5",
                             border_radius="1vh",
                             spacing="0vh",
@@ -397,6 +405,7 @@ def index():
                             border_color="#00fff5",
                             border_width="5px",
                         ),
+                        align_items="stretch",
                         spacing="10vh"
                     ),
                     rx.box(
@@ -741,11 +750,11 @@ def index():
                     rx.text("This data is live updated, refresh this page to see the numbers change!", color="WHITE", font_size="1.2vh"),
                     rx.vstack(
                         rx.box(
-                            rx.chart(
-                                rx.line(
-                                    data=State.loads_per_day,
-                                ),
-                            ),
+#                            rx.chart(
+#                                rx.line(
+#                                    data=State.loads_per_day,
+#                                ),
+#                            ),
                         rx.box(
                             rx.heading(rx.span("Number of times this page was loaded today: "), rx.span(State.loads_today), font_size="1.7vh", style={"text-align":"center"})
                             ),
@@ -779,7 +788,6 @@ def index():
                 spacing="0px"
             )
         ),
-        on_mount=lambda: State.index_page_load(rx.get_local_storage("accounts"), rx.get_local_storage("TPU")),
         on_unmount=State.unload_homepage
     )
 
@@ -831,7 +839,7 @@ def notifications_tab():
         rx.text("No Notifications found at the moment", color="WHITE", font_size="2vh"),
         border_radius="2vh",
         border_color="#0F0F10",
-        bg="#0F0F10",
+        bg="#0F0F10", 
         border_width="1vh",
         spacing="0.5vh"
     )
@@ -856,9 +864,11 @@ def account_manager():
         spacing="2vh"
         ),
     rx.vstack(
+        updating_components.account_manager(),
         announcements_tab(),
-        updating_components.add_TPU_to_account_widget(State.TPU_verified)
+        spacing="2vh"
         ),
+    align_items="top",
     spacing="5vh"
     )
 
@@ -981,7 +991,6 @@ def dashboard():
             style={"margin-left":"15%"},
             spacing="0px"
             ),
-        on_mount=lambda: State.dashboard_load(rx.get_local_storage("accounts"),rx.get_local_storage("TPU")),
         spacing="0px",
     )
 
@@ -992,8 +1001,8 @@ def TPU_login():
 
 # Add state and page to the app.
 app = rx.App()
-app.add_page(login, title="Login Page - anga.pro", description="Website is under construction")
-app.add_page(dashboard, title="Dashboard - anga.pro", description="Website is under construction")
+app.add_page(login, title="Login Page - anga.pro", description="Website is under construction", on_load=State.login_page_load)
+app.add_page(dashboard, title="Dashboard - anga.pro", description="Website is under construction", on_load=State.dashboard_load)
 app.add_page(index, title="Home - anga.pro", description="Website is under construction", on_load=State.homepage_load)
 app.add_page(TPU_login, title="TPU - anga.pro", description="Temporary link", route="/tpulogin", on_load=State.TPU_verify)
 app.compile()
