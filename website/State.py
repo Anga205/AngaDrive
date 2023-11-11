@@ -18,6 +18,11 @@ class State(rx.State):
     sign_up_password:str=""
     TPU_verified=False
 
+
+    def open_signup_page(self):
+        self.SignUpEnabled = True
+        return rx.redirect("/login")
+
     accounts: str = rx.LocalStorage("None", name="accounts")
 
     @rx.var
@@ -127,13 +132,6 @@ class State(rx.State):
             else:
                 print(login_data)
                 return rx.window_alert(login_data)
-
-    @rx.var
-    def welcome_message(self):
-        if self.username=="":
-            return "Welcome to anga.pro"
-        else:
-            return f"Welcome back, {self.username}"
     
     random_light_color=random.choice(["#ffcccb","#90EE90","#ADD8E6"])
 

@@ -1,122 +1,10 @@
 """Welcome to Reflex! This file outlines the steps to create a basic app."""
 import reflex as rx
-import website.TPU_cmds as TPU
 import website.updating_components as updating_components
 import website.dashboard_pages as dashboard_pages
 from website.State import State
+from website.account_login import login 
 
-
-
-
-def login() -> rx.Component:
-    return rx.box(
-    rx.desktop_only(
-        rx.hstack(
-            rx.center( 
-                rx.vstack(
-                    rx.box(height="33vh", width="100%"),
-                    rx.vstack(
-                        rx.box(height="1vh"),
-                        rx.heading("Login", font_size="4vh"),
-                        rx.box(height="1.05vh"),
-                        rx.input(
-                            placeholder="Enter e-mail address",
-                            on_blur=State.set_email,
-                            bg=State.email_color_bg,
-                            width="80%",
-                            font_size="1.65vh",
-                            height="4vh"
-                            ),
-                        rx.password(
-                            placeholder="Enter password",
-                            on_blur=State.set_password,
-                            width="80%",
-                            font_size="1.65vh",
-                            height="4vh"
-                        ),
-                        rx.button("LOGIN", bg="PURPLE", color="WHITE", on_click=State.submit_login, font_size="1.7vh", width="8vh", height="3.5vh"),
-                        rx.hstack(
-                            rx.text("Dont have an account?"),
-                            rx.link("Sign up!",on_click=State.SignUpEnable),
-                            font_size="1.65vh"
-                        ),
-                        TPU.login_page_TPU_button("Desktop"),
-                        rx.box(height="1vh"),
-                        spacing="2.1vh",
-                        bg="WHITE", 
-                        width="100%",
-                        border_radius="2.1vh 0vh",
-                        border_color="BLUE",
-                        border_width="1.05vh"
-                        ),
-                    rx.box(height="40vh", width="100%"),
-                    width="20%",
-                    height="100vh"
-                ),
-                width="100%"
-            ),
-            rx.alert_dialog(
-                rx.alert_dialog_overlay(
-                    rx.alert_dialog_content(
-                        rx.alert_dialog_header("Sign Up"),
-                        rx.alert_dialog_body(
-                            rx.vstack(
-                                rx.input(placeholder="Enter a username", on_blur=State.set_sign_up_username),
-                                rx.input(placeholder="Enter an e-mail ID", bg=State.signup_email_color_bg, on_blur=State.set_SignUp_email),
-                                rx.password(placeholder="Enter a password", on_blur=State.set_sign_up_password),
-                                rx.heading(rx.span("This should go without saying but, please "), rx.span("DO NOT USE THE SAME PASSWORD EVERYWHERE", color="RED", _as="b"), font_size="xs")
-                            )
-                        ),
-                        rx.alert_dialog_footer(
-                            rx.hstack(
-                                rx.button(
-                                    "Close",
-                                    on_click=State.SignUpEnable
-                                ),
-                                rx.button(
-                                    "Submit",
-                                    on_click=State.submit_signup,
-                                )
-                            )
-                        ),
-                    )
-                ),
-                is_open=State.SignUpEnabled,
-            ),
-            width="100%",
-            bg="BLACK",
-        )
-    ),
-    rx.mobile_and_tablet(
-        rx.vstack(
-            rx.box(height="10vh"),
-            rx.vstack(
-                rx.box(height="5vh"),
-                rx.heading("Login", font_size="4vh"),
-                rx.box(height="2vh"),
-                rx.input(placeholder="Enter e-mail address", width="85%",on_blur=State.set_email, bg=State.email_color_bg),
-                rx.box(height="2vh"),
-                rx.input(placeholder="Enter password", width="85%", on_blur=State.set_password),
-                rx.box(height="2vh"),
-                rx.button("LOGIN",bg="PURPLE", color="WHITE", on_click=State.submit_login),
-                rx.box(height="1vh"),
-                rx.text("Dont have an account? ", rx.span(rx.link("Sign up!", on_click=State.SignUpEnable))),
-                TPU.login_page_TPU_button("Mobile"),
-                rx.box(height="7vh" if not TPU.enable_TPU else "3vh"),
-                spacing="0vh",
-                width="90%",
-                bg="WHITE",
-                border_radius="2vh 0px",
-                border_color="BLUE",
-                border_width="1vh"
-                ),
-            height="100vh",
-            position="fixed",
-            bg="BLACK",
-            width="100%"
-        )
-    ),
-)
 
 def index():
     return rx.box(
@@ -136,13 +24,13 @@ def index():
                                     ), 
                                 ),
                             rx.menu_list(
-                                rx.menu_item("Discord", on_click=rx.redirect("https://discord.gg/DgxppCZnJb")),
-                                rx.menu_item("Instagram", on_click=rx.redirect("https://instagram.com/_anga205")),
-                                rx.menu_item("Threads", on_click=rx.redirect("https://threads.net/@_anga205")),
-                                rx.menu_item("𝕏.com", on_click=rx.redirect("https://x.com/_anga205")),
-                                rx.menu_item("Email", on_click=rx.redirect("mailto:support@anga.pro")),
-                                rx.menu_item("GitHub", on_click=rx.redirect("https://github.com/Anga205")),
-                                rx.menu_item("Telegram", on_click=rx.redirect("https://t.me/Anga205"))
+                                rx.menu_item("Discord", on_click=rx.redirect("https://discord.gg/DgxppCZnJb", external=True)),
+                                rx.menu_item("Instagram", on_click=rx.redirect("https://instagram.com/_anga205", external=True)),
+                                rx.menu_item("Threads", on_click=rx.redirect("https://threads.net/@_anga205", external=True)),
+                                rx.menu_item("𝕏.com", on_click=rx.redirect("https://x.com/_anga205", external=True)),
+                                rx.menu_item("Email", on_click=rx.redirect("mailto:support@anga.pro", external=True)),
+                                rx.menu_item("GitHub", on_click=rx.redirect("https://github.com/Anga205", external=True)),
+                                rx.menu_item("Telegram", on_click=rx.redirect("https://t.me/Anga205", external=True))
                             ),
                         ),
                         rx.menu(
@@ -199,10 +87,7 @@ def index():
                             font_size="4vh"
                         ),
                         rx.heading(
-                            rx.span("Welcome to ", color="WHITE"),
-                            rx.span("anga", color="#ffcccb"),
-                            rx.span(".", color="#90EE90"),
-                            rx.span("pro", color="#ADD8E6"),
+                            rx.span("Cloud hosting for files", color="WHITE"),
                             font_size="4vh"
                         )
                     ),
@@ -368,26 +253,31 @@ def index():
                             rx.recharts.line_chart(
                                 rx.recharts.line(
                                     data_key="Page loads",
-                                    type_="monotone",
                                     stroke="BLACK"
                                 ),
                                 rx.recharts.x_axis(data_key="Date"),
                                 rx.recharts.y_axis(),
+                                rx.recharts.graphing_tooltip(),
                                 data=State.loads_per_day,
-                                height=250,
-                                width="100%"
+                                height="90%",
+                                width="100%",
                             ),
-                            rx.heading(
-                                rx.span("Number of times this page was loaded today: "), 
-                                rx.span(State.loads_today), 
-                                font_size="2vh", 
-                                bg="#00fff5"
+                            rx.hstack(
+                                rx.spacer(),
+                                rx.heading("Number of times this page was loaded today: ", font_size="2vh"), 
+                                rx.heading(State.loads_today, font_size="2vh"), 
+                                rx.spacer(),
+                                bg="#00fff5",
+                                spacing="0vh",
+                                width="100%",
+                                align_items="center",
                             ),
-                            align_items="flex-start",
+                            align_items="center",
                             bg="#00fff5",
                             border_radius="1vh",
                             spacing="0vh",
-                            width="50vh",
+                            width="65vh",
+                            height="30vh",
                             border_width="1vh",
                             border_color="#00fff5"
                         ),
@@ -403,7 +293,7 @@ def index():
                             border_width="5px",
                         ),
                         align_items="stretch",
-                        spacing="10vh"
+                        spacing="5vh"
                     ),
                     rx.box(
                             height="10vh"
@@ -443,13 +333,13 @@ def index():
                                                     rx.accordion_icon(),
                                                 ),
                                                 rx.accordion_panel(
-                                                    rx.text("Discord", on_click=rx.redirect("https://discord.gg/DgxppCZnJb"), color="WHITE"),
-                                                    rx.text("Instagram", on_click=rx.redirect("https://instagram.com/_anga205"), color="WHITE"),
-                                                    rx.text("Threads", on_click=rx.redirect("https://threads.net/@_anga205"), color="WHITE"),
-                                                    rx.text("𝕏.com", on_click=rx.redirect("https://x.com/_anga205"), color="WHITE"),
-                                                    rx.text("Email", on_click=rx.redirect("mailto:support@anga.pro"), color="WHITE"),
-                                                    rx.text("GitHub", on_click=rx.redirect("https://github.com/Anga205"), color="WHITE"),
-                                                    rx.text("Telegram", on_click=rx.redirect("https://t.me/Anga205"), color="WHITE"),
+                                                    rx.text("Discord", on_click=rx.redirect("https://discord.gg/DgxppCZnJb", external=True), color="WHITE"),
+                                                    rx.text("Instagram", on_click=rx.redirect("https://instagram.com/_anga205", external=True), color="WHITE"),
+                                                    rx.text("Threads", on_click=rx.redirect("https://threads.net/@_anga205", external=True), color="WHITE"),
+                                                    rx.text("𝕏.com", on_click=rx.redirect("https://x.com/_anga205", external=True), color="WHITE"),
+                                                    rx.text("Email", on_click=rx.redirect("mailto:support@anga.pro", external=True), color="WHITE"),
+                                                    rx.text("GitHub", on_click=rx.redirect("https://github.com/Anga205", external=True), color="WHITE"),
+                                                    rx.text("Telegram", on_click=rx.redirect("https://t.me/Anga205", external=True), color="WHITE"),
                                                 ),
                                             ),
                                             allow_toggle=True,
@@ -515,10 +405,7 @@ def index():
                             style={"text-align":"center"}
                         ),
                         rx.heading(
-                            rx.span("Welcome to ", color="WHITE"),
-                            rx.span("anga", color="#ffcccb"),
-                            rx.span(".", color="#90EE90"),
-                            rx.span("pro", color="#ADD8E6"),
+                            rx.span("Cloud hosting for files", color="WHITE"),
                             font_size="7vh",
                             style={"text-align":"center"}
                         )
@@ -746,25 +633,28 @@ def index():
                     ),
                     rx.text("This data is live updated, refresh this page to see the numbers change!", color="WHITE", font_size="1.2vh"),
                     rx.vstack(
-                        rx.box(
+                        rx.vstack(
                             rx.recharts.line_chart(
                                 rx.recharts.line(
                                     data_key="Page loads",
-                                    type_="monotone",
+                                    #type_="monotone",
                                     stroke="BLACK"
                                 ),
                                 rx.recharts.x_axis(data_key="Date"),
                                 rx.recharts.y_axis(),
+                                rx.recharts.graphing_tooltip(),
                                 data=State.loads_per_day,
-                                height=250,
-                                width="100%"
+                                height="90%",
+                                width="100%",
                             ),
                         rx.box(
                             rx.heading(rx.span("Number of times this page was loaded today: "), rx.span(State.loads_today), font_size="1.7vh", style={"text-align":"center"})
                             ),
                         bg="#00fff5",
+                        border_color="#00fff5",
                         border_radius="1vh",
-                        width="90%"
+                        height="40vh",
+                        width="100%"
                         )
                     ),
                     rx.vstack(
@@ -1009,4 +899,5 @@ app.add_page(login, title="Login Page - anga.pro", description="Website is under
 app.add_page(dashboard, title="Dashboard - anga.pro", description="Website is under construction", on_load=State.dashboard_load)
 app.add_page(index, title="Home - anga.pro", description="Website is under construction", on_load=State.homepage_load)
 app.add_page(TPU_login, title="TPU - anga.pro", description="Temporary link", route="/tpulogin", on_load=State.TPU_verify)
+app.add_page(rx.fragment(), route="/signup", on_load=State.open_signup_page)
 app.compile()
