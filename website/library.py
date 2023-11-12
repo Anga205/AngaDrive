@@ -136,7 +136,7 @@ def new_user_signup(username: str, email: str, hashed_password: str=None, TPU_to
         
         connection.commit()
         print("User signup successful.")
-        return None
+        return {"token":token}
     except sqlite3.Error as e:
         return f"Error inserting user data: {e}"
     finally:
@@ -297,10 +297,10 @@ def TPU_signin(TPU_email: str, TPU_username: str, TPU_authtoken: str):
             cur.execute(f"select email, username from accounts where email={dbify(TPU_email)}")
             email_matching_account=cur.fetchone()
             if email_matching_account is None:
-                new_user_signup(TPU_username, TPU_email, hashed_password=None, TPU_token=TPU_authtoken)
-                return {"email":TPU_email, "username":TPU_username}
+                output=new_user_signup(TPU_username, TPU_email, hashed_password=None, TPU_token=TPU_authtoken)
+                return {"email":TPU_email, "username":TPU_username, "token": output.get("token")}
             else:
-                return {"error":"email already registered"}
+                return {"error":"email already registered", "email": TPU_email}
         else:
             return {"email":data[0],"username":data[1]}
     except Exception as e:
@@ -344,14 +344,6 @@ def create_sqlite_database(DB_PATH):
                         TPU_token TEXT
                     )''')
 
-    # Create the 'TPU_accounts' table
-    cursor.execute('''CREATE TABLE IF NOT EXISTS TPU_accounts (
-                        id INTEGER,
-                        username TEXT,
-                        email TEXT,
-                        authtoken TEXT PRIMARY KEY,
-                        avatar_link TEXT
-                    )''')
 
     # Create the 'file_data' table
     cursor.execute('''CREATE TABLE IF NOT EXISTS file_data (
@@ -387,6 +379,31 @@ def get_token_from_username(username):
         return token
     except:
         return ""
+    
+def get_token_from_email(email):
+    if email=="":
+        return ""
+    con= sqlite3.connect(database_directory)
+    cur=con.cursor()
+    cur.execute(f"select token from accounts where username={dbify(email)}")
+    try:
+        token=cur.fetchone()
+        token=token[0]
+        con.close()
+        return token
+    except:
+        return ""
+
+
+def validate_login(email, hashed_password):
+    con = sqlite3.connect(database_directory)
+    cur = con.cursor()
+    cur.execute(f"select hashed_password from accounts where email = {dbify(email)}")
+    stored_password=cur.fetchone()
+    stored_password = bytes.fromhex(stored_password) if not type(stored_password)==type(b"") else stored_password
+    hashed_password = hashed_password.encode('utf-8') if type(hashed_password)==type("") else hashed_password
+    return get_token_from_email if bcrypt.checkpw(hashed_password, stored_password) else False
+
 
 def get_files(account_token):
     # Connect to the SQLite database
@@ -514,3 +531,4 @@ def delete_file(file_name):
     finally:
         # Close the database connection
         conn.close()
+

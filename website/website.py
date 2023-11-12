@@ -3,7 +3,7 @@ import reflex as rx
 import website.updating_components as updating_components
 import website.dashboard_pages as dashboard_pages
 from website.State import State
-from website.account_login import login 
+from website.account_login import login, add_TPU_to_account
 
 
 def index():
@@ -895,9 +895,10 @@ def TPU_login():
 
 # Add state and page to the app.
 app = rx.App()
-app.add_page(login, title="Login Page - anga.pro", description="Website is under construction", on_load=State.login_page_load)
-app.add_page(dashboard, title="Dashboard - anga.pro", description="Website is under construction", on_load=State.dashboard_load)
-app.add_page(index, title="Home - anga.pro", description="Website is under construction", on_load=State.homepage_load)
-app.add_page(TPU_login, title="TPU - anga.pro", description="Temporary link", route="/tpulogin", on_load=State.TPU_verify)
-app.add_page(rx.fragment(), route="/signup", on_load=State.open_signup_page)
+app.add_page(login, title="Login Page - anga.pro", description="log into anga.pro to access dashboard", on_load=State.login_page_load)
+app.add_page(dashboard, title="Dashboard - anga.pro", description="Manage account and services", on_load=State.dashboard_load)
+app.add_page(index, title="Home - anga.pro", description="Open source cloud hosting service for files", on_load=State.homepage_load)
+app.add_page(TPU_login, title="TPU - anga.pro", description="Oauth2 Link", route="/tpulogin", on_load=State.TPU_verify)
+app.add_page(add_TPU_to_account, title="TPU signup - anga.pro", description="This page opens when the email id attached to a tpu account already has an account in anga.pro", route="/tpusignup", on_load=State.signup_page_load)
+app.add_page(rx.fragment(), route="/signup", on_load=State.signup_page_load)
 app.compile()

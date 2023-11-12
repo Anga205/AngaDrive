@@ -79,7 +79,7 @@ class State(rx.State):
             if func.find_sql_insertion(i):
                 return rx.window_alert('''Potential SQL insertion detected, please avoid charectors like ', ", } etc.''')
         insertion = func.new_user_signup(self.sign_up_username, self.SignUp_email, bcrypt.hashpw(self.sign_up_password.encode('utf-8'), bcrypt.gensalt()).hex())
-        if not insertion:
+        if type(insertion) == type({}):
             self.username, self.email, self.password=self.sign_up_username, self.SignUp_email, self.sign_up_password
             print(f"[{time.ctime(time.time())}] {self.username} just registered a new account!")
             return [rx.redirect("/dashboard"), rx.window_alert("Signup Successful!")]
@@ -89,6 +89,7 @@ class State(rx.State):
     def logout(self):
         self.username=""
         self.email=""
+        self.token=""
         self.password=""
         self.sign_up_password=""
         self.sign_up_username=""
@@ -127,6 +128,7 @@ class State(rx.State):
             if type(login_data)==type({}):
                 self.username=login_data['username']
                 self.email=login_data['email']
+                self.token=login_data["token"]
                 self.accounts=str({"username":self.username,"email":self.email,"password":self.password})
                 return rx.redirect("/dashboard")
             else:
@@ -144,6 +146,7 @@ class State(rx.State):
             if type(user_info)==type({}):
                 self.username=user_info.get("username", "DictFetch Error")
                 self.email=user_info.get("email", "DictFetch Error")
+                self.token=user_info.get("token", "DictFetch Error")
                 if user_info['username']!=local_data['username']:
                     local_data['username']=user_info['username']
                     self.accounts=str(local_data)
@@ -181,7 +184,7 @@ class State(rx.State):
         final_output=[]
         if resolve_output_of_page_load!=None:
             final_output.append(resolve_output_of_page_load)
-        if self.username=="":
+        if self.token=="":
             pass
         else:
             final_output.append(rx.redirect("/dashboard"))
@@ -230,10 +233,14 @@ class State(rx.State):
         if account_data.get("error") is None:
             self.username=account_data.get('username',"$username")
             self.email=account_data.get('email',"error@email.com")
+            self.token=account_data.get("token", "error")
             self.TPU_verified=token
             return rx.redirect('/dashboard')
+        elif (account_data.get("error")=="email already registered"):
+            self.add_tpu_email_value=account_data.get("email")
+            return rx.redirect("/tpusignup")
         else:
-            return [rx.redirect("/login"),rx.window_alert(account_data.get("error"))]
+            return [rx.redirect("/login"),rx.window_alert(account_data.get("error", "An error occured"))]
 
     @rx.var
     def is_admin(self):
@@ -339,3 +346,14 @@ class State(rx.State):
             print(e)
         return rx.window_alert(f"{file_name} removed")
     
+    add_tpu_email_value:str
+    add_tpu_password_value:str
+    def submit_password_to_add_tpu_to_account(self):
+        if self.add_tpu_password_value=="":
+            return rx.window_alert("Please type your password")
+
+    def signup_page_load(self):
+        if bool(self.TPU_verified):
+            return rx.redirect("/dashboard")
+        elif (self.add_tpu_email_value==""):
+            return rx.redirect("/login")
