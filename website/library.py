@@ -400,13 +400,15 @@ def get_token_from_email(email):
         return ""
     con= sqlite3.connect(database_directory)
     cur=con.cursor()
-    cur.execute(f"select token from accounts where username={dbify(email)}")
+    cur.execute(f"select token from accounts where email={dbify(email)}")
     try:
         token=cur.fetchone()
         token=token[0]
         con.close()
         return token
-    except:
+    except Exception as e:
+        print(f"Exception in get_token_from_email: {e}")
+        con.close()
         return ""
 
 
