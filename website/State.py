@@ -351,6 +351,10 @@ class State(rx.State):
     def submit_password_to_add_tpu_to_account(self):
         if self.add_tpu_password_value=="":
             return rx.window_alert("Please type your password")
+        if func.validate_login(self.add_tpu_email_value, self.add_tpu_password_value):
+            print("success")
+        else:
+            return rx.window_alert("Entered password is incorrect")
 
     def signup_page_load(self):
         if bool(self.TPU_verified):

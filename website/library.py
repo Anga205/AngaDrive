@@ -15,6 +15,21 @@ def dbify(var):
         else:
             return "'"+("".join([("''" if x=="'" else x) for x in var]))+"'"
 
+table_columns_cache = {}
+def table_columns(table_name):
+    global table_columns_cache
+    if table_name in table_columns_cache:
+        return table_columns_cache[table_name]
+    con = sqlite3.connect("rx.db")
+    cur=con.cursor()
+    cur.execute(f"PRAGMA table_info({table_name})")
+    table_info = cur.fetchall()
+    con.close()
+    columns = [x[1] for x in table_info]
+    table_columns_cache[table_name]=columns
+    return columns
+
+
 def gen_token():
     a="qwertyuiopasdfghjklzxcvbnm"
     a=a+a.upper()
@@ -395,14 +410,29 @@ def get_token_from_email(email):
         return ""
 
 
-def validate_login(email, hashed_password):
+def validate_login(email, unhashed_password):
     con = sqlite3.connect(database_directory)
     cur = con.cursor()
     cur.execute(f"select hashed_password from accounts where email = {dbify(email)}")
     stored_password=cur.fetchone()
+    stored_password=stored_password[0]
+    con.close()
     stored_password = bytes.fromhex(stored_password) if not type(stored_password)==type(b"") else stored_password
-    hashed_password = hashed_password.encode('utf-8') if type(hashed_password)==type("") else hashed_password
-    return get_token_from_email if bcrypt.checkpw(hashed_password, stored_password) else False
+    unhashed_password = unhashed_password.encode('utf-8') if type(unhashed_password)==type("") else unhashed_password
+    return get_token_from_email(email) if bcrypt.checkpw(unhashed_password, stored_password) else False
+
+
+def get_account_info_from_token(token):
+    if token=="":
+        return None
+    con = sqlite3.connect(database_directory)
+    cur = con.cursor()
+    cur.execute(f"select * from accounts where token = {dbify(token)}")
+    output=cur.fetchone()
+    con.close()
+    columns = table_columns("accounts")
+    dict_output = dict(zip(columns, output))
+    return dict_output
 
 
 def get_files(account_token):
