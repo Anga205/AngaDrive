@@ -127,7 +127,7 @@ def index():
                             bg="BLACK",
                             color="WHITE",
                             width="20vh",
-                            on_click=rx.redirect("https://github.com/Anga205/anga.pro/")
+                            on_click=rx.redirect("https://github.com/Anga205/drive.anga.pro/")
                         ),
                         spacing="1vh"
                     ),
@@ -306,7 +306,7 @@ def index():
                 ),
                 rx.vstack(
                     rx.box(height="1vh"),
-                    rx.text(rx.span("All visible content on this website is available under the ",rx.span(rx.link("GNU affero general public license", href="https://github.com/Anga205/anga.pro/blob/main/LICENSE", color="#ADD8E6"))), color="WHITE", font_size="1.4vh"),
+                    rx.text(rx.span("All visible content on this website is available under the ",rx.span(rx.link("GNU affero general public license", href="https://github.com/Anga205/drive.anga.pro/blob/main/LICENSE", color="#ADD8E6"))), color="WHITE", font_size="1.4vh"),
                     spacing="3.15vh",
                     width="100%",
                     height="10vh",
@@ -442,7 +442,7 @@ def index():
                             width="27vh",
                             bg="BLACK",
                             color="WHITE",
-                            on_click=rx.redirect("https://github.com/Anga205/anga.pro/")
+                            on_click=rx.redirect("https://github.com/Anga205/drive.anga.pro/")
                         ),
                         spacing="1vh"
                     ),
@@ -674,7 +674,7 @@ def index():
                 ),
                 rx.vstack(
                     rx.box(height="1vh"),
-                    rx.text(rx.span("All visible content on this website is available under the ",rx.span(rx.link("GNU affero general public license", href="https://github.com/Anga205/anga.pro/blob/main/LICENSE", color="#ADD8E6"))), color="WHITE", font_size="1.4vh", style={"text-align":"center"}),
+                    rx.text(rx.span("All visible content on this website is available under the ",rx.span(rx.link("GNU affero general public license", href="https://github.com/Anga205/drive.anga.pro/blob/main/LICENSE", color="#ADD8E6"))), color="WHITE", font_size="1.4vh", style={"text-align":"center"}),
                     rx.box(height="1vh"),
                     width="100%",
                     bg="#000f19"
