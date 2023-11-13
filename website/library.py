@@ -423,7 +423,6 @@ def validate_login(email, unhashed_password):
     unhashed_password = unhashed_password.encode('utf-8') if type(unhashed_password)==type("") else unhashed_password
     return get_token_from_email(email) if bcrypt.checkpw(unhashed_password, stored_password) else False
 
-
 def get_account_info_from_token(token):
     if token=="":
         return None
@@ -435,7 +434,6 @@ def get_account_info_from_token(token):
     columns = table_columns("accounts")
     dict_output = dict(zip(columns, output))
     return dict_output
-
 
 def get_files(account_token):
     # Connect to the SQLite database
@@ -497,6 +495,12 @@ def turn_size_to_string(file_size):
             formatted_size = "{:.1f}".format(file_size / sizes[i])
             return f"{formatted_size} {units[i]}"
 
+def add_tpu_to_existing_account(token, TPU_token):
+    con = sqlite3.connect(database_directory)
+    cur = con.cursor()
+    cur.execute(f"UPDATE accounts SET TPU_token = {dbify(TPU_token)} WHERE token = {dbify(token)}")
+    con.commit()
+    con.close()
 
 def get_new_file_names(account_token):
     conn = sqlite3.connect(database_directory)

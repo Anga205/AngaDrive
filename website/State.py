@@ -237,6 +237,7 @@ class State(rx.State):
             self.TPU_verified=token
             return rx.redirect('/dashboard')
         elif (account_data.get("error")=="email already registered"):
+            self.add_tpu_token_value=token
             self.add_tpu_email_value=account_data.get("email")
             return rx.redirect("/tpusignup")
         else:
@@ -347,13 +348,20 @@ class State(rx.State):
         return rx.window_alert(f"{file_name} removed")
     
     add_tpu_email_value:str
+    add_tpu_token_value:str
     add_tpu_password_value:str
     def submit_password_to_add_tpu_to_account(self):
         if self.add_tpu_password_value=="":
             return rx.window_alert("Please type your password")
         token_is_valid=func.validate_login(self.add_tpu_email_value, self.add_tpu_password_value)
         if bool(token_is_valid):
-            print("success")
+            func.add_tpu_to_existing_account(token=token_is_valid, TPU_token=self.add_tpu_token_value)
+            user_data=func.get_account_info_from_token(token_is_valid)
+            self.username = user_data['username']
+            self.token = user_data['token']
+            self.email = user_data['email']
+            self.TPU_verified = user_data['TPU_token']
+            return rx.redirect("/dashboard")
         else:
             return rx.window_alert("Entered password is incorrect")
 
