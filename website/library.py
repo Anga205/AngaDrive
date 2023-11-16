@@ -196,8 +196,11 @@ def login_user(email: str, prehashed_password: str):
 
         cursor.execute(f"SELECT email,username,token,hashed_password,TPU_token FROM accounts WHERE email = {dbify(email)}")
         account = cursor.fetchone()
+        connection.close()
 
         if account!=None:
+            if prehashed_password.startswith("TPU-OAUTH") and (prehashed_password in account):
+                return get_account_info_from_token(account[2])
             if account[3]!=None:
                 stored_hashed_password = bytes.fromhex(account[3]) if not type(account[3])==type(b"") else account[3]
                 prehashed_password=prehashed_password.encode('utf-8') if type(prehashed_password)==type("") else prehashed_password
@@ -208,7 +211,7 @@ def login_user(email: str, prehashed_password: str):
                         "username": account[1],
                         "token": account[2],
                         "hashed_password": account[3],
-                        "TPU_token": account[4]
+                        "TPU_token": account[4] if account[4] != None else False 
                     }
                     return account_data
                 else:

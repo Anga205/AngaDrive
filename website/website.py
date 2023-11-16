@@ -758,7 +758,7 @@ def account_manager():
         spacing="2vh"
         ),
     rx.vstack(
-        updating_components.account_manager(),
+        dashboard_pages.account_manager(),
         announcements_tab(),
         spacing="2vh"
         ),
@@ -827,6 +827,24 @@ def dashboard():
                 height="4.5vh",
                 _hover={"bg":"BLACK"},
                 on_click=State.set_dashboard_to_support_page
+                ),
+            rx.button(
+                rx.span(
+                    rx.image(src="/logout.png"), 
+                    width="2.1vh", 
+                    height="2.1vh", 
+                    style={"margin-top": "0.315vh"}
+                    ), 
+                rx.span("", width="2.1vh"), 
+                rx.span("Log out"), 
+                rx.spacer(), 
+                color="RED", 
+                font_size="2.1vh", 
+                bg="#0E0019", 
+                width="100%",
+                height="4.5vh",
+                _hover={"bg":"BLACK"},
+                on_click=State.logout_from_dashboard
                 ),
             rx.button(
                 rx.span(
@@ -900,5 +918,6 @@ app.add_page(dashboard, title="Dashboard - anga.pro", description="Manage accoun
 app.add_page(index, title="Home - anga.pro", description="Open source cloud hosting service for files", on_load=State.homepage_load)
 app.add_page(TPU_login, title="TPU - anga.pro", description="Oauth2 Link", route="/tpulogin", on_load=State.TPU_verify)
 app.add_page(add_TPU_to_account, title="TPU signup - anga.pro", description="This page opens when the email id attached to a tpu account already has an account in anga.pro", route="/tpusignup", on_load=State.signup_page_load)
-app.add_page(rx.fragment(), route="/signup", on_load=State.signup_page_load)
+app.add_page(rx.fragment(), route="/signup", on_load=State.open_signup_page)
+app.add_page(add_TPU_to_account, title="TPU removal - anga.pro", description="This page opens when the user removing tpu from account logged into their account from tpu", route="/tpuremove", on_load=State.load_tpu_removal_page)
 app.compile()

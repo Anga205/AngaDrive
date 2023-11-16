@@ -97,6 +97,13 @@ class State(rx.State):
         self.TPU_verified=False
         return rx.clear_local_storage()
     
+    def logout_from_dashboard(self):
+        output_from_logout=self.logout()
+        output=[rx.redirect("/login")]
+        if output_from_logout != None:
+            output.append(output_from_logout)
+        return output
+    
     def dashboard_delete_account(self):
         if func.delete_account(self.email):
             self.username=""
@@ -147,6 +154,7 @@ class State(rx.State):
                 self.username=user_info.get("username", "DictFetch Error")
                 self.email=user_info.get("email", "DictFetch Error")
                 self.token=user_info.get("token", "DictFetch Error")
+                self.TPU_verified=user_info.get("TPU_token", False)
                 if user_info['username']!=local_data['username']:
                     local_data['username']=user_info['username']
                     self.accounts=str(local_data)
@@ -227,17 +235,17 @@ class State(rx.State):
     pfp_exists=False
 
     def TPU_verify(self):
-        token=self.router.page.params.get("code",None)
-        TPU_info=TPU.get_info(token)
-        account_data=func.TPU_signin(TPU_info['email'], TPU_info["username"], token)
+        TPU_token=self.router.page.params.get("code",None)
+        TPU_info=TPU.get_info(TPU_token)
+        account_data=func.TPU_signin(TPU_info['email'], TPU_info["username"], TPU_token)
         if account_data.get("error") is None:
             self.username=account_data.get('username',"$username")
             self.email=account_data.get('email',"error@email.com")
             self.token=account_data.get("token", "error")
-            self.TPU_verified=token
+            self.TPU_verified=TPU_token
             return rx.redirect('/dashboard')
         elif (account_data.get("error")=="email already registered"):
-            self.add_tpu_token_value=token
+            self.add_tpu_token_value=TPU_token
             self.add_tpu_email_value=account_data.get("email")
             return rx.redirect("/tpusignup")
         else:
@@ -361,12 +369,47 @@ class State(rx.State):
             self.token = user_data['token']
             self.email = user_data['email']
             self.TPU_verified = user_data['TPU_token']
+            local_data=eval(self.accounts)
+            local_data["TPU_token"]=user_data.get("TPU_token")
+            self.accounts=str(local_data)
             return rx.redirect("/dashboard")
         else:
             return rx.window_alert("Entered password is incorrect")
 
     def signup_page_load(self):
+        self.page_load()
         if bool(self.TPU_verified):
             return rx.redirect("/dashboard")
         elif (self.add_tpu_email_value==""):
             return rx.redirect("/login")
+
+    def remove_tpu_account(self):
+        if self.password or ("password" in eval(self.accounts)):
+            func.remove_tpu_account(self.token)
+            self.TPU_verified=False
+        else:
+            rx.redirect("/tpuremove")
+    
+    def load_tpu_removal_page(self):
+        self.page_load()
+        if self.token == None:
+            return rx.redirect("/login")
+        
+    remove_tpu_password_value:str
+    def submit_password_to_remove_tpu_from_account(self):
+        if self.add_tpu_password_value=="":
+            return rx.window_alert("Please type your password")
+        token_is_valid=func.validate_login(self.email, self.remove_tpu_password_value)
+        if bool(token_is_valid):
+            func.remove_tpu_account(token=token_is_valid)
+            self.password = self.remove_tpu_account
+            self.TPU_verified = False
+            local_data=eval(self.accounts)
+            try:
+                del local_data["TPU_token"]
+                self.accounts=str(local_data)
+            except Exception as e:
+                print(f"Error {e} occured in function submit_password_to_remove_tpu_from_account in State file")
+            return rx.redirect("/dashboard")
+        else:
+            return rx.window_alert("Entered password is incorrect")

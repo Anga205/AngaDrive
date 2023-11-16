@@ -1,5 +1,6 @@
 import reflex as rx
-import website.library as func
+import website.updating_components as updating_components
+from website.State import State
 
 
 def text_inside_uploader(files):
@@ -322,4 +323,19 @@ def support_page(State):
             width="100%"
         ),
         spacing="1vh"
+    )
+
+
+
+def account_manager():
+    return rx.vstack(
+        rx.heading("Manage account", font_size="4vh", color="WHITE"),
+        rx.divider(border_color="WHITE"),
+        updating_components.add_TPU_to_account_widget(State.TPU_verified),
+        border_radius="2vh",
+        bg="#0F0F10",
+        spacing="0.5vh",
+        width="100%",
+        border_color="#0F0F10",
+        border_width="1vh"
     )
