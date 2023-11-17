@@ -381,7 +381,7 @@ def password_manager():
     )
 
 
-def account_manager():
+def account_editor():
     return rx.vstack(
         rx.heading("Manage account", font_size="4vh", color="WHITE"),
         rx.divider(border_color="WHITE"),
@@ -393,4 +393,247 @@ def account_manager():
         width="100%",
         border_color="#0F0F10",
         border_width="1vh"
+    )
+
+def user_profile_pic(side=100):
+    return rx.cond(
+        State.pfp_exists,
+        rx.image(src=f"/pfps/{State.email}"),
+        rx.avatar(name=State.username, border_radius=f"{side/2}vh", height=f"{side}vh", width=f"{side}vh")
+    )
+
+def account_details():
+    return rx.vstack(
+                rx.heading("Account Details", color="WHITE", font_size="5vh"),
+                rx.divider(border_color="WHITE"),
+                rx.hstack(
+                    rx.hstack(
+                        rx.vstack(
+                            rx.text("Username:", width="14vh", color="WHITE", font_size="2.3vh"), 
+                            rx.text("E-mail:", width="14vh", color="WHITE", font_size="2.3vh"),
+                            spacing="0px"
+                            ),
+                        rx.vstack(
+                            rx.cond(
+                                State.enable_username_editor_in_dashboard,
+                                rx.input(default_value=State.username, on_blur=State.change_username_thru_dashboard, color="WHITE", height="2.3vh"),
+                                rx.text(State.username, color="WHITE", font_size="2.3vh", width="100%", on_click=State.switch_username_editor_in_dashboard),
+                            ),
+                            rx.text(State.email, color="WHITE", font_size="2.3vh", width="100%", on_click=rx.window_alert("E-mail cannot be edited (yet)")),
+                            spacing="0px"
+                            
+                        ),
+                        spacing="0px"
+                    ),
+                    rx.box(width="1vh"),
+                    user_profile_pic(10),
+                    spacing="0vh"
+                ),
+                border_radius="2vh",
+                bg="#0F0F10",
+                spacing="0.5vh",
+                border_color="#0F0F10",
+                border_width="1vh"
+            )
+
+def notifications_tab():
+    return rx.vstack(
+        rx.heading("Account Notifications", color="WHITE", font_size="5vh"),
+        rx.divider(border_color="WHITE"),
+        rx.text("No Notifications found at the moment", color="WHITE", font_size="2vh"),
+        border_radius="2vh",
+        border_color="#0F0F10",
+        bg="#0F0F10", 
+        border_width="1vh",
+        spacing="0.5vh"
+    )
+
+def announcements_tab():
+    return rx.vstack(
+        rx.heading("Site-Wide Announcements", color="WHITE", font_size="3.5vh"),
+        rx.divider(border_color="WHITE"),
+        rx.text("None for now", color="WHITE", font_size="1.65vh"),
+        bg="#0F0F10",
+        border_color="#0F0F10",
+        border_radius="1vh",
+        border_width="1vh",
+        spacing="0.5vh"
+    )
+
+def account_manager():
+    return rx.hstack(
+    rx.vstack(
+        account_details(),
+        notifications_tab(),
+        spacing="2vh"
+        ),
+    rx.vstack(
+        account_editor(),
+        announcements_tab(),
+        spacing="2vh"
+        ),
+    align_items="top",
+    spacing="5vh"
+    )
+
+def desktop_site():
+    return rx.hstack(
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+#                                                              SIDEBAR
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+        rx.vstack(
+            rx.box(height="5vh"),
+            rx.button(
+                rx.span(
+                    rx.image(src="/account.png"), 
+                    width="2.1vh", 
+                    height="2.1vh", 
+                    style={"margin-top": "0.315vh"}
+                    ), 
+                rx.span("", width="2.1vh"), 
+                rx.span("Manage Account"), 
+                rx.spacer(), 
+                color="WHITE", 
+                font_size="2.1vh", 
+                bg="#0E0019", 
+                on_click=State.set_dashboard_to_account_manager,
+                width="100%",
+                height="4.5vh",
+                spacing="0px",
+                _hover={"bg":"BLACK"}
+                ),
+            rx.button(
+                rx.span(
+                    rx.image(src="/file_host.png"), 
+                    width="2.1vh", 
+                    height="2.1vh", 
+                    style={"margin-top": "0.315vh"}
+                    ), 
+                rx.span("", width="2.1vh"), 
+                rx.span("File Hosting"), 
+                rx.spacer(), 
+                color="WHITE", 
+                on_click=State.set_dashboard_to_file_hosting,
+                font_size="2.1vh", 
+                bg="#0E0019", 
+                width="100%",
+                height="4.5vh",
+                _hover={"bg":"BLACK"}
+                ),
+            rx.button(
+                rx.span(
+                    rx.image(src="/support.png"), 
+                    width="2.1vh", 
+                    height="2.1vh", 
+                    style={"margin-top": "0.315vh"}
+                    ), 
+                rx.span("", width="2.1vh"), 
+                rx.span("Support"), 
+                rx.spacer(), 
+                color="WHITE", 
+                font_size="2.1vh", 
+                bg="#0E0019", 
+                width="100%",
+                height="4.5vh",
+                _hover={"bg":"BLACK"},
+                on_click=State.set_dashboard_to_support_page
+                ),
+            rx.button(
+                rx.span(
+                    rx.image(src="/logout.png"), 
+                    width="2.1vh", 
+                    height="2.1vh", 
+                    style={"margin-top": "0.315vh"}
+                    ), 
+                rx.span("", width="2.1vh"), 
+                rx.span("Log out"), 
+                rx.spacer(), 
+                color="RED", 
+                font_size="2.1vh", 
+                bg="#0E0019", 
+                width="100%",
+                height="4.5vh",
+                _hover={"bg":"BLACK"},
+                on_click=State.logout_from_dashboard
+                ),
+            rx.button(
+                rx.span(
+                    rx.icon(tag="delete"), 
+                    style={"margin-top": "-0.525vh"}
+                    ), 
+                rx.span(
+                    "", 
+                    width="2.1vh"
+                    ), 
+                rx.span("Delete Account"), 
+                rx.spacer(), 
+                color="RED", 
+                font_size="2.1vh", 
+                bg="#0E0019", 
+                width="100%",
+                on_click=State.dashboard_delete_account,
+                height="4.5vh",
+                _hover={"bg":"BLACK"},
+                spacing="0vh"
+                ),
+            spacing="1vh",
+            width="15%",
+            height="100vh",
+            bg="#0E0019",
+            position="fixed",
+        ),
+        rx.spacer(),
+        rx.vstack(
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+#                                                              TOPBAR
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+            rx.hstack(
+                rx.box(width="6%"),
+                rx.image(src="/logo.png", height="6vh", width="auto"),
+                rx.spacer(),
+                bg="#000d19",
+                height="6vh",
+                width="85%",
+                position="fixed",
+                spacing="0px"
+            ),
+            rx.box(height="7vh"),
+            rx.cond(
+                State.dashboard_is_account_page,
+                account_manager(),
+                rx.cond(
+                    State.dashboard_is_hosting_page,
+                    file_hosting_page(State, State.bool_files_associated_with_account,State.enable_popup_to_upload, State.turn_off_popup_to_upload, State.turn_on_popup_to_upload, State.handle_upload),
+                    support_page(State)
+                )
+            ),
+            height="100vh", 
+            width="85%", 
+            bg="BLACK", 
+            style={"margin-left":"15%"},
+            spacing="0px"
+            ),
+        spacing="0px",
+    )
+
+def mobile_site():
+    return rx.vstack(
+        rx.hstack(
+            rx.box(width="1vh"),
+            rx.image(
+                src="/logo.png", 
+                width="auto", 
+                height="100%",
+                on_click=rx.redirect("/")
+                ),
+            rx.spacer(),
+            rx.icon(tag="hamburger", height="50%", width="auto", color="WHITE"),
+            rx.box(width="1vh"),
+            position="fixed",
+            bg="#000d19",
+            height="10vh",
+            width="100%"
+        ),
+        
+        width="100%"
     )
