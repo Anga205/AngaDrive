@@ -149,6 +149,21 @@ def is_valid_email(email):
     else:
         return True
 
+def check_for_password(token: str) -> bool:
+    try:
+        con = sqlite3.connect(database_directory)
+        cur = con.cursor()
+        cur.execute(f"SELECT hashed_password FROM accounts WHERE token = {dbify(token)}")
+        result = cur.fetchone()
+        con.close()
+        result = result[0]
+        if result==None:
+            return False
+        return True
+    except:
+        return False
+    
+
 def new_user_signup(username: str, email: str, hashed_password: str=None, TPU_token: str=None) -> None:
     try:
         connection = sqlite3.connect(database_directory)

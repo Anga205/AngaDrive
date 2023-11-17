@@ -102,7 +102,7 @@ def dashboard_file_hosted_widget(State,file_object):
                 font_size="1.65vh",
                 border_radius="1.5vh",
                 height="3vh",
-                on_click=State.delete_file(file_object[0])
+                on_click=State.delete_file(new_file_name)
             ),
             rx.spacer(),
             rx.button(
@@ -122,7 +122,14 @@ def dashboard_file_hosted_widget(State,file_object):
         bg="#0a0a0a"
     )
 
-def file_hosting_page(State, bool_files_associated_with_account, state_enable_popup_to_upload, state_turn_off_popup_to_upload, state_turn_on_popup_to_upload, upload_handler):
+def file_hosting_page(
+        State=State, 
+        bool_files_associated_with_account=State.bool_files_associated_with_account, 
+        state_enable_popup_to_upload=State.enable_popup_to_upload, 
+        state_turn_off_popup_to_upload=State.turn_off_popup_to_upload, 
+        state_turn_on_popup_to_upload=State.turn_on_popup_to_upload, 
+        upload_handler=State.handle_upload
+    ):
     return rx.vstack(
         rx.box(height="2vh"),
         rx.hstack(
@@ -186,7 +193,7 @@ def support_card(title, *components):
         spacing="1vh"
     )
 
-def support_page(State):
+def support_page():
     return rx.vstack(
         rx.heading(
             "You can get support from the following platforms:",
@@ -334,39 +341,71 @@ def password_manager():
             rx.accordion_item(
                 rx.accordion_button(
                     rx.spacer(),
-                    rx.heading(
-                        "Change password", 
-                        font_size = "2vh"
-                        ),
+                    rx.cond(
+                        State.account_has_password,
+                        rx.heading(
+                            "Change password", 
+                            font_size = "2vh"
+                            ),
+                        rx.heading(
+                            "Add a password",
+                            font_size = "2vh"
+                        )
+                    ),
                     rx.accordion_icon(),
                     rx.spacer()
                 ),
                 rx.accordion_panel(
-                    rx.vstack(
-                        rx.password(
-                            placeholder="Enter current password", 
-                            on_blur=State.set_reset_password_auth_password
-                            ),
-                        rx.password(
-                            placeholder="Enter new password", 
-                            on_blur=State.set_reset_password_new_password
-                            ),
-                        rx.password(
-                            placeholder="Retype new password", 
-                            on_blur=State.set_reset_password_new_password_retyped
-                            ),
-                        rx.hstack(
-                            rx.spacer(),
-                            rx.button(
-                                "Change password",
-                                is_disabled=State.disable_reset_button,
-                                on_click=State.change_password_button_clicked
+                    rx.cond(
+                        State.account_has_password,
+                        rx.vstack(
+                            rx.password(
+                                placeholder="Enter current password", 
+                                on_blur=State.set_reset_password_auth_password
                                 ),
-                            rx.spacer(),
-                            width="100%"
+                            rx.password(
+                                placeholder="Enter new password", 
+                                on_blur=State.set_reset_password_new_password
+                                ),
+                            rx.password(
+                                placeholder="Retype new password", 
+                                on_blur=State.set_reset_password_new_password_retyped
+                                ),
+                            rx.hstack(
+                                rx.spacer(),
+                                rx.button(
+                                    "Change password",
+                                    is_disabled=State.disable_reset_button,
+                                    on_click=State.change_password_button_clicked
+                                    ),
+                                rx.spacer(),
+                                width="100%"
+                            ),
+                            spacing="0.5vh"
                         ),
-                        spacing="0.5vh"
-                    )
+                        rx.vstack(
+                            rx.password(
+                                placeholder="Type any password",
+                                on_blur=State.set_add_new_password
+                            ),
+                            rx.password(
+                                placeholder="Retype the same password",
+                                on_blur=State.set_add_new_password_retyped
+                            ),
+                            rx.hstack(
+                                rx.spacer(),
+                                rx.button(
+                                    "Add password",
+                                    is_disabled=State.disable_add_password_button,
+                                    on_click=State.add_new_password_function
+                                ),
+                                rx.spacer(),
+                                width="100%"
+                            ),
+                            spacing="0.5vh"
+                        )
+                    ),
+                    
                 )
             ),
             allow_toggle=True,
@@ -615,8 +654,8 @@ def desktop_site():
                 account_manager(),
                 rx.cond(
                     State.dashboard_is_hosting_page,
-                    file_hosting_page(State, State.bool_files_associated_with_account,State.enable_popup_to_upload, State.turn_off_popup_to_upload, State.turn_on_popup_to_upload, State.handle_upload),
-                    support_page(State)
+                    file_hosting_page(),
+                    support_page()
                 )
             ),
             height="100vh", 
@@ -628,18 +667,74 @@ def desktop_site():
         spacing="0px",
     )
     
+def destructive_account_actions_on_mobile():
+    return rx.vstack(
+        rx.heading("Destroy account", color="WHITE", font_size="3.5vh"),
+        rx.divider(border_color="WHITE"),
+        rx.button(
+            rx.span(
+                rx.image(src="/logout.png", height="100%", width="auto"),
+                height="100%", 
+                ), 
+            rx.span("", width="2.1vh"), 
+            rx.span("Log out"), 
+            rx.spacer(), 
+            color="RED",
+            bg="rgba(0, 0, 0, 0.3)",
+            width="100%",
+            color_scheme="blackAlpha",
+            variant="ghost",
+            on_click=State.logout_from_dashboard
+        ),
+        rx.button(
+            rx.span(
+                rx.icon(tag="delete", color="RED", height="100%", width="auto"),
+                height="100%", 
+                ), 
+            rx.span("", width="2.1vh"), 
+            rx.span("Delete Account"), 
+            rx.spacer(), 
+            color="RED",
+            bg="rgba(0, 0, 0, 0.3)",
+            width="100%",
+            variant="ghost",
+            on_click=State.dashboard_delete_account
+        ),
+        bg="#0F0F10",
+        border_color="#0F0F10",
+        border_radius="1vh",
+        border_width="1vh",
+        width="100%",
+        spacing="0.5vh"
+    )
+
 def mobile_account_page():
     return rx.vstack(
-        rx.box(height="10vh"),
         account_details(),
         account_editor(),
         notifications_tab(),
         announcements_tab(),
+        destructive_account_actions_on_mobile(),
         rx.spacer(),
         width="100%",
         height="100vh",
         spacing="1vh",
         bg="BLACK"
+    )
+
+def mobile_hosting_page():
+    return rx.vstack(
+        file_hosting_page(),
+        rx.box(height="100vh"),
+        width="100%",
+    )
+
+def mobile_support_page():
+    return rx.hstack(
+        rx.spacer(),
+        support_page(),
+        rx.spacer(),
+        width="100%"
     )
 
 def mobile_site():
@@ -653,17 +748,87 @@ def mobile_site():
                 on_click=rx.redirect("/")
                 ),
             rx.spacer(),
-            rx.icon(tag="hamburger", height="50%", width="auto", color="WHITE"),
+            rx.icon(tag="hamburger", height="50%", width="auto", color="WHITE", on_click=State.open_mobile_dashboard_drawer),
             rx.box(width="1vh"),
+            rx.drawer(
+                rx.drawer_overlay(
+                    rx.drawer_content(
+                        rx.drawer_header("Dashboard", color="WHITE"),
+                        rx.drawer_body(
+                            rx.button(
+                                rx.span(
+                                    rx.image(src="/account.png", height="100%", width="auto"),
+                                    height="100%"
+                                ),
+                                rx.span("", width="2.1vh"), 
+                                rx.span("Manage Account"), 
+                                rx.spacer(),
+                                color="WHITE",
+                                bg="rgba(0, 0, 0, 0.3)",
+                                width="100%",
+                                variant="ghost",
+                                on_click=State.set_dashboard_to_account_manager
+                            ),
+                            rx.button(
+                                rx.span(
+                                    rx.image(src="/file_host.png", height="100%", width="auto"),
+                                    height="100%"
+                                ),
+                                rx.span("", width="2.1vh"), 
+                                rx.span("File Hosting"), 
+                                rx.spacer(),
+                                color="WHITE",
+                                bg="rgba(0, 0, 0, 0.3)",
+                                width="100%",
+                                variant="ghost",
+                                on_click=State.set_dashboard_to_file_hosting
+                            ),
+                            rx.button(
+                                rx.span(
+                                    rx.image(src="/support.png", height="100%", width="auto"),
+                                    height="100%"
+                                ),
+                                rx.span("", width="2.1vh"), 
+                                rx.span("Support"), 
+                                rx.spacer(),
+                                color="WHITE",
+                                bg="rgba(0, 0, 0, 0.3)",
+                                width="100%",
+                                variant="ghost",
+                                on_click=State.set_dashboard_to_support_page
+                            ),
+                        ),
+                        rx.drawer_footer(
+                            rx.button(
+                                "Close", on_click=State.close_mobile_dashboard_drawer
+                            )
+                        ),
+                        bg="rgba(0, 0, 0, 0.3)",
+                    )
+                ),
+                placement="left",
+                is_open=State.mobile_dashboard_drawer,
+            ),
             position="fixed",
             bg="#000d19",
             height="10vh",
             width="100%"
         ),
+        rx.box(height="10vh"),
         rx.cond(
             State.dashboard_is_account_page,
             mobile_account_page(),
-            rx.heading("Page not found")
+            rx.cond(
+                State.dashboard_is_hosting_page,
+                mobile_hosting_page(),
+                rx.cond(
+                    State.dashboard_is_support_page,
+                    mobile_support_page(),
+                    rx.heading("Page not found")
+                )
+            )
         ),
+        bg="BLACK",
+        spacing="0vh",
         width="100%"
     )

@@ -17,7 +17,10 @@ class State(rx.State):
     SignUp_email:str=""
     sign_up_password:str=""
     TPU_verified=False
-
+    
+    @rx.var
+    def account_has_password(self):
+        return func.check_for_password(self.token)
 
     def open_signup_page(self):
         self.SignUpEnabled = True
@@ -98,6 +101,7 @@ class State(rx.State):
         return rx.clear_local_storage()
     
     def logout_from_dashboard(self):
+        self.close_mobile_dashboard_drawer()
         output_from_logout=self.logout()
         output=[rx.redirect("/login")]
         if output_from_logout != None:
@@ -105,13 +109,9 @@ class State(rx.State):
         return output
     
     def dashboard_delete_account(self):
+        self.close_mobile_dashboard_drawer()
         if func.delete_account(self.email):
-            self.username=""
-            self.email=""
-            self.password=""
-            self.sign_up_password=""
-            self.sign_up_username=""
-            self.SignUp_email=""
+            self.logout()
             return [rx.clear_local_storage(), rx.redirect("/login"), rx.window_alert("Account deletion was successful!")]
         else:
             return rx.window_alert("An error occured while deleting your account")
@@ -264,33 +264,36 @@ class State(rx.State):
     dashboard_page="account"
 
     def set_dashboard_to_file_hosting(self):
+        self.close_mobile_dashboard_drawer()
         if self.dashboard_page=="hosting":
             pass
         else:
             self.dashboard_page="hosting"
     
     def set_dashboard_to_support_page(self):
+        self.close_mobile_dashboard_drawer()
         if self.dashboard_page=="support":
             pass
         else:
             self.dashboard_page="support"
 
     @rx.var
-    def dashboard_is_hosting_page(self):
+    def dashboard_is_hosting_page(self) -> bool:
         return self.dashboard_page=="hosting" 
     
     @rx.var
-    def dashboard_is_support_page(self):
+    def dashboard_is_support_page(self) -> bool:
         return self.dashboard_page=="support" 
 
     def set_dashboard_to_account_manager(self):
+        self.close_mobile_dashboard_drawer()
         if self.dashboard_page=="account":
             pass
         else:
             self.dashboard_page="account"
 
     @rx.var 
-    def dashboard_is_account_page(self):
+    def dashboard_is_account_page(self) -> bool:
         return self.dashboard_page=="account"
     
 
@@ -339,7 +342,7 @@ class State(rx.State):
         data_list=func.get_file_info_from_account_token(func.get_token_from_username(self.username))
         final_list=[]
         for i in data_list:
-            final_list.append(i+[f"{self.get_headers().get('origin')}/i/{i[0]}"])
+            final_list.append(i+[f"{self.router.headers.origin}/i/{i[0]}"])
         return final_list
 
     @rx.var
@@ -347,7 +350,7 @@ class State(rx.State):
         return func.get_file_sizes(func.get_token_from_username(self.username))
 
     def delete_file(self, file_name):
-        file_name=file_name.lstrip("https://i.anga.pro/")
+        print(file_name)
         func.delete_file(file_name)
         try:
             os.remove(os.path.join("assets","i",file_name))
@@ -448,3 +451,34 @@ class State(rx.State):
                 return rx.window_alert("Password changed successfully")
         else:
             pass
+        
+    mobile_dashboard_drawer:bool = False
+    def open_mobile_dashboard_drawer(self):
+        self.mobile_dashboard_drawer = True
+    def close_mobile_dashboard_drawer(self):
+        self.mobile_dashboard_drawer = False
+        
+    add_new_password:str
+    add_new_password_retyped:str
+    
+    @rx.var
+    def disable_add_password_button(self) -> bool:
+        if "" in [self.add_new_password, self.add_new_password_retyped] or (self.add_new_password!=self.add_new_password_retyped):
+            return True
+        return False
+    
+    def add_new_password_function(self):
+        if self.disable_add_password_button:
+            pass
+        else:
+            dbms_error=func.change_password(self.token, bcrypt.hashpw(self.add_new_password.encode('utf-8'), bcrypt.gensalt()).hex()).get("Error")
+            if dbms_error==None:
+                pass
+            else:
+                return rx.window_alert(f"An error occured: {e}")
+            self.password=self.add_new_password
+            self.add_new_password,self.add_new_password_retyped="",""
+            local_data=eval(self.accounts)
+            local_data["password"]=self.password
+            self.accounts=str(local_data)
+            return rx.window_alert("Password changed successfully")
