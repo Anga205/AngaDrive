@@ -55,9 +55,10 @@ def change_password(token, hashed_new_password):
         cur.execute(f"UPDATE accounts SET hashed_password = {dbify(hashed_new_password)} where token = {dbify(token)}")
         con.commit()
         con.close()
-        return {200, "OK"}
+        return {200: "OK"}
     except Exception as e:
         print(f"[{time.ctime(time.time())}] Error {e} occured in change_password function in library.py")
+        return {"Error": e}
 
 def convert_to_time_value(number):
     # Check if the input number is negative
@@ -153,10 +154,10 @@ def new_user_signup(username: str, email: str, hashed_password: str=None, TPU_to
         connection = sqlite3.connect(database_directory)
         cursor = connection.cursor()
 
-        # Check if the email already exists in TPU_accounts table
-        cursor.execute("SELECT email FROM TPU_accounts WHERE email = ?;", (email,))
-        existing_tpu_email = cursor.fetchone()
-        if existing_tpu_email:
+        # Check if the email already exists as a TPU_account
+        cursor.execute("SELECT TPU_token FROM accounts WHERE email = ?;", (email,))
+        existing_tpu_email = cursor.fetchone()[0]
+        if not bool(existing_tpu_email):
             return "Oops this account is already registered as a TPU account, login with TPU to add a password to it"
 
         # Check if the email already exists in accounts table
@@ -181,36 +182,24 @@ def new_user_signup(username: str, email: str, hashed_password: str=None, TPU_to
         if connection:
             connection.close()
 
-def delete_account(email: str):
-    try:
-        connection = sqlite3.connect(database_directory)
-        cursor = connection.cursor()
-
-        # Check if the email exists in accounts table
-        cursor.execute("SELECT * FROM accounts WHERE email = ?;", (email,))
-        existing_accounts_entries = cursor.fetchall()
-
-        # Check if the email exists in TPU_accounts table
-        cursor.execute("SELECT * FROM TPU_accounts WHERE email = ?;", (email,))
-        existing_tpu_entries = cursor.fetchall()
-
-        if existing_accounts_entries or existing_tpu_entries:
-            # Delete entries from accounts table
-            cursor.execute("DELETE FROM accounts WHERE email = ?;", (email,))
-
-            # Delete entries from TPU_accounts table
-            cursor.execute("DELETE FROM TPU_accounts WHERE email = ?;", (email,))
-            
-            connection.commit()
-            return True  # Deletion successful
-        else:
+def delete_account(token: str):
+    if is_valid_email(token):
+        converted_token=get_token_from_email(token)
+        if converted_token == "":
+            print(f"[{time.ctime(time.time())}] delete_account in library.py tried to delete {dbify(token)} but no such account was found")
             return False
+        token=converted_token        
+    try:
+        con = sqlite3.connect(database_directory)
+        cur = con.cursor()
+        cur.execute(f"DELETE FROM accounts WHERE token = {dbify(token)}")
+        con.commit()
+        con.close()
+        return True  # Deletion successful
+    except Exception as e:
+        print(f"[{time.ctime(time.time())}] Error {e} occured in delete_account function in library.py")
+        return False
 
-    except sqlite3.Error as e:
-        return f"Deletion error: {e}"
-    finally:
-        if connection:
-            connection.close()
 
 def login_user(email: str, prehashed_password: str):
     try:

@@ -431,7 +431,7 @@ class State(rx.State):
         return False
     
     def change_password_button_clicked(self):
-        if self.disable_reset_button:
+        if not self.disable_reset_button:
             token = func.validate_login(self.email, self.reset_password_auth_password)
             if not token:
                 return rx.window_alert("Password is incorrect; try again")

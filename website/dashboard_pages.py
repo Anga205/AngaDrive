@@ -62,7 +62,7 @@ def upload_popup_in_dashboard(state_enable_popup_to_upload, state_turn_off_popup
 
 
 
-def dashboard_file_hosted_widget(State ,file_object):
+def dashboard_file_hosted_widget(State,file_object):
     file_size, timestamp, new_file_name, link=file_object[3], file_object[2], file_object[0], file_object[-1]
     return rx.vstack(
         rx.span(
@@ -161,7 +161,7 @@ def file_hosting_page(State, bool_files_associated_with_account, state_enable_po
                     lambda file_obj: dashboard_file_hosted_widget(State, file_obj)
                 )
             ),
-            rx.text("You have not uploaded anything yet, click 'upload' to start hosting files on i.anga.pro!", color="WHITE"),
+            rx.text("You have not uploaded anything yet, click 'upload' to start hosting files on drive.anga.pro!", color="WHITE"),
         ),
         width="100%",
         spacing="1vh"
