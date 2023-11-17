@@ -208,6 +208,15 @@ def delete_account(token: str):
         con = sqlite3.connect(database_directory)
         cur = con.cursor()
         cur.execute(f"DELETE FROM accounts WHERE token = {dbify(token)}")
+        cur.execute(f"SELECT file_name FROM file_data WHERE account_token = {dbify(token)}")
+        files=cur.fetchall()
+        try:
+            file_names=[x[0] for x in files]
+            cur.execute(f"DELETE FROM file_data WHERE account_token = {dbify(token)}")
+            for file_name in file_names:
+                os.remove(os.path.join("assets","i",file_name))
+        except Exception as e:
+            print(f"[{time.ctime(time.time())}] An error occured in delete_account while deleting files in library.py: {e}")
         con.commit()
         con.close()
         return True  # Deletion successful
