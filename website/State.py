@@ -413,3 +413,38 @@ class State(rx.State):
             return rx.redirect("/dashboard")
         else:
             return rx.window_alert("Entered password is incorrect")
+        
+    reset_password_auth_password:str
+    reset_password_new_password:str
+    reset_password_new_password_retyped:str
+    
+    @rx.var
+    def disable_reset_button(self) -> bool:
+        if "" == self.reset_password_auth_password:
+            return True
+        elif "" == self.reset_password_new_password:
+            return True
+        elif "" == self.reset_password_new_password_retyped:
+            return True
+        elif self.reset_password_new_password != self.reset_password_new_password_retyped:
+            return True
+        return False
+    
+    def change_password_button_clicked(self):
+        if self.disable_reset_button:
+            token = func.validate_login(self.email, self.reset_password_auth_password)
+            if not token:
+                return rx.window_alert("Password is incorrect; try again")
+            else:
+                dbms_error = func.change_password(self.token, bcrypt.hashpw(self.reset_password_new_password.encode('utf-8'), bcrypt.gensalt()).hex()).get("Error")
+                if dbms_error==None:
+                    pass
+                else:
+                    return rx.window_alert(f"error: {dbms_error}")
+                local_data = eval(self.accounts)
+                local_data["password"] = self.reset_password_new_password
+                self.accounts = str(local_data)
+                self.password = self.reset_password_new_password
+                return rx.window_alert("Password changed successfully")
+        else:
+            pass

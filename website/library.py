@@ -48,6 +48,17 @@ def gen_token():
     a=a+"1234567890"
     return "".join(random.choices(a, k=10))+"."+"".join(random.choices(a, k=20))+"."+str(round(time.time()))
 
+def change_password(token, hashed_new_password):
+    try:
+        con = sqlite3.connect(database_directory)
+        cur = con.cursor()
+        cur.execute(f"UPDATE accounts SET hashed_password = {dbify(hashed_new_password)} where token = {dbify(token)}")
+        con.commit()
+        con.close()
+        return {200, "OK"}
+    except Exception as e:
+        print(f"[{time.ctime(time.time())}] Error {e} occured in change_password function in library.py")
+
 def convert_to_time_value(number):
     # Check if the input number is negative
     if number < 0:

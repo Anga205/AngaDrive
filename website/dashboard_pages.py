@@ -327,11 +327,66 @@ def support_page(State):
 
 
 
+
+def password_manager():
+    return rx.vstack(
+        rx.accordion(
+            rx.accordion_item(
+                rx.accordion_button(
+                    rx.spacer(),
+                    rx.heading(
+                        "Change password", 
+                        font_size = "2vh"
+                        ),
+                    rx.accordion_icon(),
+                    rx.spacer()
+                ),
+                rx.accordion_panel(
+                    rx.vstack(
+                        rx.password(
+                            placeholder="Enter current password", 
+                            on_blur=State.set_reset_password_auth_password
+                            ),
+                        rx.password(
+                            placeholder="Enter new password", 
+                            on_blur=State.set_reset_password_new_password
+                            ),
+                        rx.password(
+                            placeholder="Retype new password", 
+                            on_blur=State.set_reset_password_new_password_retyped
+                            ),
+                        rx.hstack(
+                            rx.spacer(),
+                            rx.button(
+                                "Change password",
+                                is_disabled=State.disable_reset_button,
+                                on_click=State.change_password_button_clicked
+                                ),
+                            rx.spacer(),
+                            width="100%"
+                        ),
+                        spacing="0.5vh"
+                    )
+                )
+            ),
+            allow_toggle=True,
+            width="100%"
+        ),
+        width="90%",
+        bg="gray",
+        spacing="0vh",
+        border_radius="1vh",
+        border_color="gray",
+        border_width="1vh"
+    )
+
+
 def account_manager():
     return rx.vstack(
         rx.heading("Manage account", font_size="4vh", color="WHITE"),
         rx.divider(border_color="WHITE"),
         updating_components.add_TPU_to_account_widget(State.TPU_verified),
+        password_manager(),
         border_radius="2vh",
         bg="#0F0F10",
         spacing="0.5vh",
