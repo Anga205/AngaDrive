@@ -140,3 +140,31 @@ def add_TPU_to_account():
         spacing="0vh",
         height="100vh"
     )
+    
+def remove_TPU_account():
+    return rx.vstack(
+        rx.spacer(),
+        rx.vstack(
+            rx.spacer(),
+            rx.vstack(
+                rx.heading("TPU account connection removal", font_size="3vh"),
+                rx.text("Please enter your password to confirm TPU removal", font_size="1.65vh"),
+                rx.spacer(),
+                rx.password(placeholder="Enter password here", is_required=True, bg="#e2e6f0", font_size="1.65vh", height="4vh", on_blur=State.set_remove_tpu_password_value),
+                rx.spacer(),
+                rx.button("Remove Account", color_scheme="red", font_size="1.65vh", width="100%", height="4vh", on_click=State.submit_password_to_remove_tpu_from_account),
+                spacing="1vh"
+            ),
+            rx.spacer(),
+            border_radius="5vh",
+            spacing="0vh",
+            border_color="white",
+            border_width="5vh",
+            bg="white",
+            width="50vh"
+        ),
+        rx.spacer(),
+        bg="BLACK",
+        spacing="0vh",
+        height="100vh"
+    )

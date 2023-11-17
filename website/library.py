@@ -15,6 +15,18 @@ def dbify(var):
         else:
             return "'"+("".join([("''" if x=="'" else x) for x in var]))+"'"
 
+def remove_tpu_account(token):
+    try:
+        con = sqlite3.connect(database_directory)
+        cur = con.cursor()
+        cur.execute(f"UPDATE accounts SET TPU_token = NULL WHERE token = {dbify(token)}")
+        con.commit()
+        con.close()
+        return {200: "OK"}
+    except Exception as e:
+        return {"Error": e}
+
+
 table_columns_cache = {}
 def table_columns(table_name):
     global table_columns_cache
