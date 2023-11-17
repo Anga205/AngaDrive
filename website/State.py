@@ -221,15 +221,15 @@ class State(rx.State):
 
 
     def change_username_thru_dashboard(self, new_username):
+        self.switch_username_editor_in_dashboard()
         if new_username.strip()==self.username.strip():
-            func.edit_username(new_username, self.email)
+            pass
         else:
             self.username=new_username
             try:
                 func.edit_username(new_username, self.email)
             except:
                 pass
-            self.switch_username_editor_in_dashboard()
             return rx.window_alert("Username was changed successfully")
 
     pfp_exists=False

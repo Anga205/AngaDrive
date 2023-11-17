@@ -407,44 +407,55 @@ def account_details():
                 rx.heading("Account Details", color="WHITE", font_size="5vh"),
                 rx.divider(border_color="WHITE"),
                 rx.hstack(
-                    rx.hstack(
-                        rx.vstack(
-                            rx.text("Username:", width="14vh", color="WHITE", font_size="2.3vh"), 
-                            rx.text("E-mail:", width="14vh", color="WHITE", font_size="2.3vh"),
-                            spacing="0px"
+                    rx.vstack(
+                        rx.hstack(
+                            rx.vstack(
+                                rx.text("Username:", width="14vh", color="WHITE", font_size="2.3vh"), 
+                                rx.text("E-mail:", width="14vh", color="WHITE", font_size="2.3vh"),
+                                spacing="0px"
+                                ),
+                            rx.vstack(
+                                rx.cond(
+                                    State.enable_username_editor_in_dashboard,
+                                    rx.input(default_value=State.username, on_blur=State.change_username_thru_dashboard, color="WHITE", height="2.3vh"),
+                                    rx.text(State.username, color="WHITE", font_size="2.3vh", width="100%", on_click=State.switch_username_editor_in_dashboard),
+                                ),
+                                rx.text(State.email, color="WHITE", font_size="2.3vh", width="100%", on_click=rx.window_alert("E-mail cannot be edited (yet)")),
+                                spacing="0px"
                             ),
-                        rx.vstack(
-                            rx.cond(
-                                State.enable_username_editor_in_dashboard,
-                                rx.input(default_value=State.username, on_blur=State.change_username_thru_dashboard, color="WHITE", height="2.3vh"),
-                                rx.text(State.username, color="WHITE", font_size="2.3vh", width="100%", on_click=State.switch_username_editor_in_dashboard),
-                            ),
-                            rx.text(State.email, color="WHITE", font_size="2.3vh", width="100%", on_click=rx.window_alert("E-mail cannot be edited (yet)")),
                             spacing="0px"
-                            
                         ),
-                        spacing="0px"
+                        rx.mobile_and_tablet(
+                            user_profile_pic(10)
+                        ),
+                        width="100%"
                     ),
-                    rx.box(width="1vh"),
-                    user_profile_pic(10),
+                    rx.desktop_only(
+                        rx.box(width="1vh")
+                    ),
+                    rx.desktop_only(
+                        user_profile_pic(10)
+                    ),
                     spacing="0vh"
                 ),
                 border_radius="2vh",
                 bg="#0F0F10",
                 spacing="0.5vh",
+                width="100%",
                 border_color="#0F0F10",
                 border_width="1vh"
             )
 
 def notifications_tab():
     return rx.vstack(
-        rx.heading("Account Notifications", color="WHITE", font_size="5vh"),
+        rx.heading("Account Notifications", color="WHITE", font_size="4.55vh"),
         rx.divider(border_color="WHITE"),
         rx.text("No Notifications found at the moment", color="WHITE", font_size="2vh"),
         border_radius="2vh",
         border_color="#0F0F10",
         bg="#0F0F10", 
         border_width="1vh",
+        width="100%",
         spacing="0.5vh"
     )
 
@@ -457,6 +468,7 @@ def announcements_tab():
         border_color="#0F0F10",
         border_radius="1vh",
         border_width="1vh",
+        width="100%",
         spacing="0.5vh"
     )
 
@@ -615,6 +627,20 @@ def desktop_site():
             ),
         spacing="0px",
     )
+    
+def mobile_account_page():
+    return rx.vstack(
+        rx.box(height="10vh"),
+        account_details(),
+        account_editor(),
+        notifications_tab(),
+        announcements_tab(),
+        rx.spacer(),
+        width="100%",
+        height="100vh",
+        spacing="1vh",
+        bg="BLACK"
+    )
 
 def mobile_site():
     return rx.vstack(
@@ -634,6 +660,10 @@ def mobile_site():
             height="10vh",
             width="100%"
         ),
-        
+        rx.cond(
+            State.dashboard_is_account_page,
+            mobile_account_page(),
+            rx.heading("Page not found")
+        ),
         width="100%"
     )
