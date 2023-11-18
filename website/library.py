@@ -171,7 +171,9 @@ def new_user_signup(username: str, email: str, hashed_password: str=None, TPU_to
 
         # Check if the email already exists as a TPU_account
         cursor.execute("SELECT TPU_token FROM accounts WHERE email = ?;", (email,))
-        existing_tpu_email = cursor.fetchone()[0]
+        existing_tpu_email = cursor.fetchone()
+        if existing_tpu_email!=None:
+            existing_tpu_email = existing_tpu_email[0]
         if not bool(existing_tpu_email):
             return "Oops this account is already registered as a TPU account, login with TPU to add a password to it"
 
