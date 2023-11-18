@@ -37,28 +37,14 @@ startup the website
 
 # For debian-based linux systems
 
-first install dependencies:
-`sudo apt install python3-venv curl nodejs`
+clone this repo
+`git clone https://github.com/Anga205/drive.anga.pro website`
 
-create a virtual environment:
-`python3 -m venv venv`
+enter the cloned repo
+`cd website`
 
-run virtual environment:
-`source venv/bin/activate`
-
-download repo:
-`git clone https://github.com/Anga205/drive.anga.pro`
-
-install dependencies:
-`pip install -r requirements.txt`
-
-initialize reflex:
-`reflex init`
-
-run webapp:
-`reflex run`
-
-*once you have run all these commands, the website should be avalible on http://localhost:3000*
+run the built-in bash file 
+`bash debian.sh`
 
 # Contributing
 anga.pro is an open source project, and I welcome contributions from everyone. If you would like to contribute, please fork the repository and submit a pull request.
