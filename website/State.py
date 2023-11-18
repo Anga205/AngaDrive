@@ -244,6 +244,7 @@ class State(rx.State):
             self.email=account_data.get('email',"error@email.com")
             self.token=account_data.get("token", "error")
             self.TPU_verified=TPU_token
+            self.accounts=str({"username": self.username, "token": self.token, "TPU_token": TPU_token, "email": self.email})
             return rx.redirect('/dashboard')
         elif (account_data.get("error")=="email already registered"):
             self.add_tpu_token_value=TPU_token
