@@ -85,6 +85,7 @@ class State(rx.State):
         if type(insertion) == type({}):
             self.username, self.email, self.password=self.sign_up_username, self.SignUp_email, self.sign_up_password
             print(f"[{time.ctime(time.time())}] {self.username} just registered a new account!")
+            self.SignUpEnabled=False
             return [rx.redirect("/dashboard"), rx.window_alert("Signup Successful!")]
         else:
             return rx.window_alert(insertion)
