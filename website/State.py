@@ -46,7 +46,6 @@ class State(rx.State):
         return output_list
 
     def homepage_load(self):
-        func.insert_timestamp()
         self.page_load()
 
     @rx.var
@@ -146,6 +145,7 @@ class State(rx.State):
     random_light_color=random.choice(["#ffcccb","#90EE90","#ADD8E6"])
 
     def page_load(self):
+        func.insert_timestamp()
         if self.username!="" or (str(self.accounts) in ["null","None"]):
             pass
         else:

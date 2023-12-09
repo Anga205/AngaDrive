@@ -264,7 +264,7 @@ def index():
                             ),
                             rx.hstack(
                                 rx.spacer(),
-                                rx.heading("Number of times this page was loaded today: ", font_size="2vh"), 
+                                rx.heading("Number of times this webapp was loaded today: ", font_size="2vh"), 
                                 rx.heading(State.loads_today, font_size="2vh"), 
                                 rx.spacer(),
                                 bg="#00fff5",
@@ -648,7 +648,7 @@ def index():
                                 width="100%",
                             ),
                         rx.box(
-                            rx.heading(rx.span("Number of times this page was loaded today: "), rx.span(State.loads_today), font_size="1.7vh", style={"text-align":"center"})
+                            rx.heading(rx.span("Number of times this webapp was loaded today: "), rx.span(State.loads_today), font_size="1.7vh", style={"text-align":"center"})
                             ),
                         bg="#00fff5",
                         border_color="#00fff5",
