@@ -3,7 +3,7 @@
 
 if [ ! -d "venv" ]; then
 	echo "Starting one-time setup"
-	required_packages=("git" "python3-venv" "curl" "nodejs" "gcc" "python3-dev")
+	required_packages=("git" "python3-venv" "curl" "nodejs" "gcc" "python3-dev", "unzip")
 
 	is_package_installed() {
 		package=$1
