@@ -43,4 +43,4 @@ else
 	source venv/bin/activate
 
 fi
-reflex run --env prod
+reflex run
