@@ -28,13 +28,6 @@ if [ ! -d "venv" ]; then
 
 	clear
 
-	echo "Enter link for backend (press enter and leave this empty if you havent setup anything separately)"
-	read link
-
-	if [ "$link" == "http"* ]; then
-		sed -i "8s/.*/    api_url='$link',/" "rxconfig.py"
-	fi
-
 
 	reflex init
 
