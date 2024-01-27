@@ -1,5 +1,5 @@
-# ❗THIS PROJECT IS NEARING ITS END OF LIFE❗
-after january 2024, this repo will stop recieving updates, you can still access, fork and host this code in your own system, but i wont update this repo anymore
+# ❗THIS PROJECT IS NO LONGER SUPPORTED❗
+as of janurary 2024 this project is outdated and its functionality has been moved to AngaDriveV2
 
 ### drive.anga.pro
 a web application for file hosting over the internet
